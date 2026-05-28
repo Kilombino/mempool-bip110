@@ -25,13 +25,16 @@
           <tr>
             <td i18n="block.health">Health</td>
             <td>
-              <span class="health-badge badge"
-              [class.text-bg-success]="block?.extras?.matchRate >= 99"
-              [class.text-bg-warning]="block?.extras?.matchRate >= 75 && block?.extras?.matchRate < 99"
-              [class.text-bg-danger]="block?.extras?.matchRate < 75"
-              *ngIf="block?.extras?.matchRate != null">
-              {{ block?.extras?.matchRate + "%" || "Unknown" }}</span>
-              <span class="health-badge badge text-bg-secondary" *ngIf="block?.extras?.matchRate == null">Unknown</span>
+              <div style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                <span class="health-badge badge"
+                  [class.text-bg-success]="block?.extras?.matchRate >= 99"
+                  [class.text-bg-warning]="block?.extras?.matchRate >= 75 && block?.extras?.matchRate < 99"
+                  [class.text-bg-danger]="block?.extras?.matchRate < 75"
+                  *ngIf="block?.extras?.matchRate != null">
+                  {{ block?.extras?.matchRate + "%" || "Unknown" }}</span>
+                <span class="health-badge badge text-bg-secondary" *ngIf="block?.extras?.matchRate == null">Unknown</span>
+                <span *ngIf="hasBIP110Signaling(block.version)" class="badge badge-bip110-signal" title="This block signals support for BIP110 (Reduced Data Temporary Softfork, version bit 4)">BIP110 ✓</span>
+              </div>
             </td>
           </tr>
           <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet' && block?.extras?.pool">

@@ -205,6 +205,11 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
     this.blockSubsidy = 0;
   }
 
+  hasBIP110Signaling(version: number): boolean {
+    const versionBit = 4; // BIP110 'reduced_data' deployment (Reduced Data Temporary Softfork)
+    return (Number(version) & (1 << versionBit)) === (1 << versionBit);
+  }
+
   onGraphReady(): void {
     this.openGraphService.waitOver({ event: 'block-viz-' + this.rawId, sessionId: this.ogSession });
   }
