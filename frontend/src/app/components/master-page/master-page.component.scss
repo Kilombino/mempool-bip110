@@ -327,3 +327,22 @@ main {
   top: 65px;
   padding-bottom: 20px;
 }
+
+/* BIP110 edition branding, anchored under the logo (bottom-right, under "mempool") */
+.bip110-logo-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  .bip110-edition {
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    line-height: 1;
+    color: #f7931a;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+}
