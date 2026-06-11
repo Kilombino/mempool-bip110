@@ -124,6 +124,14 @@ export const TransactionFilters: { [key: string]: Filter } = {
     sighash_single: { key: 'sighash_single', label: 'sighash_single', flag: TransactionFlags.sighash_single, tooltip: true },
     sighash_default: { key: 'sighash_default', label: 'sighash_default', flag: TransactionFlags.sighash_default },
     sighash_acp: { key: 'sighash_acp', label: 'sighash_anyonecanpay', flag: TransactionFlags.sighash_acp, tooltip: true },
+    /* BIP110 'Reduced Data' violations */
+    bip110_large_scriptpubkey: { key: 'bip110_large_scriptpubkey', label: '☢️ BIP110: large scriptPubKey (>34B)', flag: TransactionFlags.bip110_large_scriptpubkey, important: true, tooltip: true, txPage: true, },
+    bip110_large_pushdata: { key: 'bip110_large_pushdata', label: '☢️ BIP110: large data push (>256B)', flag: TransactionFlags.bip110_large_pushdata, important: true, tooltip: true, txPage: true, },
+    bip110_undefined_witness: { key: 'bip110_undefined_witness', label: '☢️ BIP110: undefined witness version', flag: TransactionFlags.bip110_undefined_witness, important: true, tooltip: true, txPage: true, },
+    bip110_taproot_annex: { key: 'bip110_taproot_annex', label: '☢️ BIP110: Taproot annex', flag: TransactionFlags.bip110_taproot_annex, important: true, tooltip: true, txPage: true, },
+    bip110_large_control_block: { key: 'bip110_large_control_block', label: '☢️ BIP110: large control block (>257B)', flag: TransactionFlags.bip110_large_control_block, important: true, tooltip: true, txPage: true, },
+    bip110_op_success: { key: 'bip110_op_success', label: '☢️ BIP110: OP_SUCCESS in tapscript', flag: TransactionFlags.bip110_op_success, important: true, tooltip: true, txPage: true, },
+    bip110_op_if_notif: { key: 'bip110_op_if_notif', label: '☢️ BIP110: OP_IF/NOTIF in tapscript', flag: TransactionFlags.bip110_op_if_notif, important: true, tooltip: true, txPage: true, },
 };
 
 export const FilterGroups: { label: string, filters: Filter[]}[] = [
