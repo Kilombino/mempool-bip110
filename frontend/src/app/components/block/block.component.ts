@@ -391,6 +391,11 @@ export class BlockComponent implements OnInit, OnDestroy {
 
       this.setupBlockAudit();
       this.isLoadingOverview = false;
+
+      // Force a canvas resize after the overview DOM updates, so the block-overview-graph
+      // recomputes its bounding rect and the hover "goggles" work on all blocks (not just
+      // BIP110/violation ones, where an extra reflow happened to fix it incidentally).
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
     });
 
     this.accelerationsSubscription = this.block$.pipe(
