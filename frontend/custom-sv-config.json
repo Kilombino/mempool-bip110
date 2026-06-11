@@ -1,0 +1,59 @@
+{
+  "theme": "bukele",
+  "enterprise": "onbtc",
+  "branding": {
+    "name": "onbtc",
+    "title": "Bitcoin Office",
+    "site_id": 19,
+    "header_img": "/resources/onbtclogo.svg",
+    "footer_img": "/resources/onbtclogo.svg",
+    "rounded_corner": true
+  },
+  "dashboard": {
+    "widgets": [
+      {
+        "component": "fees",
+        "mobileOrder": 4
+      },
+      {
+        "component": "walletBalance",
+        "mobileOrder": 1,
+        "props": {
+          "wallet": "ONBTC"
+        }
+      },
+      {
+        "component": "twitter",
+        "mobileOrder": 5,
+        "props": {
+          "handle": "nayibbukele"
+        }
+      },
+      {
+        "component": "wallet",
+        "mobileOrder": 2,
+        "props": {
+          "wallet": "ONBTC",
+          "period": "1m",
+          "label": "bitcoin.gob.sv",
+          "image": "/resources/elsalvador-flag.svg"
+        }
+      },
+      {
+        "component": "simpleproof_cubo",
+        "mobileOrder": 6,
+        "props": {
+          "label": "CUBO+ Certificates",
+          "key": "cubo_certificates"
+        }
+      },
+      {
+        "component": "walletTransactions",
+        "mobileOrder": 3,
+        "props": {
+          "wallet": "ONBTC"
+        }
+      }
+    ]
+  }
+}

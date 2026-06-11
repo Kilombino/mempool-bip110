@@ -1,0 +1,83 @@
+<app-indexing-progress></app-indexing-progress>
+
+<div class="container-xl dashboard-container">
+
+  <div class="row row-cols-1 row-cols-md-2">
+
+    <div class="col">
+      <div class="main-title">
+        <span [attr.data-cy]="'reward-stats'" i18n="mining.reward-stats">Reward stats</span>&nbsp;
+        <span style="font-size: xx-small" i18n="mining.144-blocks">(144 blocks)</span>
+      </div>
+      <div class="card-wrapper">
+        <div class="card">
+          <div class="card-body more-padding">
+            <app-reward-stats></app-reward-stats>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- difficulty adjustment -->
+    <div class="col">
+      <div class="main-title" i18n="dashboard.difficulty-adjustment">Difficulty Adjustment</div>
+      <app-difficulty-mining [attr.data-cy]="'difficulty-adjustment'" [showTitle]="false" [showProgress]="false" [showHalving]="true"></app-difficulty-mining>
+    </div>
+
+    <!-- pool distribution -->
+    <div class="col" style="margin-bottom: 1.47rem">
+      <div class="card">
+        <div class="card-body ps-2 pe-2">
+          <div class="mempool-graph">
+            <app-pool-ranking [height]="poolGraphHeight" [attr.data-cy]="'pool-distribution'" [widget]=true [antPoolProxy]="antPoolProxy"></app-pool-ranking>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-1">
+            <a [attr.data-cy]="'pool-distribution-view-more'" [routerLink]="['/graphs/mining/pools' | relativeUrl]" i18n="dashboard.view-more">View more &raquo;</a>
+            <app-toggle [textLeft]="'Normal'" [textRight]="'AntPool Proxy'" [checked]="false" (toggleStatusChanged)="onPoolGroupToggleStatusChanged($event)"></app-toggle>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- hashrate -->
+    <div class="col" style="margin-bottom: 1.47rem">
+      <div class="card">
+        <div class="card-body ps-lg-3 pe-lg-3 ps-2 pe-2">
+          <div class="fixed-mempool-graph">
+            <app-hashrate-chart [height]="hashrateGraphHeight" [attr.data-cy]="'hashrate-graph'" [widget]="true"></app-hashrate-chart>
+          </div>
+          <div class="mt-1"><a [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" fragment="1y" i18n="dashboard.view-more">View more &raquo;</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent blocks -->
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <a class="title-link" href="" [routerLink]="['/blocks' | relativeUrl]">
+            <h5 class="card-title d-inline" i18n="dashboard.recent-blocks">Recent Blocks</h5>
+            <span>&nbsp;</span>
+            <fa-icon [icon]="['fas', 'external-link-alt']" [fixedWidth]="true" style="vertical-align: text-top; font-size: 13px; color: var(--title-fg)"></fa-icon>
+          </a>
+          <app-blocks-list [attr.data-cy]="'latest-blocks'" [widget]=true></app-blocks-list>
+        </div>
+      </div>
+    </div>
+
+    <!-- Difficult adjustments -->
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <a class="title-link" href="" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]">
+            <h5 class="card-title d-inline" i18n="dashboard.adjustments">Adjustments</h5>
+            <span>&nbsp;</span>
+            <fa-icon [icon]="['fas', 'external-link-alt']" [fixedWidth]="true" style="vertical-align: text-top; font-size: 13px; color: var(--title-fg)"></fa-icon>
+          </a>
+          <app-difficulty-adjustments-table [attr.data-cy]="'difficulty-adjustments-table'"></app-difficulty-adjustments-table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

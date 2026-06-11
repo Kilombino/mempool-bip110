@@ -1,0 +1,85 @@
+<app-indexing-progress *ngIf="!widget"></app-indexing-progress>
+
+<div [class]="widget === false ? 'full-container' : ''">
+
+  <div *ngIf="widget">
+    <div class="pool-distribution" *ngIf="(hashrateObservable$ | async) as hashrates; else loadingStats">
+      <div class="item">
+        <h5 class="card-title" i18n="mining.hashrate">Hashrate (1w)</h5>
+        <p class="card-text">
+          {{ hashrates.currentHashrate | amountShortener: 3 : 'H/s' : false : true }}
+        </p>
+      </div>
+      <div class="item">
+        <h5 class="card-title" i18n="block.difficulty">Difficulty</h5>
+        <p class="card-text" *ngIf="network === 'signet'">
+          {{ hashrates.currentDifficulty | amountShortener : 5 }}
+        </p>
+        <p class="card-text" *ngIf="network !== 'signet'">
+          {{ hashrates.currentDifficulty | amountShortener : 2 }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-header mb-0 mb-md-4" [style]="widget ? 'display:none' : ''">
+    <div class="d-flex d-md-block align-items-baseline">
+      <span i18n="mining.hashrate-difficulty">Hashrate & Difficulty</span>
+      <button class="btn p-0 ps-2" style="margin: 0 0 4px 0px" (click)="onSaveChart()">
+        <fa-icon [icon]="['fas', 'download']" [fixedWidth]="true"></fa-icon>
+      </button>
+    </div>  
+
+    <form [formGroup]="radioGroupForm" class="formRadioGroup" *ngIf="(hashrateObservable$ | async) as stats">
+      <div class="btn-group" role="group" name="radioBasic">
+        <ng-container *ngIf="stats.blockCount >= 12960">
+          <input type="radio" class="btn-check" id="hashrate-3m" [value]="'3m'" fragment="3m" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" [attr.data-cy]="'3m'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="hashrate-3m">3M</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 25920">
+          <input type="radio" class="btn-check" id="hashrate-6m" [value]="'6m'" fragment="6m" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" [attr.data-cy]="'6m'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="hashrate-6m">6M</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 52560">
+          <input type="radio" class="btn-check" id="hashrate-1y" [value]="'1y'" fragment="1y" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" [attr.data-cy]="'1y'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="hashrate-1y">1Y</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 105120">
+          <input type="radio" class="btn-check" id="hashrate-2y" [value]="'2y'" fragment="2y" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" [attr.data-cy]="'2y'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="hashrate-2y">2Y</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 157680">
+          <input type="radio" class="btn-check" id="hashrate-3y" [value]="'3y'" fragment="3y" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" [attr.data-cy]="'3y'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="hashrate-3y">3Y</label>
+        </ng-container>
+        <input type="radio" class="btn-check" id="hashrate-all" [value]="'all'" fragment="all" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" [attr.data-cy]="'all'" formControlName="dateSpan">
+        <label class="btn btn-primary btn-sm" for="hashrate-all">ALL</label>
+      </div>
+    </form>
+  </div>
+
+  <div [class]="!widget ? 'chart' : 'chart-widget'" *browserOnly [style]="{ height: widget ? ((height + 20) + 'px') : null, opacity: isLoading ? 0.5 : 1 }" echarts [initOpts]="chartInitOptions" [options]="chartOptions"
+    (chartInit)="onChartInit($event)">
+  </div>
+  <div class="text-center loadingGraphs" *ngIf="!stateService.isBrowser || isLoading">
+    <div class="spinner-border text-light"></div>
+  </div>
+
+</div>
+
+<ng-template #loadingStats>
+  <div class="pool-distribution">
+    <div class="item">
+      <h5 class="card-title" i18n="mining.hashrate">Hashrate</h5>
+      <p class="card-text">
+        <span class="skeleton-loader skeleton-loader-big"></span>
+      </p>
+    </div>
+    <div class="item">
+      <h5 class="card-title" i18n="block.difficulty">Difficulty</h5>
+      <p class="card-text">
+        <span class="skeleton-loader skeleton-loader-big"></span>
+      </p>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,632 @@
+<div class="container-xl" [class.bip110-violation-glow]="bip110ViolationCount > 0" [class.bip110-signaling-glow]="block && hasBIP110Signaling(block.version)" (window:resize)="onResize($event)">
+
+  <div class="title-block" [class.time-ltr]="timeLtr" id="block">
+    <div *ngIf="block?.stale" class="alert alert-mempool" role="alert">
+      <span i18n="block.reorged|Block reorg" class="alert-text">This block does not belong to the main chain, it has been replaced by:</span>
+      <app-truncate [text]="block.canonical" [lastChars]="12" [link]="['/block/' | relativeUrl, block.canonical]" [maxWidth]="480"></app-truncate>
+    </div>
+    <h1>
+      @if (!block?.stale) {
+        <ng-container *ngIf="blockHeight == null || blockHeight > 0; else genesis" i18n="shared.block-title">Block</ng-container>
+        <ng-template #genesis i18n="@@2303359202781425764">Genesis</ng-template>
+      } @else {
+        <ng-container i18n="shared.stale-block-title">Stale Block</ng-container>
+      }
+      <span class="next-previous-blocks">
+        <a *ngIf="showNextBlocklink" class="nav-arrow next" [routerLink]="['/block/' | relativeUrl, nextBlockHeight]" (click)="navigateToNextBlock()" i18n-ngbTooltip="Next Block" ngbTooltip="Next Block" placement="bottom">
+          <fa-icon [icon]="['fas', 'angle-left']" [fixedWidth]="true"></fa-icon>
+        </a>
+        <span *ngIf="!showNextBlocklink" placement="bottom" class="disable nav-arrow next">
+          <fa-icon [icon]="['fas', 'angle-left']" [fixedWidth]="true"></fa-icon>
+        </span>
+        <a [routerLink]="['/block/' | relativeUrl, blockHash]" class="block-link">{{ blockHeight }}</a>
+        <a *ngIf="showPreviousBlocklink && block" class="nav-arrow prev"  [routerLink]="['/block/' | relativeUrl, block.previousblockhash]" (click)="navigateToPreviousBlock()" i18n-ngbTooltip="Previous Block" ngbTooltip="Previous Block" placement="bottom">
+          <fa-icon [icon]="['fas', 'angle-right']" [fixedWidth]="true"></fa-icon>
+        </a>
+        <span *ngIf="!showPreviousBlocklink || !block" placement="bottom" class="disable nav-arrow prev">
+          <fa-icon [icon]="['fas', 'angle-right']" [fixedWidth]="true"></fa-icon>
+        </span>
+      </span>
+    </h1>
+
+    <div class="grow"></div>
+
+    <button *ngIf="block?.stale" type="button" class="btn btn-sm btn-danger container-button" i18n="block.stale|Stale block state">Stale</button>
+
+    <button [routerLink]="['/' | relativeUrl]" class="btn btn-sm">&#10005;</button>
+  </div>
+
+  <div class="clearfix"></div>
+
+  <div class="box" *ngIf="!error">
+    <div class="row">
+      <div class="col-sm">
+        <table class="table table-borderless table-striped">
+          <tbody>
+            <ng-container *ngIf="block && !isLoadingBlock; else skeletonRows">
+              <tr>
+                <td class="td-width" i18n="block.hash">Hash</td>
+                <td>&lrm;<a [routerLink]="['/block/' | relativeUrl, block.id]" title="{{ block.id }}">{{ block.id | shortenString : 13 }}</a> <app-clipboard [text]="block.id"></app-clipboard></td>
+              </tr>
+              <tr>
+                <td i18n="block.timestamp">Timestamp</td>
+                <td>
+                  <app-timestamp [customFormat]="'yyyy-MM-dd HH:mm:ss'" [unixTime]="block.timestamp" [precision]="1" minUnit="minute"></app-timestamp>
+                </td>
+              </tr>
+              <tr>
+                <td i18n="block.size">Size</td>
+                <td [innerHTML]="'&lrm;' + (block.size | bytes: 2)"></td>
+              </tr>
+              <tr>
+                <td i18n="block.weight">Weight</td>
+                <td [innerHTML]="'&lrm;' + (block.weight | wuBytes: 2)"></td>
+              </tr>
+              <tr *ngIf="auditAvailable">
+                <td><ng-container i18n="latest-blocks.health">Health</ng-container></td>
+                <td>
+                  <span
+                    class="health-badge badge"
+                    [class.bg-success]="blockAudit?.matchRate >= 99"
+                    [class.bg-warning]="blockAudit?.matchRate >= 75 && blockAudit?.matchRate < 99"
+                    [class.bg-danger]="blockAudit?.matchRate < 75"
+                    *ngIf="blockAudit?.matchRate != null && blockAudit?.id === block.id; else nullHealth"
+                  >{{ blockAudit?.matchRate }}%</span>
+                  <ng-template #nullHealth>
+                    <ng-container *ngIf="!isLoadingOverview && blockAudit?.id === block.id; else loadingHealth">
+                      <span class="health-badge badge bg-secondary" i18n="unknown">Unknown</span>
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #loadingHealth>
+                    <span class="skeleton-loader" style="max-width: 60px"></span>
+                  </ng-template>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #skeletonRows>
+              <tr>
+                <td class="td-width" colspan="2"><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr>
+                <td colspan="2"><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr>
+                <td colspan="2"><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr>
+                <td colspan="2"><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr *ngIf="showComparison">
+                <td colspan="2"><span class="skeleton-loader"></span></td>
+              </tr>
+            </ng-template>
+            <ng-container *ngIf="isMobile || (webGlEnabled && !showComparison); then restOfTable;"></ng-container>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-sm" [class.graph-col]="webGlEnabled && !showComparison">
+        <table class="table table-borderless table-striped" *ngIf="!isMobile && !(webGlEnabled && !showComparison)">
+          <tbody>
+            <ng-container *ngTemplateOutlet="restOfTable"></ng-container>
+          </tbody>
+        </table>
+        <div class="col-sm chart-container" *ngIf="webGlEnabled && !showComparison">
+          <app-block-overview-graph
+            #blockGraphActual
+            [isLoading]="!stateService.isBrowser || isLoadingOverview"
+            [resolution]="86"
+            [blockLimit]="stateService.blockVSize"
+            [orientation]="'top'"
+            [flip]="false"
+            [blockConversion]="blockConversion"
+            [showFilters]="true"
+            [excludeFilters]="['replacement']"
+            [relativeTime]="block?.timestamp"
+            (txClickEvent)="onTxClick($event)"
+          ></app-block-overview-graph>
+          @if (!isMobile || mode === 'actual') {
+            <ng-container *ngTemplateOutlet="emptyBlockInfo; context: { $implicit: block?.stale ? canonicalBlock : block }"></ng-container>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #restOfTable>
+    <ng-container *ngIf="block && !isLoadingBlock; else loadingRest">
+      <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+        <td i18n="mempool-block.fee-span">Fee span</td>
+        <td><app-fee-rate [fee]="block.extras?.minFee" [showUnit]="false"></app-fee-rate> - <app-fee-rate [fee]="block.extras?.maxFee"></app-fee-rate></td>
+      </tr>
+      <tr *ngIf="block.extras?.medianFee != undefined">
+        <td class="td-width" i18n="block.median-fee">Median fee</td>
+        <td>~<app-fee-rate [fee]="block.extras?.medianFee" rounding="1.0-0"></app-fee-rate>
+          <span class="fiat">
+            <app-fiat [blockConversion]="blockConversion" [value]="block.extras?.medianFee * 140" digitsInfo="1.2-2"
+              i18n-ngbTooltip="Transaction fee tooltip" ngbTooltip="Based on average native segwit transaction of 140 vBytes"
+              placement="bottom"></app-fiat>
+          </span>
+        </td>
+      </tr>
+      <ng-template [ngIf]="fees !== undefined" [ngIfElse]="loadingFees">
+        <tr>
+          <td i18n="block.total-fees|Total fees in a block">Total fees</td>
+          <td *ngIf="network !== 'liquid' && network !== 'liquidtestnet'; else liquidTotalFees">
+            <app-amount [satoshis]="block.extras.totalFees" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+            <span class="fiat">
+              <app-fiat [blockConversion]="blockConversion" [value]="block.extras.totalFees" digitsInfo="1.0-0"></app-fiat>
+            </span>
+          </td>
+          <ng-template #liquidTotalFees>
+            <td>
+              <app-amount [satoshis]="fees * 100000000" digitsInfo="1.2-2" [noFiat]="true"></app-amount>&nbsp; <app-fiat
+              [blockConversion]="blockConversion" [value]="fees * 100000000" digitsInfo="1.2-2"></app-fiat>
+            </td>
+          </ng-template>
+        </tr>
+        <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+          <td i18n="block.subsidy-and-fees|Total subsidy and fees in a block">Subsidy + fees</td>
+          <td>
+            <app-amount [satoshis]="block.extras.reward" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+            <span class="fiat">
+              <app-fiat [blockConversion]="blockConversion" [value]="(blockSubsidy + fees) * 100000000" digitsInfo="1.0-0"></app-fiat>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #loadingFees>
+        <tr>
+          <td i18n="block.total-fees|Total fees in a block">Total fees</td>
+          <td style="width: 75%;"><span class="skeleton-loader"></span></td>
+        </tr>
+        <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+          <td i18n="block.subsidy-and-fees|Total subsidy and fees in a block">Subsidy + fees</td>
+          <td><span class="skeleton-loader"></span></td>
+        </tr>
+      </ng-template>
+      <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+        <td i18n="block.miner">Miner</td>
+        <td *ngIf="stateService.env.MINING_DASHBOARD">
+          <a placement="bottom" [routerLink]="['/mining/pool' | relativeUrl, block.extras.pool.slug]" class="badge" style="color: #FFF;padding:0;">
+            <span class="miner-name" *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''">
+              @if (block.extras.pool.minerNames[1].length > 16) {
+                {{ block.extras.pool.minerNames[1].slice(0, 15) }}…
+              } @else {
+                {{ block.extras.pool.minerNames[1] }}
+              }
+            </span>
+            <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.name"></app-mining-pool>
+            <span *ngIf="poolsWithAntpool.includes(block.extras.pool.slug)"> (AntPool proxy) <img class="mining-pool-logo" [src]="'/resources/mining-pools/antpool.svg'" [alt]="'Logo of AntPool mining pool'"></span>
+          </a>
+        </td>
+        <td *ngIf="!stateService.env.MINING_DASHBOARD && stateService.env.BASE_MODULE === 'mempool'">
+          <span placement="bottom" class="badge"
+            [class]="block.extras.pool.slug === 'unknown' ? 'bg-secondary' : 'bg-primary'">
+            {{ block.extras.pool.name }}
+        </span>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-template #loadingRest>
+      <tr>
+        <td class="td-width" colspan="2"><span class="skeleton-loader"></span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="skeleton-loader"></span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="skeleton-loader"></span></td>
+      </tr>
+      <tr>
+        <td colspan="2"><span class="skeleton-loader"></span></td>
+      </tr>
+      <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+        <td colspan="2"><span class="skeleton-loader"></span></td>
+      </tr>
+    </ng-template>
+  </ng-template>
+
+  <ng-container *ngIf="showComparison">
+    <span id="overview"></span>
+    <br>
+  </ng-container>
+
+  <!-- VISUALIZATIONS -->
+  <div class="box" *ngIf="!error && webGlEnabled && showComparison">
+    @if (block?.stale) {
+      <div class="nav nav-tabs" *ngIf="isMobile">
+        <a class="nav-link" [class.active]="mode === 'stale'"
+          fragment="stale" (click)="changeMode('stale')"><ng-container i18n="block.stale">Stale</ng-container></a>
+        <a class="nav-link" [class.active]="mode === 'actual'" i18n="block.actual"
+          fragment="actual" (click)="changeMode('actual')">Winning</a>
+      </div>
+    } @else {
+      <div class="nav nav-tabs" *ngIf="isMobile && showAudit">
+        <a class="nav-link" [class.active]="mode === 'projected'"
+          fragment="projected" (click)="changeMode('projected')"><ng-container i18n="block.expected">Expected</ng-container></a>
+        <a class="nav-link" [class.active]="mode === 'actual'" i18n="block.actual"
+          fragment="actual" (click)="changeMode('actual')">Actual</a>
+      </div>
+    }
+    <div class="row">
+      <div class="col-sm audit-col" [class.mobile]="isMobile">
+        @if (block?.stale && !showAudit) {
+          <h3 class="block-subtitle" *ngIf="!isMobile">
+            <ng-container i18n="block.stale-block">Stale Block</ng-container>
+            @if (block?.extras?.pool) {
+              <app-mining-pool [slug]="block?.extras?.pool?.slug" [name]="block?.extras?.pool?.name" [logoStyle]="'width:30px;height:30px;margin: 0 .3em;'"></app-mining-pool>
+            }
+          </h3>
+        } @else {
+          <h3 class="block-subtitle" *ngIf="!isMobile"><ng-container i18n="block.expected-block">Expected Block</ng-container></h3>
+        }
+        <div class="block-graph-wrapper">
+          <app-block-overview-graph #blockGraphProjected [isLoading]="!stateService.isBrowser || isLoadingOverview" [resolution]="86"
+            [blockLimit]="stateService.blockVSize" [orientation]="'top'" [flip]="false" [mirrorTxid]="hoverTx" [auditHighlighting]="showComparison"
+            (txClickEvent)="onTxClick($event)" (txHoverEvent)="onTxHover($event)" [unavailable]="!isMobile && !showAudit && !block?.stale"
+            [showFilters]="true" [excludeFilters]="['replacement']" [relativeTime]="block?.timestamp"></app-block-overview-graph>
+            @if (isMobile && mode === 'actual' || block?.stale) {
+              <ng-container *ngTemplateOutlet="emptyBlockInfo; context: { $implicit: (isMobile && mode === 'actual' && block?.stale) ? canonicalBlock : block }"></ng-container>
+            }
+        </div>
+        <ng-container *ngIf="network !== 'liquid'">
+          <ng-template [ngIf]="!isLoadingOverview" [ngIfElse]="loadingDetailsSkeletons">
+            @if (block?.stale && !showAudit) {
+              <ng-container *ngTemplateOutlet="isMobile && mode === 'actual' ? canonicalDetails : staleDetails"></ng-container>
+            } @else {
+              <ng-container *ngTemplateOutlet="isMobile && mode === 'actual' ? actualDetails : expectedDetails"></ng-container>
+            }
+          </ng-template>
+        </ng-container>
+      </div>
+      <div class="col-sm audit-col" *ngIf="!isMobile">
+        <h3 class="block-subtitle actual" *ngIf="!isMobile">
+          @if (block?.stale) {
+            @if (showAudit) {
+              <ng-container i18n="block.winning-block">Stale Block</ng-container>
+            } @else {
+              <ng-container i18n="block.stale-block">Winning Block</ng-container>
+              @if (canonicalBlock?.extras?.pool) {
+                <app-mining-pool [slug]="canonicalBlock?.extras?.pool?.slug" [name]="canonicalBlock?.extras?.pool?.name" [showName]="true" [logoStyle]="'width:30px;height:30px;margin: 0 .3em;'"></app-mining-pool>
+              }
+            }
+          } @else {
+            <ng-container i18n="block.actual-block">Actual Block</ng-container>
+            <a class="info-link" [routerLink]="['/docs/faq' | relativeUrl ]" fragment="how-do-block-audits-work"><fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon></a>
+          }
+        </h3>
+        <div class="block-graph-wrapper">
+          <app-block-overview-graph #blockGraphActual [isLoading]="!stateService.isBrowser || isLoadingOverview" [resolution]="86"
+            [blockLimit]="stateService.blockVSize" [orientation]="'top'" [flip]="false" [mirrorTxid]="hoverTx" mode="mined"  [auditHighlighting]="showComparison"
+            (txClickEvent)="onTxClick($event)" (txHoverEvent)="onTxHover($event)" [unavailable]="isMobile && !showAudit && !block?.stale"
+            [showFilters]="true" [excludeFilters]="['replacement']" [relativeTime]="block?.timestamp"></app-block-overview-graph>
+            <ng-container *ngTemplateOutlet="emptyBlockInfo; context: { $implicit: block?.stale ? canonicalBlock : block }"></ng-container>
+        </div>
+        <ng-container *ngIf="network !== 'liquid'">
+          <ng-template [ngIf]="!isLoadingOverview" [ngIfElse]="loadingDetailsSkeletons">
+            @if (block?.stale && !showAudit) {
+              <ng-container *ngTemplateOutlet="canonicalDetails"></ng-container>
+            } @else {
+              <ng-container *ngTemplateOutlet="actualDetails"></ng-container>
+            }
+          </ng-template>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <ng-template [ngIf]="block && !isLoadingBlock && !error">
+    <div [hidden]="!showDetails" id="details">
+      <br>
+
+      <div class="box">
+        <div class="row">
+          <div class="col-sm">
+            <table class="table table-borderless table-striped">
+              <tbody>
+                <tr>
+                  <td class="td-width" i18n="transaction.version">Version</td>
+                  <td>{{ block.version | decimal2hex }} <span *ngIf="displayTaprootStatus() && hasTaproot(block.version)" class="badge bg-success ms-1" i18n="tx-features.tag.taproot|Taproot">Taproot</span><span *ngIf="hasBIP110Signaling(block.version)" class="badge badge-bip110-signal ml-1" title="This block signals support for BIP110 (Reduced Data Temporary Softfork, version bit 4)">BIP110 ✓</span></td>
+                </tr>
+                <tr>
+                  <td>BIP110 Violations<a class="info-link" ngbTooltip="Transactions that would be invalid under BIP110 (Reduced Data Temporary Softfork)" i18n-ngbTooltip><fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon></a></td>
+                  <td>
+                    <ng-container *ngIf="!isLoadingOverview; else loadingBip110">
+                      <span *ngIf="bip110ViolationCount === 0" class="badge" [ngClass]="block && hasBIP110Signaling(block.version) ? 'badge-bip110-clean' : 'bg-success'">None ✓</span>
+                      <span *ngIf="bip110ViolationCount > 0" class="badge badge-bip110-violation-block">
+                        ⚠️ {{ bip110ViolationCount }} {{ bip110ViolationCount === 1 ? 'transaction' : 'transactions' }}
+                      </span>
+                    </ng-container>
+                    <ng-template #loadingBip110>
+                      <span class="skeleton-loader" style="max-width: 80px"></span>
+                    </ng-template>
+                  </td>
+                </tr>
+                <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+                  <td i18n="block.bits">Bits</td>
+                  <td>{{ block.bits | decimal2hex }}</td>
+                </tr>
+                <tr>
+                  <td i18n="block.merkle-root">Merkle root</td>
+                  <td><p class="break-all">{{ block.merkle_root }}</p></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-sm" *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+            <table class="table table-borderless table-striped">
+              <tbody>
+                <tr *ngIf="isMobile"></tr>
+                <tr>
+                  <td class="td-width" i18n="block.difficulty">Difficulty</td>
+                  <td>{{ block.difficulty }}</td>
+                </tr>
+                <tr>
+                  <td i18n="block.nonce">Nonce</td>
+                  <td>{{ block.nonce | decimal2hex }}</td>
+                </tr>
+                <tr>
+                  <td i18n="block.header">Block Header Hex</td>
+                  <td><a target="_blank" href="{{ network === '' ? '' : '/' + network }}/api/block/{{block.id}}/header"><fa-icon [icon]="['fas', 'external-link-alt']" [fixedWidth]="true"></fa-icon></a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (!block?.stale && block?.extras?.orphans?.length > 0) {
+      <br>
+      <div class="header-bg box stale-block-alert">
+        <span class="stale-msg me-1">
+          @if (block.extras.orphans.length === 1) {
+            <span i18n="block.stale-block-singular">There is a stale block at this height</span>
+          } @else {
+            <span i18n="block.stale-block-plural">There are {{ block.extras.orphans.length }} stale blocks at this height</span>
+          }
+        </span>
+        <ul class="stale-list mb-0 list-unstyled">
+          @for (orphan of block.extras.orphans; track orphan.height) {
+            <li><app-truncate [text]="orphan.hash" [lastChars]="8" [link]="['/block' | relativeUrl, orphan.hash]"></app-truncate></li>
+          }
+        </ul>
+      </div>
+    }
+
+    <div class="text-end mt-3 toggle-btns">
+      <button
+        *ngIf="webGlEnabled && auditAvailable"
+        type="button"
+        class="btn btn-outline-info btn-sm btn-audit"
+        [class.active]="auditModeEnabled"
+        (click)="toggleAuditMode()"
+        i18n="block.toggle-audit|Toggle Audit"
+      >Audit</button>
+      <button
+        type="button"
+        class="btn btn-outline-info btn-sm btn-details"
+        [class.active]="showDetails"
+        (click)="toggleShowDetails()"
+        i18n="transaction.details|Transaction Details"
+      >Details</button>
+    </div>
+
+    @defer (on viewport) {
+      @if (!block?.stale) {
+      <app-block-transactions [paginationMaxSize]="paginationMaxSize" [block$]="block$" [txCount]="block.tx_count" [timestamp]="block.timestamp" [blockHash]="blockHash" [previousBlockHash]="block.previousblockhash" (blockReward)="updateBlockReward($event)"></app-block-transactions>
+      }
+    } @placeholder {
+      <div>
+        <div class="block-tx-title">
+          <h2 class="text-start">
+            <ng-container *ngTemplateOutlet="block.tx_count === 1 ? transactionsSingular : transactionsPlural; context: {$implicit: block.tx_count | number}"></ng-container>
+            <ng-template #transactionsSingular let-i i18n="shared.transaction-count.singular">{{ i }} transaction</ng-template>
+            <ng-template #transactionsPlural let-i i18n="shared.transaction-count.plural">{{ i }} transactions</ng-template>
+          </h2>
+          <ngb-pagination class="pagination-container float-end" [disabled]="true" [collectionSize]="block.tx_count" [rotate]="true" [pageSize]="stateService.env.ITEMS_PER_PAGE" [maxSize]="paginationMaxSize" [boundaryLinks]="true" [ellipses]="false"></ngb-pagination>
+        </div>
+        <div class="clearfix"></div>
+        <div class="tx-skeleton">
+  
+          <div class="header-bg box">
+            <span class="skeleton-loader"></span>
+          </div>
+          <div class="header-bg box">
+            <div class="row">
+              <div class="col-sm">
+                <span class="skeleton-loader"></span>
+              </div>
+              <div class="col-sm">
+                <span class="skeleton-loader"></span>
+                <span class="skeleton-loader"></span>
+                <span class="skeleton-loader"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="clearfix"></div>
+    <br>
+  </ng-template>
+  <ng-template [ngIf]="error">
+    <app-http-error [error]="error">
+      <span i18n="block.error.loading-block-data">Error loading block data.</span>
+    </app-http-error>
+  </ng-template>
+
+</div>
+
+<ng-template #emptyBlockInfo let-emptyBlock>
+  @if (network === '' && emptyBlock && emptyBlock.height > 100000 && emptyBlock.tx_count <= 1) {
+    <a
+      class="info-bubble-link badge bg-primary"
+      [routerLink]="['/docs/faq/' | relativeUrl]"
+      fragment="why-empty-blocks"
+    >
+      <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
+      <span i18n="block.empty-block-explanation">Why is this block empty?</span>
+    </a>
+  }
+</ng-template>
+
+<ng-template #expectedDetails>
+  <table *ngIf="block && blockAudit && blockAudit.expectedFees != null" class="table table-borderless table-striped audit-details-table">
+    <tbody>
+      <tr>
+        <td i18n="block.total-fees|Total fees in a block">Total fees</td>
+        <td>
+          <app-amount [satoshis]="blockAudit.expectedFees" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+        </td>
+      </tr>
+      <tr>
+        <td i18n="block.weight">Weight</td>
+        <td [innerHTML]="'&lrm;' + (blockAudit.expectedWeight | wuBytes: 2)"></td>
+      </tr>
+      <tr>
+        <td i18n="mempool-block.transactions">Transactions</td>
+        <td>{{ blockAudit.template?.length || 0 }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #actualDetails>
+  <table *ngIf="block && blockAudit && blockAudit.expectedFees != null" class="table table-borderless table-striped audit-details-table">
+    <tbody>
+      <tr>
+        <td i18n="block.total-fees|Total fees in a block">Total fees</td>
+        <td class="text-wrap">
+          <app-amount [satoshis]="block.extras.totalFees" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+          <span *ngIf="oobFees" class="oobFees" i18n-ngbTooltip="Acceleration Fees" ngbTooltip="Acceleration fees paid out-of-band">
+             <app-amount [satoshis]="oobFees" digitsInfo="1.8-8" [noFiat]="true" [addPlus]="true"></app-amount>
+          </span>
+          <span *ngIf="blockAudit.feeDelta" class="difference" [class.positive]="blockAudit.feeDelta <= 0" [class.negative]="blockAudit.feeDelta > 0">
+            {{ blockAudit.feeDelta < 0 ? '+' : '' }}{{ (-blockAudit.feeDelta * 100) | amountShortener: 2 }}%
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td i18n="block.weight">Weight</td>
+        <td [innerHTML]>
+          <span [innerHTML]="'&lrm;' + (block.weight | wuBytes: 2)"></span>
+          <span *ngIf="blockAudit.weightDelta" class="difference" [class.positive]="blockAudit.weightDelta <= 0" [class.negative]="blockAudit.weightDelta > 0">
+            {{ blockAudit.weightDelta < 0 ? '+' : '' }}{{ (-blockAudit.weightDelta * 100) | amountShortener: 2 }}%
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td i18n="mempool-block.transactions">Transactions</td>
+        <td>
+          {{ block.tx_count }}
+          <span *ngIf="blockAudit.txDelta" class="difference" [class.positive]="blockAudit.txDelta <= 0" [class.negative]="blockAudit.txDelta > 0">
+            {{ blockAudit.txDelta < 0 ? '+' : '' }}{{ (-blockAudit.txDelta * 100) | amountShortener: 2 }}%
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #staleDetails>
+  <table *ngIf="block && staleStats" class="table table-borderless table-striped audit-details-table">
+    <tbody>
+      <tr>
+        <td i18n="block.total-fees|Total fees in a block">Total fees</td>
+        <td>
+          <app-amount [satoshis]="staleStats.totalFees" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+          @if (staleStats.feeDelta && (canonicalStats.feeDelta >= 100 || canonicalStats.feeDelta <= -100)) {
+            <span class="difference" [class.positive]="staleStats.feeDelta > 0" [class.negative]="staleStats.feeDelta <= 0">
+              {{ staleStats.feeDelta > 0 ? '+' : '' }}{{ (staleStats.feeDelta * 100) | amountShortener: 2 }}%
+            </span>
+          }
+        </td>
+      </tr>
+      <tr>
+        <td i18n="block.weight">Weight</td>
+        <td>
+          <span [innerHTML]="'&lrm;' + (staleStats.totalWeight | wuBytes: 2)"></span>
+          @if (staleStats.weightDelta && (canonicalStats.weightDelta >= 100 || canonicalStats.weightDelta <= -100)) {
+            <span class="difference" [class.positive]="staleStats.weightDelta > 0" [class.negative]="staleStats.weightDelta <= 0">
+              {{ staleStats.weightDelta > 0 ? '+' : '' }}{{ (staleStats.weightDelta * 100) | amountShortener: 2 }}%
+            </span>
+          }
+        </td>
+      </tr>
+      <tr>
+        <td i18n="mempool-block.transactions">Transactions</td>
+        <td>{{ staleStats.txCount || 0 }}
+          @if (staleStats.txDelta && (canonicalStats.txDelta >= 100 || canonicalStats.txDelta <= -100)) {
+            <span class="difference" [class.positive]="staleStats.txDelta > 0" [class.negative]="staleStats.txDelta <= 0">
+              {{ staleStats.txDelta > 0 ? '+' : '' }}{{ (staleStats.txDelta * 100) | amountShortener: 2 }}%
+            </span>
+          }
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #canonicalDetails>
+  <table *ngIf="block && canonicalTransactions && canonicalStats" class="table table-borderless table-striped audit-details-table">
+    <tbody>
+      <tr>
+        <td i18n="block.total-fees|Total fees in a block">Total fees</td>
+        <td class="text-wrap">
+          <app-amount [satoshis]="canonicalStats.totalFees" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+          @if (canonicalStats.feeDelta && canonicalStats.feeDelta < 100 && canonicalStats.feeDelta > -100) {
+            <span class="difference" [class.positive]="canonicalStats.feeDelta > 0" [class.negative]="canonicalStats.feeDelta <= 0">
+              {{ canonicalStats.feeDelta > 0 ? '+' : '' }}{{ (canonicalStats.feeDelta * 100) | amountShortener: 2 }}%
+            </span>
+          }
+        </td>
+      </tr>
+      <tr>
+        <td i18n="block.weight">Weight</td>
+        <td>
+          <span [innerHTML]="'&lrm;' + (canonicalStats.totalWeight | wuBytes: 2)"></span>
+          @if (canonicalStats.weightDelta && canonicalStats.weightDelta < 100 && canonicalStats.weightDelta > -100) {
+            <span class="difference" [class.positive]="canonicalStats.weightDelta > 0" [class.negative]="canonicalStats.weightDelta <= 0">
+              {{ canonicalStats.weightDelta > 0 ? '+' : '' }}{{ (canonicalStats.weightDelta * 100) | amountShortener: 2 }}%
+            </span>
+          }
+        </td>
+      </tr>
+      <tr>
+        <td i18n="mempool-block.transactions">Transactions</td>
+        <td>
+          {{ canonicalStats.txCount || 0 }}
+          @if (canonicalStats.txDelta && canonicalStats.txDelta < 100 && canonicalStats.txDelta > -100) {
+            <span class="difference" [class.positive]="canonicalStats.txDelta > 0" [class.negative]="canonicalStats.txDelta <= 0">
+              {{ canonicalStats.txDelta > 0 ? '+' : '' }}{{ (canonicalStats.txDelta * 100) | amountShortener: 2 }}%
+            </span>
+          }
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #loadingDetailsSkeletons>
+  <table class="table table-borderless table-striped audit-details-table">
+    <tbody>
+      <tr>
+        <td class="w-50" i18n="block.total-fees|Total fees in a block">Total fees</td>
+        <td><span class="skeleton-loader"></span></td>
+      </tr>
+      <tr>
+        <td i18n="block.weight">Weight</td>
+        <td><span class="skeleton-loader"></span></td>
+      </tr>
+      <tr>
+        <td i18n="mempool-block.transactions">Transactions</td>
+        <td><span class="skeleton-loader"></span></td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
+<br>
+<br>

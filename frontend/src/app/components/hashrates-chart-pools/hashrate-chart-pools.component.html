@@ -1,0 +1,44 @@
+<app-indexing-progress></app-indexing-progress>
+
+<div class="full-container">
+
+  <div class="card-header mb-0 mb-md-4">
+    <div class="d-flex d-md-block align-items-baseline">
+      <span i18n="mining.pools-dominance">Pools Dominance</span>
+      <button class="btn p-0 ps-2" style="margin: 0 0 4px 0px" (click)="onSaveChart()">
+        <fa-icon [icon]="['fas', 'download']" [fixedWidth]="true"></fa-icon>
+      </button>
+    </div>  
+
+    <form [formGroup]="radioGroupForm" class="formRadioGroup" *ngIf="(hashrateObservable$ | async) as stats">
+      <div class="btn-group" role="group" name="radioBasic">
+        <ng-container *ngIf="stats.blockCount >= 25920">
+          <input type="radio" class="btn-check" id="dominance-6m" [value]="'6m'" fragment="6m" [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]" [attr.data-cy]="'6m'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="dominance-6m">6M</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 52560">
+          <input type="radio" class="btn-check" id="dominance-1y" [value]="'1y'" fragment="1y" [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]" [attr.data-cy]="'1y'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="dominance-1y">1Y</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 105120">
+          <input type="radio" class="btn-check" id="dominance-2y" [value]="'2y'" fragment="2y" [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]" [attr.data-cy]="'2y'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="dominance-2y">2Y</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 157680">
+          <input type="radio" class="btn-check" id="dominance-3y" [value]="'3y'" fragment="3y" [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]" [attr.data-cy]="'3y'" formControlName="dateSpan">
+          <label class="btn btn-primary btn-sm" for="dominance-3y">3Y</label>
+        </ng-container>
+        <input type="radio" class="btn-check" id="dominance-all" [value]="'all'" fragment="all" [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]" [attr.data-cy]="'all'" formControlName="dateSpan">
+        <label class="btn btn-primary btn-sm" for="dominance-all">ALL</label>
+      </div>
+    </form>
+  </div>
+
+  <div class="chart" *browserOnly echarts [initOpts]="chartInitOptions" [options]="chartOptions"
+    (chartInit)="onChartInit($event)" [style]="{opacity: isLoading ? 0.5 : 1}">
+  </div>
+  <div class="text-center loadingGraphs" *ngIf="!stateService.isBrowser || isLoading">
+    <div class="spinner-border text-light"></div>
+  </div>
+
+</div>

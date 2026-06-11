@@ -1,0 +1,227 @@
+@use 'sass:math';
+
+#blockchain-container {
+  position: relative;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+
+  transform: translateX(0px);
+  transition: transform 0;
+
+  &.with-menu {
+    width: calc(100% + 120px);
+  }
+}
+
+#blockchain-container::-webkit-scrollbar {
+  display: none;
+}
+
+.blockchain-wrapper {
+  position: relative;
+
+  .reset-scroll {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 50px;
+    z-index: 10;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 500ms;
+    background: radial-gradient(var(--bg) 0%, transparent 50%);
+
+    &:hover {
+      opacity: 1;
+      transition: opacity 300ms;
+    }
+
+    &.hidden {
+      opacity: 0;
+      cursor: inherit;
+      pointer-events: none;
+      transition: opacity 500ms;
+    }
+  }
+
+  &.time-ltr .reset-scroll{
+    right: 10px;
+    transform: translateY(-50%) rotateZ(180deg);
+  }
+
+  &.time-rtl .reset-scroll {
+    left: 10px;
+  }
+
+  &:hover {
+    cursor: grab;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.warning-label {
+  position: relative;
+  text-align: center;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 6px 4px;
+  margin-top: -10px;
+}
+// Fireworks
+
+$particles: 50;
+$width: 500;
+$height: 500;
+
+// Create the explosion...
+
+@mixin keyframes ($animationName) {
+    @-webkit-keyframes #{$animationName} {
+        @content;
+    }
+
+    @-moz-keyframes #{$animationName} {
+        @content;
+    }
+
+    @-o-keyframes #{$animationName} {
+        @content;
+    }
+
+    @-ms-keyframes #{$animationName} {
+        @content;
+    }
+
+    @keyframes #{$animationName} {
+        @content;
+    }
+}
+
+@mixin animation-delay ($settings) {
+    -moz-animation-delay: $settings;
+    -webkit-animation-delay: $settings;
+    -o-animation-delay: $settings;
+    -ms-animation-delay: $settings;
+    animation-delay: $settings;
+}
+
+@mixin animation-duration ($settings) {
+    -moz-animation-duration: $settings;
+    -webkit-animation-duration: $settings;
+    -o-animation-duration: $settings;
+    -ms-animation-duration: $settings;
+    animation-duration: $settings;
+}
+
+@mixin animation ($settings) {
+    -moz-animation: $settings;
+    -webkit-animation: $settings;
+    -o-animation: $settings;
+    -ms-animation: $settings;
+    animation: $settings;
+}
+
+@mixin transform ($settings) {
+    transform: $settings;
+    -moz-transform: $settings;
+    -webkit-transform: $settings;
+    -o-transform: $settings;
+    -ms-transform: $settings;
+}
+
+body {
+  margin:0;
+  padding:0;
+  background: #000;
+  overflow: hidden;
+}
+
+.pyro > .inner {
+  z-index: 100;
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  @include animation((1.25s ease-out infinite bang, 1.25s ease-in infinite gravity, 10s linear infinite position));
+
+  &.b {
+    @include animation-delay((-4.35s, -4.35s, -4.35s));
+    @include animation-duration((1.45s, 1.45s, 11.6s));
+  }
+  &.c {
+    @include animation-delay((-3.2s, -3.2s, -3.2s));
+    @include animation-duration((1.6s, 1.6s, 12.8s));
+  }
+}
+
+@keyframes bang {
+  0%, 15% {
+    box-sizing: none;
+  }
+  84% {
+    box-shadow: -30.55vw -35.21vw red,-5.02vw 3.14vw #ff3700,-34.43vw -25.70vw #7b00ff,-31.04vw -7.15vw #00f7ff,-13.17vw -15.02vw #00ff48,5.57vw -39.09vw #0d00ff,-12.30vw -11.81vw #00ff7b,-32.59vw -0.55vw #00fff2,-28.32vw -.6666666667px #4f0,-12.30vw -18.22vw #7f0,-40.16vw -21.81vw #00ffbf,-27.54vw -38.03vw #00ff3c,-33.07vw -33.56vw #02f,-16.38vw -17.44vw #eaff00,0.71vw -14.92vw #26ff00,-17.06vw -22.78vw #8400ff,-31.52vw -24.72vw #0048ff,-32.59vw -0.94vw #00ff59,-29.58vw -0.84vw #001eff,-32.20vw -4.34vw #3f0,.3333333333px -4.82vw #0fc,-35.99vw -5.89vw #0015ff,2.85vw -1.33vw #8cff00,-16.38vw -27.35vw #f80,-4.72vw -5.99vw #f0b,3.24vw -11.04vw #ff00e1,-18.80vw -19.09vw #ff7b00,-1.42vw -2.39vw #ff0037,-14.53vw -26.57vw #0fa,-1.91vw -6.18vw #ff0004,1.29vw -22.10vw #7f0,-25.79vw -4.24vw #ff4800,-11.81vw -9.29vw #bfff00,-23.46vw -8.80vw #6200ff,-29.87vw -22.49vw #ff0062,7.61vw -12.49vw #ffbf00,2.65vw 4.30vw #95ff00,-7.93vw 0.61vw #ffc800,-33.37vw -24.05vw #2f0,-21.91vw -24.34vw #08f,-0.94vw -23.66vw #ff1a00,8.09vw -39.77vw #04f,-36.96vw -32.20vw #84ff00,-10.06vw -5.02vw #f02,-16.96vw -16.47vw #ffc800,1.97vw -18.61vw #ff0059,-3.95vw -5.40vw #0400ff,-19.39vw -6.47vw #ffd500,-34.82vw -0.55vw #0051ff,-8.22vw -28.12vw #f7ff00,-18.80vw -17.93vw #80f;
+  }
+  85%, 100% {
+    box-sizing: none;
+  }
+}
+
+@include keyframes(gravity)  {
+  0% {
+    @include transform(translateY(0px));
+    opacity: 0;
+  }
+  15% {
+    @include transform(translateY(0px));
+    opacity: 1;
+  }
+  84% {
+    @include transform(translateY(400px));
+    opacity: 0;
+  }
+  85%, 100% {
+    @include transform(translateY(200px));
+    opacity: 0;
+  }
+}
+
+@include keyframes(position) {
+  0%, 12.4% {
+    margin-top: 10vw;
+    margin-left: 50%;
+  }
+  12.5%, 24.9% {
+    margin-top: 22vw;
+    margin-left: 35%;
+  }
+  25%, 37.4% {
+    margin-top: 15vw;
+    margin-left: 80%
+  }
+  37.5%, 49.9% {
+    margin-top: 28vw;
+    margin-left: 72%;
+  }
+  50%, 62.4% {
+    margin-top: 22vw;
+    margin-left: 37%;
+  }
+  62.5%, 74.9% {
+    margin-top: 10vw;
+    margin-left: 66%;
+  }
+  75%, 87.4% {
+    margin-top: 25vw;
+    margin-left: 49%;
+  }
+  87.5%, 99.9% {
+    margin-top: 18vw;
+    margin-left: 58%;
+  }
+}

@@ -1,0 +1,134 @@
+.tomahawk {
+  .links {
+    text-align: right;
+    margin-inline-end: 1em;
+
+    a, span {
+      margin-left: 1em;
+    }
+  }
+
+  .status-panel {
+    max-width: 1000px;
+    margin: auto;
+    padding: 1em;
+    background: var(--box-bg);
+    overflow-x: auto;
+  }
+
+  .status-table {
+    width: max-content;
+    min-width: 100%;
+
+    td, th {
+      padding: 0.25em;
+      width: 0%;
+
+      &.rank, &.flag {
+        text-align: right;
+      }
+      &.updated {
+        display: none;
+        text-align: right;
+        white-space: nowrap;
+      }
+      &.rtt, &.height {
+        text-align: right;
+      }
+      &.peg {
+        text-align: right;
+        white-space: nowrap;
+      }
+      &.only-small {
+        display: table-cell;
+      }
+      &.only-large {
+        display: none;
+      }
+      &.height {
+        padding-right: 0.5em;
+      }
+      &.host {
+        width: 100%;
+        max-width: 0;
+        min-width: 130px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      &.hash, &.version {
+        font-size: 11px;
+        vertical-align: middle;
+        text-align: center;
+        --bs-table-bg-type: transparent;
+      }
+
+      span {
+        &.only-small {
+          display: none;
+        }
+        &.only-large {
+          display: inline;
+        }
+      }
+
+      @media (min-width: 576px) {
+        &.only-small {
+          display: none;
+        }
+        &.only-large {
+          display: table-cell;
+        }
+      }
+    }
+
+    @media (max-width: 1080px) {
+      th {
+        font-size: 11px;
+      }
+
+      td, th {
+        &.updated {
+          display: none;
+        }
+
+        &.hash {
+          max-width: 50px;
+          overflow: hidden;
+        }
+        
+        span {
+          &.only-small {
+            display: inline;
+          }
+          &.only-large {
+            display: none;
+          }
+        }
+      }
+    }
+
+    @media (max-width: 800px) {
+      th {
+        font-size: 10px;
+      }
+      td, th {
+        &.hash {
+          max-width: 38px;
+          overflow: hidden;
+        }
+      }
+    }
+
+    @media (max-width: 670px) {
+      font-size: 11px;
+
+      td, th {
+        &.hash {
+          max-width: 30px;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+}

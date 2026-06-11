@@ -1,0 +1,43 @@
+<div *ngIf="(pegsVolume$ | async) as pegsVolume; else loadingData">
+  <div class="fee-estimation-container volume-header">
+    <div class="item">
+      <h5 i18n="liquid.24h-volume">24h Volume</h5>
+    </div>
+  </div>
+  <div class="fee-estimation-container">
+    <div class="item">
+      <div class="card-text">
+        <div class="fee-text credit">+{{ (+pegsVolume[0].volume) / 100000000 | number: '1.2-2' }} <span i18n="shared.btc|BTC">BTC</span></div>
+        <div class="fiat">{{ (+pegsVolume[0].number) }} <span i18n="liquid.peg-ins">Peg-Ins</span></div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="card-text">
+        <div class="fee-text debit">{{ (+pegsVolume[1].volume) / 100000000 | number: '1.2-2' }} <span i18n="shared.btc|BTC">BTC</span></div>
+        <div class="fiat">{{ (+pegsVolume[1].number) }} <span i18n="liquid.peg-outs">Peg-Outs</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingData>
+  <div class="fee-estimation-container loading-container volume-header">
+    <div class="item">
+      <h5 i18n="liquid.24h-volume">24h Volume</h5>
+    </div>
+  </div>
+  <div class="fee-estimation-container">
+    <div class="item">
+      <div class="card-text">
+        <div class="skeleton-loader"></div>
+        <div class="skeleton-loader"></div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="card-text">
+        <div class="skeleton-loader"></div>
+        <div class="skeleton-loader"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>

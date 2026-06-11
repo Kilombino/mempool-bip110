@@ -1,0 +1,530 @@
+.bitcoin-block {
+  width: var(--block-size);
+  height: var(--block-size);
+}
+
+.blockLink {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  z-index: 10;
+}
+
+.blockLink:hover {
+  text-decoration: none;
+}
+
+.blockLink.disabled {
+  pointer-events: none;
+}
+
+.on-pool-name-text {
+  display: inline-block;
+  padding-top: 2px;
+  font-weight: normal;
+}
+
+.timestamp-info {
+  color: var(--fg);
+  position: relative;
+  z-index: 11;
+  font-size: 14px;
+  margin-left: 4px;
+  transition: color 0.15s ease-in-out;
+  &:hover {
+    color: var(--info);
+  }
+}
+
+.on-pool {
+  align-items: center;
+  background-color: var(--bg);
+  display: inline-block;
+  margin-top: 4px;
+  padding: .25em .4em;
+  border-radius: .25rem;
+}
+
+.on-pool-container {
+  align-items: center;
+  position: relative;
+  top: -8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.on-pool-container.selected {
+  top: 0px;
+}
+
+.pool-container {
+  margin-top: 12px;
+}
+
+.mined-block {
+  position: absolute;
+  top: 0px;
+  transition: background 2s, left 2s, transform 1s, opacity 1s;
+}
+
+.mined-block.offscreen {
+  opacity: 0;
+}
+
+.mined-block.placeholder-block {
+  background: none !important;
+}
+
+.block-size {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.blocks-container {
+  --block-size: 125px;
+  --block-offset: calc(0.32 * var(--block-size));
+  position: absolute;
+  top: 0px;
+  left: var(--block-offset);
+}
+
+.mining-pool-logo {
+  width: 15px;
+  height: 15px;
+  position: relative;
+  top: -1px;
+  margin-right: 5px;
+}
+
+.block-body {
+  text-align: center;
+}
+
+.time-difference {
+  font-size: 13px;
+}
+
+.fees {
+  font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+.fee-span {
+  font-size: 11px;
+  margin-bottom: 5px;
+  color: var(--yellow);
+}
+
+.transaction-count {
+  font-size: 10px;
+  margin-top: 3px;
+  margin-bottom: 4px;
+}
+
+.block-height {
+  position: absolute;
+  font-size: 16px;
+  bottom: 160px;
+  width: 100%;
+  left: -12px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.block-height-link {
+  pointer-events: all;
+}
+
+.bitcoin-block::after {
+  content: '';
+  width: var(--block-size);
+  height: calc(0.192 * var(--block-size));
+  position:absolute;
+  top: calc(-0.192 * var(--block-size));
+  left: calc(-0.16 * var(--block-size));
+  background-color: var(--block-top);
+  transform:skew(40deg);
+  transform-origin:top;
+}
+
+.bitcoin-block::before {
+  content: '';
+  width: calc(0.16 * var(--block-size));
+  height: var(--block-size);
+  position: absolute;
+  top: calc(-0.096 * var(--block-size));
+  left: calc(-0.16 * var(--block-size));
+  background-color: var(--block-side);
+
+  transform: skewY(50deg);
+  transform-origin: top;
+}
+
+.bitcoin-block .stale-ghost {
+  position: absolute;
+  --stale-index: 0;
+  top: calc(-1 * ((var(--stale-index) * 0.144) + 0.24) * var(--block-size));
+  left: calc(-1 * ((var(--stale-index) * 0.12) + 0.20) * var(--block-size));
+  width: var(--block-size);
+  height: var(--block-size);
+  z-index: calc(-1 * (var(--stale-index) + 1));
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.bitcoin-block .stale-ghost::after {
+  content: '';
+  width: var(--block-size);
+  height: calc(0.096 * var(--block-size));
+  position:absolute;
+  top: calc(-0.096 * var(--block-size));
+  left: calc(-0.08 * var(--block-size));
+  background-color: var(--block-top);
+  transform:skew(40deg);
+  transform-origin:top;
+}
+
+.bitcoin-block .stale-ghost::before {
+  content: '';
+  width: calc(0.08 * var(--block-size));
+  height: var(--block-size);
+  position: absolute;
+  top: calc(-0.048 * var(--block-size));
+  left: calc(-0.08 * var(--block-size));
+  background-color: var(--block-side);
+
+  transform: skewY(50deg);
+  transform-origin: top;
+}
+
+.bitcoin-block .stale-ghost:hover {
+  opacity: 1;
+}
+
+
+.bitcoin-block.placeholder-block::after {
+  content: none;
+  background: 0;
+}
+
+.bitcoin-block.placeholder-block::before {
+  content: none;
+  background: 0;
+}
+
+.black-background {
+  background-color: var(--active-bg);
+  z-index: 100;
+  position: relative;
+}
+
+#arrow-up {
+  position: relative;
+  left: calc(var(--block-size) * 0.6);
+  top: calc(var(--block-size) * 1.28);
+  width: 0;
+  height: 0;
+  border-left: calc(var(--block-size) * 0.2) solid transparent;
+  border-right: calc(var(--block-size) * 0.2) solid transparent;
+  border-bottom: calc(var(--block-size) * 0.2) solid var(--nav-icon);
+}
+
+.flashing {
+  /* force compositing */
+  will-change: opacity;
+  transform: translateZ(0);
+  /* effective max frame rate = (#keyframes - 1) x steps / duration */
+  animation: opacityPulse 2s steps(30, end);
+  animation-iteration-count: infinite;
+  opacity: 1;
+}
+
+.loading .bitcoin-block.mined-block {
+  background: var(--secondary);
+}
+
+@keyframes opacityPulse {
+  0% {opacity: 0.7;}
+  50% {opacity: 1.0;}
+  100% {opacity: 0.7;}
+}
+
+.badge {
+  position: relative;
+  top: 19px;
+  z-index: 101;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 145px;
+
+  &.miner-name {
+    max-width: 125px;
+  }
+}
+
+.animated {
+  transition: all 0.15s ease-in-out;
+  white-space: nowrap;
+}
+
+.time-ltr {
+  .bitcoin-block {
+    transform: scaleX(-1);
+  }
+}
+
+.spotlight-bottom {
+  position: absolute;
+  width: calc(0.6 * var(--block-size));
+  height: calc(0.25 * var(--block-size));
+  border-left: solid calc(0.3 * var(--block-size)) transparent;
+  border-bottom: solid calc(0.3 * var(--block-size)) var(--fg);
+  border-right: solid calc(0.3 * var(--block-size)) transparent;
+  transform: translate(calc(0.2 * var(--block-size)), calc(1.1 * var(--block-size)));
+  border-radius: 2px;
+  z-index: -1;
+}
+// ============================================
+// BIP110 Styles
+// ============================================
+
+// Block with BIP110 signaling - glowing green border on all cube faces
+.bitcoin-block.bip110-signaling {
+  box-shadow:
+    0 0 8px 2px rgba(0, 255, 136, 0.5),
+    inset 0 0 8px rgba(0, 255, 136, 0.15);
+  border: 2px solid #00ff88;
+  animation: bip110-signal-pulse 2s ease-in-out infinite;
+  animation-delay: -1s; // Out of phase with violation pulse
+
+  &::before {
+    // Left face of cube
+    background-color: rgba(0, 255, 136, 0.2) !important;
+    box-shadow: inset 0 0 8px rgba(0, 255, 136, 0.15);
+  }
+
+  &::after {
+    // Top face of cube
+    background-color: rgba(0, 255, 136, 0.15) !important;
+    box-shadow: inset 0 0 8px rgba(0, 255, 136, 0.1);
+  }
+}
+
+@keyframes bip110-signal-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 8px 2px rgba(0, 255, 136, 0.5),
+      inset 0 0 8px rgba(0, 255, 136, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 15px 4px rgba(0, 255, 136, 0.7),
+      inset 0 0 12px rgba(0, 255, 136, 0.25);
+  }
+}
+
+
+// BIP110 signaling indicator (green)
+.bip110-indicator {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 102;
+}
+
+.badge-bip110-signal-mini {
+  font-size: 8px;
+  padding: 2px 4px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: #003d1a;
+  border-radius: 3px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.6);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+/* ===== BIP110 violation indicators (ported from paulscode/mempool-bip110) ===== */
+.bitcoin-block.bip110-violations {
+  box-shadow: 
+    0 0 8px 2px rgba(255, 107, 0, 0.7),
+    inset 0 0 10px rgba(255, 107, 0, 0.3);
+  border: 2px solid #ff6b00;
+  animation: bip110-pulse 2s ease-in-out infinite;
+  
+  &::before {
+    background-color: rgba(255, 107, 0, 0.3);
+  }
+  
+  &::after {
+    background-color: rgba(255, 107, 0, 0.2);
+  }
+}
+
+@keyframes bip110-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 8px 2px rgba(255, 107, 0, 0.7),
+      inset 0 0 10px rgba(255, 107, 0, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 0 15px 4px rgba(255, 107, 0, 0.9),
+      inset 0 0 15px rgba(255, 107, 0, 0.5);
+  }
+}
+
+// Block with BIP110 signaling - glowing green border on all cube faces
+.bitcoin-block.bip110-signaling {
+  box-shadow:
+    0 0 8px 2px rgba(0, 255, 136, 0.5),
+    inset 0 0 8px rgba(0, 255, 136, 0.15);
+  border: 2px solid #00ff88;
+  animation: bip110-signal-pulse 2s ease-in-out infinite;
+  animation-delay: -1s; // Out of phase with violation pulse
+
+  &::before {
+    // Left face of cube
+    background-color: rgba(0, 255, 136, 0.2) !important;
+    box-shadow: inset 0 0 8px rgba(0, 255, 136, 0.15);
+  }
+
+  &::after {
+    // Top face of cube
+    background-color: rgba(0, 255, 136, 0.15) !important;
+    box-shadow: inset 0 0 8px rgba(0, 255, 136, 0.1);
+  }
+}
+
+@keyframes bip110-signal-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 8px 2px rgba(0, 255, 136, 0.5),
+      inset 0 0 8px rgba(0, 255, 136, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 15px 4px rgba(0, 255, 136, 0.7),
+      inset 0 0 12px rgba(0, 255, 136, 0.25);
+  }
+}
+
+// Block with BOTH signaling AND violations — green frame (intent), orange interior (content)
+.bitcoin-block.bip110-signaling.bip110-violations {
+  // Green border shows miner intent, orange inner glow shows violation content
+  border: 2px solid #00ff88;
+  box-shadow:
+    0 0 10px 2px rgba(0, 255, 136, 0.6),
+    0 0 4px 1px rgba(255, 107, 0, 0.5),
+    inset 0 0 12px rgba(255, 107, 0, 0.3);
+  animation: bip110-dual-pulse 2.5s ease-in-out infinite;
+
+  &::before {
+    // Left face — green tint with orange warmth
+    background-color: rgba(0, 255, 136, 0.15) !important;
+    box-shadow: inset 0 0 10px rgba(255, 107, 0, 0.15);
+  }
+
+  &::after {
+    // Top face — green tint with orange warmth
+    background-color: rgba(0, 255, 136, 0.1) !important;
+    box-shadow: inset 0 0 8px rgba(255, 107, 0, 0.1);
+  }
+}
+
+@keyframes bip110-dual-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 10px 2px rgba(0, 255, 136, 0.6),
+      0 0 4px 1px rgba(255, 107, 0, 0.5),
+      inset 0 0 12px rgba(255, 107, 0, 0.3);
+    border-color: #00ff88;
+  }
+  50% {
+    box-shadow:
+      0 0 18px 4px rgba(0, 255, 136, 0.8),
+      0 0 8px 2px rgba(255, 107, 0, 0.7),
+      inset 0 0 18px rgba(255, 107, 0, 0.45);
+    border-color: #33ffaa;
+  }
+}
+
+// BIP110 signaling indicator (green)
+.bip110-indicator {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 102;
+}
+
+.badge-bip110-signal-mini {
+  font-size: 8px;
+  padding: 2px 4px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: #003d1a;
+  border-radius: 3px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.6);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+// BIP110 radioactive icon - top-left corner
+.bip110-radioactive-indicator {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 102;
+  
+  .radioactive-icon {
+    width: 22px;
+    height: 22px;
+    filter: drop-shadow(0 0 4px rgba(255, 107, 0, 0.8));
+    animation: radioactive-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes radioactive-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(255, 107, 0, 0.8));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 107, 0, 1));
+    transform: scale(1.1);
+  }
+}
+
+// BIP110 violation count - top-right corner
+.bip110-violation-count {
+  position: absolute;
+  top: -20px;
+  right: 5px;
+  z-index: 102;
+}
+
+.badge-bip110-violation-mini {
+  font-size: 10px;
+  padding: 2px 5px;
+  background: linear-gradient(135deg, #ff6b00, #ff4500);
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.8);
+  font-weight: bold;
+  animation: violation-glow 1.5s ease-in-out infinite;
+  white-space: nowrap;
+}
+
+@keyframes violation-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 107, 0, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 107, 0, 1);
+  }
+}

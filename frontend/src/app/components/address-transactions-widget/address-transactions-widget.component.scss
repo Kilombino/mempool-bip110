@@ -1,0 +1,67 @@
+@mixin responsive-breakpoint {
+  @media (min-width: 420px) and (max-width: 767px), (min-width: 900px) {
+    @content;
+  }
+}
+
+.latest-transactions {
+  width: 100%;
+  text-align: left;
+  table-layout:fixed;
+  tr, td, th {
+    border: 0px;
+    padding-top: 0.71rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  td {
+    overflow:hidden;
+    width: 25%;
+  }
+  .table-cell-txid {
+    display: none;
+    @include responsive-breakpoint {
+      display: table-cell;
+    }
+  }
+  .table-cell-satoshis-desktop {
+    display: none;
+    @include responsive-breakpoint {
+      display: table-cell;
+      text-align: right;
+    }
+  }
+  .table-cell-satoshis-mobile {
+    display: table-cell;
+    text-align: right;
+    @include responsive-breakpoint {
+      display: none;
+    }
+  }
+  .table-cell-fiat {
+    display: none;
+    text-align: right;
+    @media (min-width: 650px) and (max-width: 767px), (min-width: 1100px) {
+      display: table-cell;
+    }
+  }
+  .table-cell-date {
+    text-align: left;
+    @include responsive-breakpoint {
+      text-align: right;
+    }
+  }
+  .mobile-tx-link {
+    display: inline;
+    @include responsive-breakpoint {
+      color: inherit;
+      pointer-events: none;
+    }
+  }
+}
+.skeleton-loader-transactions {
+  max-width: 250px;
+  position: relative;
+  top: 2px;
+  margin-bottom: -3px;
+  height: 18px;
+}

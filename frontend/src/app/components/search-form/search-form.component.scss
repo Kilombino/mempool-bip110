@@ -1,0 +1,63 @@
+:host ::ng-deep {
+  .dropdown-item {
+    white-space: nowrap;
+  }
+  .dropdown-menu {
+    width: calc(100% - 34px);
+  }
+  @media (min-width: 768px) {
+    .dropdown-menu {
+      width: 410px;
+    }
+  }
+}
+
+form {
+  margin-top: 5px;
+  @media (min-width: 564px) {
+    margin-right: -5px;
+  }
+  @media (min-width: 992px) {
+    width: 100%;
+  }
+
+  &.hamburgerOpen {
+    @media (max-width: 613px) {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  }
+}
+
+.search-submit {
+  width: 62px;
+  color: #fff;
+}
+
+.search-box-container {
+  position: relative;
+  width: 100%;
+  @media (min-width: 768px) {
+    min-width: 300px;
+  }
+  @media (min-width: 992px) {
+    min-width: 142px;
+  }
+  @media (min-width: 1200px) {
+    min-width: 300px;
+  }
+  .btn {
+    width: 100px;
+  }
+}
+
+.spinner-border {
+  vertical-align: text-top;
+  margin-top: 1px;
+  margin-right: 2px;
+}
+
+input:focus {
+  box-shadow: none;
+  border-color: transparent;
+}

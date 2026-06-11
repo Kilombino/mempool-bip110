@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+
+# kill actual node backends
+killall node 2>/dev/null
+
+# kill "while true" loops
+killall sh 2>/dev/null
+
+# kill nginx cache warmer scripts
+for pid in `ps uaxww|grep warmer|grep zsh|awk '{print $2}'`;do
+    kill $pid
+done
+
+# kill nginx cache heater scripts
+for pid in `ps uaxww|grep heater|grep zsh|awk '{print $2}'`;do
+    kill $pid
+done
+
+# always exit successfully despite above errors
+exit 0

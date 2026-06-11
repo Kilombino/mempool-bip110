@@ -1,0 +1,58 @@
+<div class="box preview-box" *ngIf="tx && !error">
+  <app-preview-title>
+    <span i18n="shared.transaction">Transaction</span>
+  </app-preview-title>
+  <div class="row d-flex justify-content-between full-width-row">
+    <div class="title-wrapper">
+      <h1 class="title truncated"><app-truncate [text]="txId"></app-truncate></h1>
+    </div>
+    <div *ngIf="network !== 'liquid' && network !== 'liquidtestnet'" class="features">
+      <app-tx-features [tx]="tx"></app-tx-features>
+      <span *ngIf="cpfpInfo && (cpfpInfo?.bestDescendant || cpfpInfo?.descendants?.length || cpfpInfo?.ancestors?.length)" class="badge bg-primary ms-1 me-1">
+        CPFP
+      </span>
+    </div>
+  </div>
+  <div class="top-data row">
+    <span class="field col-sm-4 text-start">
+      <ng-template [ngIf]="isLiquid && haveBlindedOutputValues(tx)" [ngIfElse]="defaultAmount" i18n="shared.confidential">Confidential</ng-template>
+      <ng-template #defaultAmount>
+        <app-amount [satoshis]="totalValue"></app-amount>
+      </ng-template>
+    </span>
+    <span class="field col-sm-4 text-center"><ng-container *ngIf="transactionTime > 0">&lrm;{{ transactionTime * 1000 | date:'yyyy-MM-dd HH:mm' }}</ng-container></span>
+    <span class="field col-sm-4 text-end"><span class="label" i18n="transaction.fee|Transaction fee">Fee</span> {{ tx.fee | number }} <span class="symbol" i18n="shared.sats">sats</span></span>
+  </div>
+
+
+  <div class="row graph-wrapper">
+    <tx-bowtie-graph [tx]="tx" [width]="1132" [height]="346" [network]="network"></tx-bowtie-graph>
+    <div class="above-bow">
+      <p class="field pair">
+        <span [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></span>
+        <span [innerHTML]="'&lrm;' + (tx.weight | wuBytes: 2)"></span>
+      </p>
+      <p class="field" *ngIf="!isCoinbase(tx)">
+        <app-fee-rate [fee]="tx.feePerVsize"></app-fee-rate>
+      </p>
+    </div>
+    <div class="overlaid">
+      <ng-container [ngSwitch]="extraData">
+        <div class="opreturns" *ngSwitchCase="'coinbase'">
+            <div class="opreturn-row">
+              <span class="label" i18n="transactions-list.coinbase">Coinbase</span>
+              <span class="message">{{ tx.vin[0].scriptsig | hex2ascii }}</span>
+            </div>
+        </div>
+        <div class="opreturns" *ngSwitchCase="'opreturn'">
+            <ng-container *ngFor="let vout of opReturns.slice(0,3)">
+              <div class="opreturn-row">
+                <span class="label">OP_RETURN</span>
+                <span *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'" class="message">{{ vout.scriptpubkey_asm | hex2ascii }}</span>
+              </div>
+            </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

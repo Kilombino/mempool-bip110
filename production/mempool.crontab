@@ -1,0 +1,8 @@
+# start on reboot
+@reboot sleep 90 ; $HOME/start
+
+# daily backup
+37 13 * * * sleep 30 ; /mempool/mempool.space/backup >/dev/null 2>&1 &
+
+# hourly liquid asset update
+6 * * * * $HOME/mempool/production/liquid-sync-assets >/dev/null 2>&1

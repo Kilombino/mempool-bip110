@@ -1,0 +1,66 @@
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: var(--bg);
+  box-shadow: 15px 15px 15px 15px #000;
+  z-index: 10;
+
+  &.inline-footer {
+    position: relative;
+    bottom: unset;
+    top: -44px;
+  }
+}
+
+.sub-text {
+  display: block;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.footer > div {
+  margin-top: 3px;
+}
+
+@media (min-width: 1200px) {
+  .footer > div {
+    margin-top: 17px;
+  }
+  .sub-text {
+    margin-left: 5px;
+    display: inline-block;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .extra-text {
+    display: none;
+  }
+}
+
+.mempoolSize {
+  color: var(--title-fg);
+}
+
+.info-block {
+  float: left;
+  width: 350px;
+  line-height: 25px;
+}
+
+.progress {
+  display: inline-flex;
+  width: 160px;
+  background-color: var(--secondary);
+  height: 1.1rem;
+}
+
+.progress-bar {
+  padding: 4px;
+}
+
+.bg-warning {
+  background-color: #b58800 !important;
+}

@@ -1,0 +1,401 @@
+<div class="container-xl" [class.bip110-violation-glow]="hasBip110Violation">
+
+  <div class="title-block">
+    <div *ngIf="rbfTransaction && !tx?.status?.confirmed" class="alert alert-mempool" role="alert">
+      <span i18n="transaction.rbf.replacement|RBF replacement">This transaction has been replaced by:</span>
+      <app-truncate [text]="rbfTransaction.txid" [lastChars]="12" [link]="['/tx/' | relativeUrl, rbfTransaction.txid]"></app-truncate>
+    </div>
+
+    <div *ngIf="hasBip110Violation" class="alert alert-bip110-violation" role="alert">
+      <span class="bip110-icon">☢️</span>
+      <span class="bip110-warning-text">BIP-110 VIOLATION: This transaction would be <strong>invalid</strong> under the proposed soft fork consensus rules.</span>
+    </div>
+
+    <ng-container *ngIf="!rbfTransaction || rbfTransaction?.size || tx">
+      <h1 i18n="shared.transaction">Transaction</h1>
+
+      <span class="tx-link">
+        <span class="txid">
+          <app-truncate [text]="txId" [lastChars]="12" [link]="['/tx/' | relativeUrl, txId]">
+            <app-clipboard [text]="txId"></app-clipboard>
+          </app-truncate>
+        </span>
+      </span>
+
+      <div class="container-buttons">
+        <app-confirmations
+          *ngIf="tx"
+          [chainTip]="latestBlock?.height"
+          [height]="tx?.status?.block_height"
+          [replaced]="replaced"
+          [removed]="this.rbfInfo?.mined && !this.tx?.status?.confirmed"
+          [cached]="isCached"
+        ></app-confirmations>
+      </div>
+    </ng-container>
+  </div>
+  <div class="clearfix"></div>
+
+  @if (duplicateTxBlocks) {
+    <div class="box duplicate-tx-alert">
+      <div class="icon-container">
+        <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
+      </div>
+      <span>
+        <ng-container i18n="transaction.duplicate.notice|Duplicate transaction notice">
+          This transaction ID appears twice in the blockchain as the coinbase of blocks <a [routerLink]="['/block/' | relativeUrl, duplicateTxBlocks[0]]">{{ duplicateTxBlocks[0] }}</a> and <a [routerLink]="['/block/' | relativeUrl, duplicateTxBlocks[1]]">{{ duplicateTxBlocks[1] }}</a>, due to a bug later mitigated by <a href="https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki" target="_blank" rel="noopener">BIP-30</a>.
+        </ng-container>
+        <span class="me-3"></span>
+        <a href="https://blog.bitmex.com/bitcoins-duplicate-transactions/" target="_blank" rel="noopener" i18n="transaction.duplicate.read-more|Duplicate transaction read more" style="white-space: nowrap;">Read more</a>
+      </span>
+    </div>
+  }
+
+  @if (!error) {
+    <app-transaction-details
+      [network]="network"
+      [tx]="tx"
+      [isLoadingTx]="isLoadingTx"
+      [isMobile]="isMobile"
+      [transactionTime]="transactionTime"
+      [isLoadingFirstSeen]="isLoadingFirstSeen"
+      [featuresEnabled]="featuresEnabled"
+      [auditStatus]="auditStatus"
+      [filters]="filters"
+      [miningStats]="miningStats"
+      [pool]="pool"
+      [isAcceleration]="isAcceleration"
+      [acceleratorAvailable]="acceleratorAvailable"
+      [accelerateCtaType]="accelerateCtaType"
+      [notAcceleratedOnLoad]="notAcceleratedOnLoad"
+      [showAccelerationSummary]="showAccelerationSummary"
+      [eligibleForAcceleration]="eligibleForAcceleration"
+      [hasEffectiveFeeRate]="hasEffectiveFeeRate"
+      [cpfpInfo]="cpfpInfo"
+      [hasCpfp]="hasCpfp"
+      [cpfpMode]="cpfpMode"
+      [accelerationInfo]="accelerationInfo"
+      [replaced]="replaced"
+      [isCached]="isCached"
+      [ETA$]="ETA$"
+      (accelerateClicked)="onAccelerateClicked()"
+      (toggleCpfp$)="toggleCpfp()"
+    ></app-transaction-details>
+  }
+
+  <ng-template [ngIf]="!isLoadingTx && !error">
+
+    <!-- CPFP Details -->
+    <ng-container *ngIf="cpfpMode && hasCpfp">
+      <br>
+      <div class="title float-start">
+        <h2 *ngIf="cpfpInfo?.cluster && !isAcceleration" i18n="transaction.cluster|Cluster">Cluster</h2>
+        <h2 *ngIf="!cpfpInfo?.cluster || isAcceleration" i18n="transaction.related-transactions|CPFP List">Related Transactions</h2>
+      </div>
+      <button type="button" class="btn btn-outline-info btn-sm float-end" (click)="toggleCpfp()" i18n="hide">Hide</button>
+      <div class="clearfix"></div>
+      <ng-container *ngIf="cpfpInfo?.cluster && !isAcceleration; else legacyCpfp">
+        <div class="box">
+          <app-cluster-diagram
+            [cluster]="cpfpInfo.cluster" [txid]="tx.txid" [isMobile]="isMobile">
+          </app-cluster-diagram>
+        </div>
+      </ng-container>
+      <ng-template #legacyCpfp>
+        <app-cpfp-info [cpfpInfo]="cpfpInfo" [tx]="tx"></app-cpfp-info>
+      </ng-template>
+    </ng-container>
+
+    <!-- Accelerator -->
+    <ng-container *ngIf="!tx?.status?.confirmed && showAccelerationSummary && (ETA$ | async) as eta;">
+      <span id='accelerate' #accelerate class="anchor"></span>
+      <br>
+      <div class="title float-start mb-1">
+        <h2><a [href]="[ isMempoolSpaceBuild ? '/accelerator' : 'https://mempool.space/accelerator']" [target]="isMempoolSpaceBuild ? '' : 'blank'"><app-svg-images name="accelerator" [height]="isMobile ? '35px' : '45px'"></app-svg-images></a></h2>
+      </div>
+      <button type="button" class="btn btn-outline-info accelerator-toggle btn-sm float-end" [class.hide-on-mobile]="hasAccelerationDetails" (click)="closeAccelerator()" i18n="accelerator.hide">Hide accelerator</button>
+      <button *ngIf="hasAccelerationDetails" class="btn btn-sm btn-outline-info details-button float-end ms-2" (click)="showAccelerationDetails = !showAccelerationDetails" i18n="transaction.details|Transaction Details">Details</button>
+
+      <div class="clearfix"></div>
+
+      <app-accelerate-checkout
+        *ngIf="(da$ | async) as da;"
+        [advancedEnabled]="true"
+        [tx]="tx"
+        [accelerating]="isAcceleration"
+        [eta]="eta"
+        [miningStats]="miningStats"
+        [showDetails]="showAccelerationDetails"
+        [noCTA]="true"
+        [partnerCode]="this.partnerCode"
+        (hasDetails)="setHasAccelerationDetails($event)"
+        (completed)="onAccelerationCompleted()"
+        (unavailable)="eligibleForAcceleration = false"
+        class="h-100 w-100"
+      ></app-accelerate-checkout>
+    </ng-container>
+
+    <br>
+
+    <ng-container *ngIf="rbfInfo">
+      <div class="title float-start">
+        <h2 id="rbf" i18n="transaction.rbf-history|RBF Timeline">RBF Timeline</h2>
+      </div>
+      <div class="clearfix"></div>
+      <app-rbf-timeline [txid]="txId" [replacements]="rbfInfo"></app-rbf-timeline>
+      <br>
+    </ng-container>
+
+    <ng-container *ngIf="transactionTime > 0 && tx.acceleratedAt > 0 && (isAcceleration || accelerationCanceled)">
+      <div class="title float-start">
+        <h2 id="acceleration-timeline" i18n="transaction.acceleration-timeline|Acceleration Timeline">Acceleration Timeline</h2>
+      </div>
+      <div class="clearfix"></div>
+      <app-acceleration-timeline [transactionTime]="transactionTime" [acceleratedAt]="tx.acceleratedAt" [tx]="tx" [accelerationInfo]="accelerationInfo" [eta]="(ETA$ | async)" [canceled]="accelerationCanceled"></app-acceleration-timeline>
+      <br>
+    </ng-container>
+
+    <ng-container *ngIf="flowEnabled; else flowPlaceholder">
+      <div class="title float-start">
+        <h2 id="flow" #flow class="anchor" i18n="transaction.flow|Transaction flow">Flow</h2>
+      </div>
+
+      <button type="button" class="btn btn-outline-info flow-toggle btn-sm float-end" (click)="toggleGraph()" i18n="hide-diagram">Hide diagram</button>
+
+      <div class="clearfix"></div>
+
+      <div class="box">
+        <div class="graph-container" #graphContainer>
+          <tx-bowtie-graph
+            [tx]="tx"
+            [cached]="isCached"
+            [width]="graphWidth"
+            [height]="graphHeight"
+            [lineLimit]="inOutLimit"
+            [maxStrands]="graphExpanded ? maxInOut : 24"
+            [network]="network"
+            [tooltip]="true"
+            [connectors]="true"
+            [inputIndex]="inputIndex" [outputIndex]="outputIndex"
+          >
+          </tx-bowtie-graph>
+        </div>
+        <div class="toggle-wrapper" *ngIf="maxInOut > 24">
+          <button class="btn btn-sm btn-primary graph-toggle" (click)="expandGraph();" *ngIf="!graphExpanded; else collapseBtn"><span i18n="show-more">Show more</span></button>
+          <ng-template #collapseBtn>
+            <button class="btn btn-sm btn-primary graph-toggle" (click)="collapseGraph();"><span i18n="show-less">Show less</span></button>
+          </ng-template>
+        </div>
+      </div>
+
+      <br>
+    </ng-container>
+    <ng-template #flowPlaceholder>
+      <div class="box hidden">
+        <div class="graph-container" #graphContainer>
+        </div>
+      </div>
+    </ng-template>
+
+    <div class="subtitle-block">
+      <div class="title">
+        <h2 i18n="transaction.inputs-and-outputs|Transaction inputs and outputs">Inputs & Outputs</h2>
+      </div>
+
+      <div class="title-buttons">
+        <button *ngIf="!flowEnabled" type="button" class="btn btn-outline-info flow-toggle btn-sm" (click)="toggleGraph()" i18n="show-diagram">Show diagram</button>
+        <button type="button" class="btn btn-outline-info btn-sm" (click)="toggleDetailsFromTxPage()" i18n="transaction.details|Transaction Details">Details</button>
+      </div>
+    </div>
+
+
+    <app-transactions-list #txList [transactions]="[tx]" [cached]="isCached" [errorUnblinded]="errorUnblinded" [inputIndex]="inputIndex" [outputIndex]="outputIndex" [transactionPage]="true"></app-transactions-list>
+
+    <div class="title text-start">
+      <h2 i18n="transaction.details|Transaction Details">Details</h2>
+    </div>
+    <div class="box">
+      <div class="row">
+        <div class="col-sm">
+          <table class="table table-borderless table-striped">
+            <tbody>
+              <tr>
+                <td i18n="block.size">Size</td>
+                <td [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></td>
+              </tr>
+              <tr>
+                <td i18n="transaction.vsize|Transaction Virtual Size">Virtual size</td>
+                <td [innerHTML]="'&lrm;' + (tx.weight / 4 | vbytes: 2)"></td>
+              </tr>
+              <tr *ngIf="adjustedVsize != null">
+                <td><ng-container i18n="transaction.adjusted-vsize|Transaction Adjusted VSize">Adjusted vsize</ng-container>
+                  <a class="info-link" [routerLink]="['/docs/faq/' | relativeUrl]" fragment="what-is-adjusted-vsize">
+                    <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
+                  </a>
+                </td>
+                <td [innerHTML]="'&lrm;' + (adjustedVsize | vbytes: 2)"></td>
+              </tr>
+              <tr>
+                <td i18n="block.weight">Weight</td>
+                <td [innerHTML]="'&lrm;' + (tx.weight | wuBytes: 2)"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm">
+          <table class="table table-borderless table-striped">
+            <tbody>
+              <tr>
+                <td i18n="transaction.version">Version</td>
+                <td [innerHTML]="'&lrm;' + (tx.version | number)"></td>
+              </tr>
+              <tr>
+                <td i18n="transaction.locktime">Locktime</td>
+                <td [innerHTML]="'&lrm;' + (tx.locktime | number)"></td>
+              </tr>
+              <tr *ngIf="sigops != null">
+                <td><ng-container i18n="transaction.sigops|Transaction Sigops">Sigops</ng-container>
+                  <a class="info-link" [routerLink]="['/docs/faq/' | relativeUrl]" fragment="what-are-sigops">
+                    <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
+                  </a>
+                </td>
+                <td [innerHTML]="'&lrm;' + (sigops | number)"></td>
+              </tr>
+              <tr>
+                <td i18n="transaction.hex">Transaction hex</td>
+                <td><a target="_blank" href="{{ network === '' ? '' : '/' + network }}/api/tx/{{ txId }}/hex"><fa-icon [icon]="['fas', 'external-link-alt']" [fixedWidth]="true"></fa-icon></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </ng-template>
+
+  <ng-template [ngIf]="(isLoadingTx && !error) || loadingCachedTx">
+    <br>
+    <ng-container *ngIf="flowEnabled">
+      <div class="title">
+        <h2 i18n="transaction.flow|Transaction flow">Flow</h2>
+      </div>
+
+      <div class="box">
+        <div class="graph-container" #graphContainer style="visibility: hidden;"></div>
+        <div class="row">
+          <div class="col-sm">
+            <table class="table table-borderless table-striped">
+              <tbody>
+                <tr>
+                  <td><span class="skeleton-loader"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-sm">
+            <table class="table table-borderless table-striped">
+              <tbody>
+                <tr>
+                  <td><span class="skeleton-loader"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <br>
+    </ng-container>
+
+    <div class="title">
+      <h2 i18n="transaction.inputs-and-outputs|Transaction inputs and outputs">Inputs & Outputs</h2>
+    </div>
+
+    <div class="box">
+      <div class="row">
+        <div class="col-sm">
+          <table class="table table-borderless table-striped">
+            <tbody>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm">
+          <table class="table table-borderless table-striped">
+            <tbody>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="title">
+      <h2 i18n="transaction.details|Transaction Details">Details</h2>
+    </div>
+
+    <div class="box">
+      <div class="row">
+        <div class="col-sm">
+          <table class="table table-borderless table-striped">
+            <tbody>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm">
+          <table class="table table-borderless table-striped">
+            <tbody>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+              <tr>
+                <td><span class="skeleton-loader"></span></td>
+                <td><span class="skeleton-loader"></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </ng-template>
+
+  <ng-template [ngIf]="error && !loadingCachedTx">
+
+    <div class="text-center" *ngIf="waitingForTransaction; else errorTemplate">
+      <h3 i18n="transaction.error.transaction-not-found">Transaction not found.</h3>
+      <h5 i18n="transaction.error.waiting-for-it-to-appear">Waiting for it to appear in the mempool...</h5>
+      <div class="spinner-border text-light mt-2"></div>
+    </div>
+
+    <ng-template #errorTemplate>
+      <app-http-error [error]="error">
+        <span i18n="transaction.error.loading-transaction-data">Error loading transaction data.</span>
+      </app-http-error>
+    </ng-template>
+  </ng-template>
+
+</div>

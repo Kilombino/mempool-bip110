@@ -1,0 +1,132 @@
+<div class="blocks-container blockchain-blocks-container" [class.time-ltr]="timeLtr" [class.minimal]="minimal"
+  [style.left]="static ? (offset || 0) + 'px' : null" [style.--block-size]="blockWidth+'px'"
+  *ngIf="static || (loadingBlocks$ | async) === false; else loadingBlocksTemplate">
+  <div *ngFor="let block of blocks; let i = index; trackBy: trackByBlocksFn">
+    <ng-container *ngIf="connected && block && !block.loading && !block.placeholder; else placeholderBlock">
+      <div
+        *ngIf="minimal && spotlight < 0 && chainTip + spotlight + 1 === block.height"
+        class="spotlight-bottom"
+        [style.left]="blockStyles[i].left"
+      ></div>
+      <div [attr.data-cy]="'bitcoin-block-offset-' + offset + '-index-' + i"
+        class="text-center bitcoin-block mined-block blockchain-blocks-offset-{{ offset }}-index-{{ i }}"
+        [class.offscreen]="!static && count && i >= count"
+        [class.bip110-signaling]="hasBIP110Signaling(block)"
+        [class.bip110-violations]="hasBIP110Violations(block)"
+        id="bitcoin-block-{{ block.height }}" [ngStyle]="blockStyles[i]"
+        [style]="blockTransformation"
+        [class.blink-bg]="isSpecial(block.height)">
+        <a draggable="false" [routerLink]="[getHref(i, block) | relativeUrl]" [state]="{ data: { block: block } }"
+          class="blockLink" [ngClass]="{'disabled': (this.stateService.blockScrolling$ | async)}">&nbsp;</a>
+        <div *ngIf="!minimal" [attr.data-cy]="'bitcoin-block-' + i + '-height'" class="block-height">
+          <a [routerLink]="[getHref(i, block) | relativeUrl]" [state]="{ data: { block: block } }" class="block-height-link">{{ block.height
+            }}</a>
+        </div>
+        <ng-container *ngIf="!minimal && hasBIP110Violations(block)">
+          <div class="bip110-radioactive-indicator" [title]="'This block contains ' + getBIP110ViolationCount(block) + ' transaction(s) that would violate BIP110 rules'">
+            <img src="/resources/radioactive.svg" alt="BIP110 Violation" class="radioactive-icon">
+            <span class="badge badge-bip110-violation-mini">{{ getBIP110ViolationCount(block) }}</span>
+          </div>
+        </ng-container>
+        @if (!minimal && block?.extras?.orphans?.length > 0) {
+          <ng-container *ngFor="let orphan of block.extras.orphans.slice(0, 3); let j = index">
+            <div
+              class="stale-ghost"
+              [style.--stale-index]="j"
+              [routerLink]="['/block' | relativeUrl, orphan.hash]"
+              [ngbTooltip]="'stale block ' + orphan.hash.slice(0, 4) + '...' + orphan.hash.slice(-4)"
+              [placement]="'top'"
+              [container]="'body'"
+              [autoClose]="'outside'"
+            ></div>
+          </ng-container>
+        }
+        <div class="block-body">
+          <ng-container *ngIf="!minimal">
+            <div *ngIf="block?.extras; else emptyfees" [attr.data-cy]="'bitcoin-block-offset=' + offset + '-index-' + i + '-fees'" class="fees">
+              ~<app-fee-rate [fee]="block?.extras?.medianFee" unitClass="" rounding="1.0-0"></app-fee-rate>
+            </div>
+            <ng-template #emptyfees>
+              <div [attr.data-cy]="'bitcoin-block-offset=' + offset + '-index-' + i + '-fees'" class="fees">
+                <app-fee-rate unitClass=""></app-fee-rate>
+              </div>
+            </ng-template>
+            <div [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i + '-fee-span'" class="fee-span"
+              *ngIf="block?.extras?.minFee != null && block?.extras?.maxFee != null; else emptyfeespan">
+              <app-fee-rate [fee]="block?.extras?.minFee" [showUnit]="false" unitClass=""></app-fee-rate>
+              -
+              <app-fee-rate [fee]="block?.extras?.maxFee" unitClass=""></app-fee-rate>
+            </div>
+            <ng-template #emptyfeespan>
+              <div [attr.data-cy]="'bitcoin-block-offset=' + offset + '-index-' + i + '-fees'" class="fee-span">
+                <app-fee-rate unitClass=""></app-fee-rate>
+              </div>
+            </ng-template>
+            <div [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i + '-total-fees'" *ngIf="blockDisplayMode === 'fees'; else noMiningInfo"
+              class="block-size">
+              <app-amount [satoshis]="block.extras?.totalFees ?? 0" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+            </div>
+            <ng-template #noMiningInfo>
+            <div [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i + 'block-size'"
+              class="block-size" [innerHTML]="'&lrm;' + (block.size | bytes: 2)"></div>
+            </ng-template>
+            <div [attr.data-cy]="'bitcoin-block-' + i + '-transactions'" class="transaction-count">
+              <ng-container
+                *ngTemplateOutlet="block.tx_count === 1 ? transactionsSingular : transactionsPlural; context: {$implicit: block.tx_count | number}"></ng-container>
+              <ng-template #transactionsSingular let-i i18n="shared.transaction-count.singular">{{ i }} transaction</ng-template>
+              <ng-template #transactionsPlural let-i i18n="shared.transaction-count.plural">{{ i }} transactions</ng-template>
+            </div>
+            <div [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i + '-time'" class="time-difference">
+              <app-time kind="since" [time]="block.timestamp" [fastRender]="true" [precision]="1" minUnit="minute"></app-time>
+              <a *ngIf="!minimal && showIsEarlierThanParent(i)" [routerLink]="['/docs/faq' | relativeUrl ]" class="timestamp-info" fragment="why-block-timestamps-dont-always-increase">
+                <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
+              </a>
+            </div>
+          </ng-container>
+        </div>
+        <div class="animated" *ngIf="block.extras?.pool != undefined && showPools">
+          <a [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i + '-pool'" class="badge" [class.miner-name]="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''" [routerLink]="[('/mining/pool/' + block.extras.pool.slug) | relativeUrl]">
+            <ng-container *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''; else centralisedPool">
+              <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.minerNames[1]" [logoStyle]="'filter: grayscale(100%) brightness(1.5);'" [showName]="false"></app-mining-pool>
+              {{ block.extras.pool.minerNames[1] }}
+            </ng-container>
+            <ng-template #centralisedPool>
+              <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.name"></app-mining-pool>
+              <span *ngIf="poolsWithAntpool.includes(block.extras.pool.slug)"> + <img class="mining-pool-logo" [src]="'/resources/mining-pools/antpool.svg'" [alt]="'Logo of AntPool mining pool'"></span>
+            </ng-template>
+          </a>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #placeholderBlock>
+      <ng-container *ngIf="block && block.placeholder && connected && !loadingTip; else loadingBlock">
+        <div [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i"
+          class="text-center bitcoin-block mined-block placeholder-block blockchain-blocks-{{ i }}"
+          id="bitcoin-block-{{ block.height }}" [ngStyle]="blockStyles[i]">
+ 
+        </div>
+      </ng-container>
+    </ng-template>
+    <ng-template #loadingBlock>
+      <ng-container *ngIf="!connected || loadingTip || (block && block.loading)">
+        <div class="flashing loading">
+          <div class="text-center bitcoin-block mined-block" id="bitcoin-block-{{ block.height }}"
+            [ngStyle]="convertStyleForLoadingBlock(blockStyles[i])"></div>
+        </div>
+      </ng-container>
+    </ng-template>
+  </div>
+  <div [hidden]="!arrowVisible" id="arrow-up" [style.transition]="arrowTransition"
+    [ngStyle]="{'left': arrowLeftPx + 8 + 'px' }"></div>
+</div>
+
+<ng-template #loadingBlocksTemplate>
+  <div class="blocks-container" [class.time-ltr]="timeLtr" [style.--block-size]="blockWidth+'px'">
+    <div class="flashing">
+      <div *ngFor="let block of emptyBlocks; let i = index; trackBy: trackByBlocksFn">
+        <div class="text-center bitcoin-block mined-block" id="bitcoin-block-{{ block.height }}"
+          [ngStyle]="emptyBlockStyles[i]" [class.offscreen]="!static && count && i >= count"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,63 @@
+.input-group-text {
+  width: 75px;
+}
+
+.bitcoin-satoshis-text {
+  font-size: 40px;
+}
+
+.fiat-text {
+  font-size: 24px;
+}
+
+.symbol {
+  font-style: italic;
+}
+
+@media (max-width: 767.98px) {
+  .bitcoin-satoshis-text {
+    font-size: 30px;
+  }
+}
+
+.sats {
+  font-size: 20px;
+  margin-left: 5px;
+}
+
+.row {
+  margin: auto;
+}
+
+.form-control.disabled {
+  pointer-events: none;
+  background-color: var(--secondary);
+  opacity: 0.75;
+}
+
+.calculator-date-group {
+  width: 172px;
+}
+
+.calculator-form {
+  width: 100%;
+  max-width: 373px;
+}
+
+.calculator-row > * {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.calculator-inline-row > * {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+:host ::ng-deep ngb-datepicker .ngb-dp-weekdays,
+:host ::ng-deep ngb-datepicker .ngb-dp-header {
+  background-color: var(--bg) !important;
+}
