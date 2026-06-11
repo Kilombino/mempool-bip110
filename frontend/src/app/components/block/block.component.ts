@@ -18,6 +18,7 @@ import { CacheService } from '@app/services/cache.service';
 import { ServicesApiServices } from '@app/services/services-api.service';
 import { PreloadService } from '@app/services/preload.service';
 import { identifyPrioritizedTransactions } from '@app/shared/transaction.utils';
+import { Bip110Service } from '@app/services/bip110.service';
 
 interface ComparisonStats {
   totalFees: number;
@@ -57,6 +58,9 @@ export class BlockComponent implements OnInit, OnDestroy {
   latestBlocks: BlockExtended[] = [];
   oobFees: number = 0;
   strippedTransactions: TransactionStripped[];
+  bip110ViolationCount: number = 0;
+  bip110ViolationTxs: TransactionStripped[] = [];
+  showBip110List = false;
   accelerations: Acceleration[];
   overviewTransitionDirection: string;
   isLoadingOverview = true;
@@ -361,8 +365,13 @@ export class BlockComponent implements OnInit, OnDestroy {
     .subscribe(([block, transactions, blockAudit, [canonicalBlock, canonicalTransactions]]) => {
       if (transactions) {
         this.strippedTransactions = transactions;
+        // BIP110 violations among the block's transactions (list + count)
+        this.bip110ViolationTxs = transactions.filter(tx => Bip110Service.hasAnyViolation(tx.flags));
+        this.bip110ViolationCount = this.bip110ViolationTxs.length;
       } else {
         this.strippedTransactions = [];
+        this.bip110ViolationTxs = [];
+        this.bip110ViolationCount = 0;
       }
       this.blockAudit = blockAudit;
 
@@ -544,6 +553,10 @@ export class BlockComponent implements OnInit, OnDestroy {
   hasBIP110Signaling(version: number): boolean {
     const versionBit = 4; // BIP110 'reduced_data' deployment (Reduced Data Temporary Softfork)
     return (Number(version) & (1 << versionBit)) === (1 << versionBit);
+  }
+
+  getBip110Violations(tx: TransactionStripped): string[] {
+    return Bip110Service.getViolationLabels(tx?.flags);
   }
 
   displayTaprootStatus(): boolean {

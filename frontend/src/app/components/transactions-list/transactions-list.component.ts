@@ -10,6 +10,7 @@ import { filter, map, tap, switchMap, catchError } from 'rxjs/operators';
 import { BlockExtended } from '@interfaces/node-api.interface';
 import { ApiService } from '@app/services/api.service';
 import { PriceService } from '@app/services/price.service';
+import { Bip110Service } from '@app/services/bip110.service';
 import { StorageService } from '@app/services/storage.service';
 import { OrdApiService } from '@app/services/ord-api.service';
 import { Inscription } from '@app/shared/ord/inscription.utils';
@@ -480,6 +481,16 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   fakeScriptHashRegex = new RegExp(/(.+?)\1{11,}/);
   isFakeScripthash(vout: Vout): boolean {
     return this.fakeScriptHashRegex.test(vout.scriptpubkey_address);
+  }
+
+  // Check if a transaction has any BIP110 violations
+  hasBIP110Violation(tx: Transaction): boolean {
+    return Bip110Service.hasAnyViolation(tx?.flags);
+  }
+
+  // Get the human-readable list of BIP110 violations for a transaction
+  getBIP110Violations(tx: Transaction): string[] {
+    return Bip110Service.getViolationLabels(tx?.flags);
   }
 
   onScroll(): void {

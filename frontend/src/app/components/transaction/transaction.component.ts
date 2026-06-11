@@ -36,6 +36,7 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
 import { PriceService } from '@app/services/price.service';
 import { isFeatureActive } from '@app/bitcoin.utils';
 import { ServicesApiServices } from '@app/services/services-api.service';
+import { Bip110Service } from '@app/services/bip110.service';
 import { EnterpriseService } from '@app/services/enterprise.service';
 import { ZONE_SERVICE } from '@app/injection-tokens';
 import { MiningService, MiningStats } from '@app/services/mining.service';
@@ -158,6 +159,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   segwitEnabled: boolean;
   rbfEnabled: boolean;
   taprootEnabled: boolean;
+  hasBip110Violation: boolean = false;
   hasEffectiveFeeRate: boolean;
   accelerateCtaType: 'alert' | 'button' = 'button';
   acceleratorAvailable: boolean = this.stateService.env.ACCELERATOR_BUTTON && this.stateService.network === '';
@@ -1000,11 +1002,13 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
       const txHeight = this.tx.status?.block_height || (this.stateService.latestBlockHeight >= 0 ? this.stateService.latestBlockHeight + 1 : null);
       this.tx.flags = getTransactionFlags(this.tx, null, null, txHeight, this.stateService.network);
       this.filters = this.tx.flags ? toFilters(this.tx.flags).filter(f => f.txPage) : [];
+      this.hasBip110Violation = this.tx.flags ? Bip110Service.hasAnyViolation(this.tx.flags) : false;
       this.checkAccelerationEligibility();
     } else {
       this.segwitEnabled = false;
       this.taprootEnabled = false;
       this.rbfEnabled = false;
+      this.hasBip110Violation = false;
     }
     this.featuresEnabled = this.segwitEnabled || this.taprootEnabled || this.rbfEnabled;
   }

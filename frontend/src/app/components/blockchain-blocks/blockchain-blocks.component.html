@@ -12,6 +12,7 @@
         class="text-center bitcoin-block mined-block blockchain-blocks-offset-{{ offset }}-index-{{ i }}"
         [class.offscreen]="!static && count && i >= count"
         [class.bip110-signaling]="hasBIP110Signaling(block)"
+        [class.bip110-violations]="hasBIP110Violations(block)"
         id="bitcoin-block-{{ block.height }}" [ngStyle]="blockStyles[i]"
         [style]="blockTransformation"
         [class.blink-bg]="isSpecial(block.height)">
@@ -21,6 +22,12 @@
           <a [routerLink]="[getHref(i, block) | relativeUrl]" [state]="{ data: { block: block } }" class="block-height-link">{{ block.height
             }}</a>
         </div>
+        <ng-container *ngIf="!minimal && hasBIP110Violations(block)">
+          <div class="bip110-radioactive-indicator" [title]="'This block contains ' + getBIP110ViolationCount(block) + ' transaction(s) that would violate BIP110 rules'">
+            <img src="/resources/radioactive.svg" alt="BIP110 Violation" class="radioactive-icon">
+            <span class="badge badge-bip110-violation-mini">{{ getBIP110ViolationCount(block) }}</span>
+          </div>
+        </ng-container>
         @if (!minimal && block?.extras?.orphans?.length > 0) {
           <ng-container *ngFor="let orphan of block.extras.orphans.slice(0, 3); let j = index">
             <div

@@ -26,6 +26,10 @@ const MAX_OP_RETURN_RELAY = 83;
 const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
 const BIP110_VERSION_BIT = 4;                 // BIP110 deployment 'reduced_data' signaling bit
+const BIP110_MAX_SCRIPTPUBKEY_SIZE = 34;      // Rule 1: max scriptPubKey size (except OP_RETURN)
+const BIP110_MAX_OPRETURN_SIZE = 83;          // Rule 1: max OP_RETURN size
+const BIP110_MAX_PUSHDATA_SIZE = 256;         // Rule 2: max script-argument witness/PUSHDATA item size
+const BIP110_MAX_CONTROL_BLOCK_SIZE = 257;    // Rule 5: max Taproot control block size (128 script leaves)
 
 export class Common {
   static nativeAssetId = config.MEMPOOL.NETWORK === 'liquidtestnet' ?
@@ -633,6 +637,412 @@ export class Common {
     return (version & (1 << BIP110_VERSION_BIT)) !== 0;
   }
 
+
+  static readonly BIP110_VIOLATION_MASK = BigInt(
+    TransactionFlags.bip110_large_scriptpubkey |
+    TransactionFlags.bip110_large_pushdata |
+    TransactionFlags.bip110_undefined_witness |
+    TransactionFlags.bip110_taproot_annex |
+    TransactionFlags.bip110_large_control_block |
+    TransactionFlags.bip110_op_success |
+    TransactionFlags.bip110_op_if_notif
+  );
+
+  /**
+   * Check if transaction flags contain any BIP110 violations
+   */
+  static hasAnyBIP110Violation(flags: number | bigint | null | undefined): boolean {
+    if (!flags) return false;
+    return (BigInt(flags) & Common.BIP110_VIOLATION_MASK) !== 0n;
+  }
+
+  /**
+   * Check transaction for BIP110 consensus rule violations.
+   * Returns bigint flags for any violations found.
+   * 
+   * BIP110 Rules (per bip-0110.mediawiki Specification):
+   * 1. New output scriptPubKeys > 34 bytes invalid (except OP_RETURN up to 83 bytes)
+   * 2. OP_PUSHDATA* payloads and script argument witness items > 256 bytes invalid.
+   *    Exempt items (limited/invalidated by another rule, or not at all): BIP16
+   *    redeemScripts, witness scripts, Tapleaf scripts, control blocks (Rule 5),
+   *    annexes (Rule 4), and Taproot key-path signatures (bounded by BIP341).
+   *    OP_PUSHDATA* payloads inside the exempt executing scripts still apply.
+   * 3. Spending undefined witness/Tapleaf versions (not v0, v1, or P2A) invalid
+   * 4. Witness stacks with a Taproot annex invalid
+   * 5. Taproot control blocks > 257 bytes (a merkle tree with 128 script leaves) invalid
+   * 6. Tapscripts including OP_SUCCESS* opcodes anywhere (even unexecuted) invalid
+   * 7. Tapscripts executing OP_IF or OP_NOTIF (regardless of result) invalid
+   *
+   * Note: Inputs spending UTXOs created before activation height are exempt.
+   */
+  static getBIP110Flags(tx: TransactionExtended): bigint {
+    let flags = 0n;
+
+    // Rule 1: Check output scriptPubKey sizes
+    for (const vout of tx.vout) {
+      const scriptSize = vout.scriptpubkey.length / 2; // hex string to bytes
+      if (vout.scriptpubkey_type === 'op_return') {
+        if (scriptSize > BIP110_MAX_OPRETURN_SIZE) {
+          flags |= TransactionFlags.bip110_large_scriptpubkey;
+        }
+      } else if (scriptSize > BIP110_MAX_SCRIPTPUBKEY_SIZE) {
+        flags |= TransactionFlags.bip110_large_scriptpubkey;
+      }
+    }
+
+    // Check inputs for rules 2-7
+    for (const vin of tx.vin) {
+      if (vin.is_coinbase) continue;
+
+      flags |= this.checkBIP110WitnessRules(vin);
+      flags |= this.checkBIP110ScriptSigRules(vin);
+    }
+
+    if (flags !== 0n) {
+      logger.debug(`BIP110 getBIP110Flags returning flags: 0x${flags.toString(16)} for tx ${tx.txid}`);
+    }
+    return flags;
+  }
+
+  /**
+   * Check witness-related BIP110 rules (Rules 2, 3, 4, 5, 6, 7)
+   *
+   * When prevout data is available (vin.prevout?.scriptpubkey_type), we use it
+   * to determine the input type. When prevout is unavailable (e.g., Core RPC
+   * backend without prevout fetching), we infer taproot script path spends
+   * from the witness structure using witnessToP2TRScript(), matching the same
+   * approach used by isInscription().
+   */
+  static checkBIP110WitnessRules(vin: any): bigint {
+    let flags = 0n;
+
+    if (!vin.witness?.length) return flags;
+
+    // Detect Taproot annex (last witness starts with 0x50)
+    const lastWitness = vin.witness[vin.witness.length - 1];
+    const hasAnnex = vin.witness.length > 1 && lastWitness.startsWith('50');
+
+    const prevoutType: string | undefined = vin.prevout?.scriptpubkey_type;
+
+    // Check for Taproot script path spends
+    // When prevout is available, use scriptpubkey_type to confirm v1_p2tr
+    // When prevout is unavailable, use witnessToP2TRScript() to infer from witness structure
+    // and validate the control block structure to avoid false positives from non-taproot witnesses
+    const isTaprootWithPrevout = prevoutType === 'v1_p2tr' && vin.witness.length > (hasAnnex ? 2 : 1);
+    let tapscriptFromWitness: string | null = null;
+    if (!prevoutType) {
+      tapscriptFromWitness = transactionUtils.witnessToP2TRScript(vin.witness);
+      // Validate control block structure when prevout is unavailable
+      // BIP341: control block = <leaf_version_byte> || <internal_key_32bytes> || <merkle_path_0_or_more_32byte_nodes>
+      // Minimum 33 bytes, and (length - 33) must be divisible by 32
+      if (tapscriptFromWitness !== null) {
+        const cbIndex = vin.witness.length - (hasAnnex ? 2 : 1);
+        const cb = vin.witness[cbIndex];
+        const cbByteLen = cb.length / 2;
+        const cbFirstByte = parseInt(cb.substring(0, 2), 16);
+        // BIP341: leaf_version = cbFirstByte & 0xfe, parity = cbFirstByte & 0x01
+        // Currently only leaf version 0xc0 (BIP342) is defined, giving first byte 0xc0 or 0xc1.
+        // Filter out non-taproot witnesses (e.g. P2WPKH pubkeys start with 0x02/0x03).
+        if (cbByteLen < 33 || (cbByteLen - 33) % 32 !== 0 || (cbFirstByte & 0xfe) < 0xc0) {
+          // Not a valid taproot control block - likely a non-taproot witness
+          tapscriptFromWitness = null;
+        }
+      }
+    }
+    const isTaprootScriptPath = isTaprootWithPrevout || tapscriptFromWitness !== null;
+
+    // Rule 4: Taproot annex is invalid
+    if (hasAnnex && (prevoutType === 'v1_p2tr' || isTaprootScriptPath)) {
+      flags |= TransactionFlags.bip110_taproot_annex;
+    }
+
+    // BIP110 Rule 2 applies the 256-byte witness limit only to "script argument
+    // witness items" (the stack inputs to the script interpreter). The following
+    // are NOT script argument witness items and are exempt from this size check
+    // (each is limited/invalidated by another rule, or not at all):
+    //   - witness scripts and Tapleaf scripts (not limited as items; their
+    //     internal OP_PUSHDATA* payloads are still subject to Rule 2)
+    //   - control blocks (limited by Rule 5)
+    //   - annexes (invalidated by Rule 4)
+    //   - Taproot key-path signatures (already bounded to 64/65 bytes by BIP341)
+    // We collect the exempt item indices, plus the executing scripts whose
+    // internal pushes must still be scanned for Rule 2.
+    const exemptItemIndices = new Set<number>();
+    const executingScriptIndices: number[] = [];
+
+    // The annex (when present) is exempt from the item-size check.
+    if (hasAnnex) {
+      exemptItemIndices.add(vin.witness.length - 1);
+    }
+
+    if (isTaprootScriptPath) {
+      // Layout (annex removed): [...script args, Tapleaf script, control block]
+      const controlBlockIndex = vin.witness.length - (hasAnnex ? 2 : 1);
+      const tapscriptIndex = controlBlockIndex - 1;
+      exemptItemIndices.add(controlBlockIndex);          // control block -> Rule 5
+      if (tapscriptIndex >= 0) {
+        exemptItemIndices.add(tapscriptIndex);           // Tapleaf script -> not an item
+        executingScriptIndices.push(tapscriptIndex);
+      }
+    } else if (prevoutType === 'v1_p2tr') {
+      // Key-path spend: the sole (non-annex) item is the Schnorr signature.
+      const sigIndex = vin.witness.length - 1 - (hasAnnex ? 1 : 0);
+      if (sigIndex >= 0) {
+        exemptItemIndices.add(sigIndex);                 // key-path signature -> bounded by BIP341
+      }
+    } else if (prevoutType === 'v0_p2wsh' || prevoutType === 'p2sh' || !prevoutType) {
+      // P2WSH / P2SH-wrapped-P2WSH (and the prevout-less scanner path): the last
+      // non-annex item is the witness script. Treating P2WPKH/key-path's small
+      // last item (pubkey/signature) as a "script" here is harmless - it is well
+      // under 256 bytes and contains no oversized pushes.
+      const witnessScriptIndex = vin.witness.length - 1 - (hasAnnex ? 1 : 0);
+      if (witnessScriptIndex >= 0) {
+        exemptItemIndices.add(witnessScriptIndex);       // witness script -> not an item
+        executingScriptIndices.push(witnessScriptIndex);
+      }
+    }
+    // Otherwise (e.g. v0_p2wpkh with prevout): every item is a script argument.
+
+    // Rule 2 (script argument witness items): any non-exempt witness stack
+    // element exceeding 256 bytes is invalid.
+    for (let i = 0; i < vin.witness.length; i++) {
+      if (exemptItemIndices.has(i)) continue;
+      if ((vin.witness[i].length / 2) > BIP110_MAX_PUSHDATA_SIZE) {
+        flags |= TransactionFlags.bip110_large_pushdata;
+        break; // Only need to flag once
+      }
+    }
+
+    if (isTaprootScriptPath) {
+      // Script path spend - control block is second-to-last (or third-to-last with annex)
+      const controlBlockIndex = vin.witness.length - (hasAnnex ? 2 : 1);
+      const controlBlock = vin.witness[controlBlockIndex];
+
+      logger.debug(`BIP110 check: taproot script path spend detected. witness_count=${vin.witness.length}, hasAnnex=${hasAnnex}, hasPrevout=${!!prevoutType}`);
+
+      // Rule 5: Check control block size (> 257 bytes)
+      if ((controlBlock.length / 2) > BIP110_MAX_CONTROL_BLOCK_SIZE) {
+        flags |= TransactionFlags.bip110_large_control_block;
+      }
+
+      // Rule 3: undefined Tapleaf versions are invalid. The control block's
+      // first byte encodes the leaf version in its upper 7 bits (& 0xfe); only
+      // 0xc0 (BIP342 tapscript) is currently defined.
+      const leafVersion = parseInt(controlBlock.substring(0, 2), 16) & 0xfe;
+      if (leafVersion !== 0xc0) {
+        flags |= TransactionFlags.bip110_undefined_witness;
+      }
+
+      // Rules 6 & 7: scan the Tapleaf script (the item before the control block)
+      const tapscriptIndex = controlBlockIndex - 1;
+      if (tapscriptIndex >= 0) {
+        const tapscriptHex = vin.witness[tapscriptIndex];
+        const scan = this.scanTapscriptForViolations(tapscriptHex);
+        if (scan.opSuccess) {
+          flags |= TransactionFlags.bip110_op_success;
+        }
+        if (scan.opIfNotif) {
+          logger.debug(`BIP110 OP_IF/NOTIF VIOLATION DETECTED in tx input`);
+          flags |= TransactionFlags.bip110_op_if_notif;
+        }
+      }
+    }
+
+    // Rule 2 (OP_PUSHDATA* payloads): data pushes *inside* executing scripts
+    // (witness scripts / Tapleaf scripts) exceeding 256 bytes are invalid, even
+    // though the script item itself is exempt from the item-size check above.
+    if ((flags & TransactionFlags.bip110_large_pushdata) === 0n) {
+      for (const idx of executingScriptIndices) {
+        if (this.scriptHasLargePush(vin.witness[idx])) {
+          flags |= TransactionFlags.bip110_large_pushdata;
+          break;
+        }
+      }
+    }
+
+    // Rule 3: Spending undefined witness/Tapleaf versions (not v0, v1, or P2A) is invalid
+    // P2A is witness v1 with a 2-byte program, so version > 1 correctly excludes v0, v1, and P2A
+    if (vin.prevout?.scriptpubkey_type === 'unknown') {
+      const witnessProgram = this.isWitnessProgram(vin.prevout.scriptpubkey);
+      if (witnessProgram && witnessProgram.version > 1) {
+        flags |= TransactionFlags.bip110_undefined_witness;
+      }
+    }
+
+    return flags;
+  }
+
+  /**
+   * Check scriptSig for BIP110 Rule 2 (large pushdata)
+   * BIP110: "OP_PUSHDATA* payloads [...] exceeding 256 bytes are invalid,
+   * except for the redeemScript push in BIP16 scriptSigs."
+   */
+  static checkBIP110ScriptSigRules(vin: any): bigint {
+    let flags = 0n;
+
+    if (!vin.scriptsig || vin.scriptsig.length === 0) return flags;
+
+    // Parse scriptsig to find push operations
+    const scriptsigAsm = vin.scriptsig_asm || transactionUtils.convertScriptSigAsm(vin.scriptsig);
+    if (!scriptsigAsm) return flags;
+
+    const parts = scriptsigAsm.split(' ');
+
+    // For P2SH, the last push is the redeemScript. It is exempt from the
+    // *item* size check (it is a script, not a data argument), but its internal
+    // OP_PUSHDATA* payloads remain subject to the 256-byte limit.
+    const isP2SH = vin.prevout?.scriptpubkey_type === 'p2sh';
+    const redeemScriptIndex = isP2SH ? parts.length - 1 : -1;
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      // Skip opcodes
+      if (part.startsWith('OP_')) continue;
+      // The redeemScript itself is exempt as an item; scanned for internal pushes below
+      if (i === redeemScriptIndex) continue;
+
+      // Check data size
+      if ((part.length / 2) > BIP110_MAX_PUSHDATA_SIZE) {
+        flags |= TransactionFlags.bip110_large_pushdata;
+        break;
+      }
+    }
+
+    // Scan the BIP16 redeemScript's internal pushes (its contents are subject to
+    // the same OP_PUSHDATA* restrictions during execution).
+    if ((flags & TransactionFlags.bip110_large_pushdata) === 0n
+        && redeemScriptIndex >= 0
+        && !parts[redeemScriptIndex].startsWith('OP_')
+        && this.scriptHasLargePush(parts[redeemScriptIndex])) {
+      flags |= TransactionFlags.bip110_large_pushdata;
+    }
+
+    return flags;
+  }
+
+  /**
+   * Check whether a script contains an OP_PUSHDATA* payload exceeding the
+   * BIP110 256-byte limit (Rule 2).
+   *
+   * Used to scan executing scripts (BIP16 redeemScripts, witness scripts, and
+   * Tapleaf scripts): the script item itself is exempt from the witness-item
+   * size check, but its internal data pushes remain subject to Rule 2.
+   *
+   * Walks the raw bytes (no ASM-string allocation) so it stays cheap even for
+   * very large inscription Tapscripts scanned by the background scanner. Only
+   * OP_PUSHDATA2/4 can declare a payload > 256 bytes (direct pushes ≤ 75 and
+   * OP_PUSHDATA1 ≤ 255), but all push forms are handled for correctness.
+   *
+   * A push only counts if its declared data actually fits in the script. This
+   * is essential: callers may pass items that are not really scripts (e.g. a
+   * pubkey or signature when the spend type is inferred without prevout data),
+   * and a stray 0x4d/0x4e byte in such data must not be mistaken for a large
+   * OP_PUSHDATA whose payload isn't even present.
+   */
+  static scriptHasLargePush(scriptHex: string): boolean {
+    if (!scriptHex) return false;
+    let buf: Buffer;
+    try {
+      buf = Buffer.from(scriptHex, 'hex');
+    } catch (e) {
+      return false;
+    }
+
+    let i = 0;
+    while (i < buf.length) {
+      const op = buf[i];
+      let headerLen: number;
+      let dataLen: number;
+      if (op >= 0x01 && op <= 0x4b) {
+        headerLen = 1;
+        dataLen = op;
+      } else if (op === 0x4c) { // OP_PUSHDATA1
+        if (i + 2 > buf.length) break;
+        headerLen = 2;
+        dataLen = buf.readUInt8(i + 1);
+      } else if (op === 0x4d) { // OP_PUSHDATA2
+        if (i + 3 > buf.length) break;
+        headerLen = 3;
+        dataLen = buf.readUInt16LE(i + 1);
+      } else if (op === 0x4e) { // OP_PUSHDATA4
+        if (i + 5 > buf.length) break;
+        headerLen = 5;
+        dataLen = buf.readUInt32LE(i + 1);
+      } else {
+        i += 1; // non-push opcode
+        continue;
+      }
+      // Only a real push (whose declared data is actually present) counts.
+      if (i + headerLen + dataLen > buf.length) break;
+      if (dataLen > BIP110_MAX_PUSHDATA_SIZE) return true;
+      i += headerLen + dataLen;
+    }
+    return false;
+  }
+
+  /**
+   * Scan a raw Tapscript for BIP110 Rule 6 (OP_SUCCESS*) and Rule 7 (OP_IF/OP_NOTIF).
+   *
+   * This walks the script byte-by-byte, skipping push payloads so that data
+   * bytes are never mistaken for opcodes. An ASM-based scan cannot be used for
+   * OP_SUCCESS*: tooling (bitcoinjs / convertScriptSigAsm) renders those code
+   * points with their legacy names (OP_RESERVED, OP_VER, OP_CAT, ...), never
+   * "OP_SUCCESSx", so a textual match would never fire.
+   *
+   * OP_SUCCESS opcodes (BIP342): 80, 98, 126-129, 131-134, 137-138, 141-142,
+   * 149-153, 187-254. OP_IF = 0x63 (99), OP_NOTIF = 0x64 (100).
+   */
+  static scanTapscriptForViolations(scriptHex: string): { opSuccess: boolean; opIfNotif: boolean } {
+    const result = { opSuccess: false, opIfNotif: false };
+    if (!scriptHex) return result;
+
+    let buf: Buffer;
+    try {
+      buf = Buffer.from(scriptHex, 'hex');
+    } catch (e) {
+      return result;
+    }
+
+    let i = 0;
+    while (i < buf.length) {
+      const op = buf[i];
+      // Push opcodes: skip the opcode and its data payload
+      if (op >= 0x01 && op <= 0x4b) {
+        i += 1 + op;
+        continue;
+      } else if (op === 0x4c) { // OP_PUSHDATA1
+        if (i + 1 >= buf.length) break;
+        i += 2 + buf.readUInt8(i + 1);
+        continue;
+      } else if (op === 0x4d) { // OP_PUSHDATA2
+        if (i + 2 >= buf.length) break;
+        i += 3 + buf.readUInt16LE(i + 1);
+        continue;
+      } else if (op === 0x4e) { // OP_PUSHDATA4
+        if (i + 4 >= buf.length) break;
+        i += 5 + buf.readUInt32LE(i + 1);
+        continue;
+      }
+
+      // Otherwise it is an opcode (includes OP_0, OP_1NEGATE, and >= 0x50)
+      if (
+        op === 80 || op === 98 ||
+        (op >= 126 && op <= 129) || (op >= 131 && op <= 134) ||
+        (op >= 137 && op <= 138) || (op >= 141 && op <= 142) ||
+        (op >= 149 && op <= 153) || (op >= 187 && op <= 254)
+      ) {
+        result.opSuccess = true;
+      } else if (op === 0x63 || op === 0x64) {
+        result.opIfNotif = true;
+      }
+      i += 1;
+
+      if (result.opSuccess && result.opIfNotif) break; // nothing more to learn
+    }
+
+    return result;
+  }
+
   static getTransactionFlags(tx: TransactionExtended, height?: number): number {
     let flags = tx.flags ? BigInt(tx.flags) : 0n;
 
@@ -806,6 +1216,9 @@ export class Common {
     if (this.isNonStandard(tx, height)) {
       flags |= TransactionFlags.nonstandard;
     }
+
+    // BIP110 violation detection
+    flags |= this.getBIP110Flags(tx);
 
     return Number(flags);
   }

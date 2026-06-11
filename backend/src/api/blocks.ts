@@ -386,6 +386,20 @@ class Blocks {
     // BIP110 'reduced_data' miner signaling detection (version bit 4, 55% threshold)
     extras.bip110Signaling = Common.isSignalingBIP110(block.version);
 
+    // BIP110 violation detection: count transactions that would be invalid under BIP110 rules.
+    // Computed directly from the block transactions (independent of cached flags). Only when the
+    // full transaction set is available (not the coinbase-only indexing path).
+    extras.bip110ViolationCount = 0;
+    extras.bip110ViolationWeight = 0;
+    if (transactions && transactions.length > 1) {
+      for (const tx of transactions) {
+        if (Common.getBIP110Flags(tx) !== 0n) {
+          extras.bip110ViolationCount++;
+          extras.bip110ViolationWeight += (tx.weight || 0);
+        }
+      }
+    }
+
     blk.extras = <BlockExtension>extras;
     return <BlockExtended>blk;
   }

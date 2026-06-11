@@ -319,9 +319,9 @@ class BitcoinRoutes {
         return;
       }
 
-      logger.debug('Fetching fresh Bitcoin Knots nodes stats from seed.txt');
-      const response = await axios.get('https://haf.ovh/seed.txt', {
-        timeout: 10000,
+      logger.debug('Fetching fresh Bitcoin Knots nodes stats from Luke Dashjr seeds.txt (includes Tor)');
+      const response = await axios.get('https://luke.dashjr.org/programs/bitcoin/files/charts/data/seeds.txt', {
+        timeout: 30000,
         headers: {
           'User-Agent': 'Mempool.space/1.0'
         },
@@ -334,6 +334,7 @@ class BitcoinRoutes {
       let bipcount = 0;
       let ipv4Nodes = 0;
       let ipv6Nodes = 0;
+      let torNodes = 0;
 
       for (const line of lines) {
         const trimmed = line.trim();
@@ -348,9 +349,12 @@ class BitcoinRoutes {
           if (ua.includes('20260508')) bipcount++;
           if (ua.includes('knots')) {
             totalKnotsNodes++;
-            // Detect IPv6 by bracket notation [::] or plain hex:colon address before port
-            const isIPv6 = trimmed.startsWith('[') || /^[0-9a-fA-F]{0,4}(:[0-9a-fA-F]{0,4}){2,}/.test(trimmed);
-            if (isIPv6) {
+            // Detect network type: Tor (.onion) → IPv6 (bracket/hex:colon) → IPv4 (default)
+            const isTor = trimmed.includes('.onion');
+            const isIPv6 = !isTor && (trimmed.startsWith('[') || /^[0-9a-fA-F]{0,4}(:[0-9a-fA-F]{0,4}){2,}/.test(trimmed));
+            if (isTor) {
+              torNodes++;
+            } else if (isIPv6) {
               ipv6Nodes++;
             } else {
               ipv4Nodes++;
@@ -359,7 +363,30 @@ class BitcoinRoutes {
         }
       }
 
-      const knotsPercentageOfTotal = totalBitcoinNodes > 0 ? (totalKnotsNodes / totalBitcoinNodes) * 100 : 0;
+      // Network percentage and BIP110 count from uainfo.json (active nodes: listening + est_unreachable).
+      // seeds.txt inflates the denominator with inactive historical nodes, so use uainfo for percentages.
+      let uaiTotalNodes = 0;
+      let uaiKnotsNodes = 0;
+      let uaiBipCount = 0;
+      try {
+        const uaResponse = await axios.get('https://luke.dashjr.org/programs/bitcoin/files/charts/data/uainfo.json', {
+          timeout: 15000,
+          headers: { 'User-Agent': 'Mempool.space/1.0' }
+        });
+        for (const [ua, data] of Object.entries(uaResponse.data as Record<string, { listening?: number; est_unreachable?: number }>)) {
+          const active = (data.listening || 0) + (data.est_unreachable || 0);
+          uaiTotalNodes += active;
+          const ual = ua.toLowerCase();
+          if (ual.includes('knots')) { uaiKnotsNodes += active; }
+          if (ual.includes('bip110')) { uaiBipCount += active; }
+        }
+      } catch (e) {
+        logger.warn('Could not fetch uainfo.json for Knots/BIP110 percentages');
+      }
+
+      const effectiveBitcoinTotal = uaiTotalNodes > 0 ? uaiTotalNodes : totalBitcoinNodes;
+      const effectiveKnotsTotal = uaiKnotsNodes > 0 ? uaiKnotsNodes : totalKnotsNodes;
+      const knotsPercentageOfTotal = effectiveBitcoinTotal > 0 ? (effectiveKnotsTotal / effectiveBitcoinTotal) * 100 : 0;
 
       const result = {
         countries: [],
@@ -367,11 +394,11 @@ class BitcoinRoutes {
           totalNodes: totalKnotsNodes,
           ipv4Nodes: ipv4Nodes,
           ipv6Nodes: ipv6Nodes,
-          clearnetNodes: totalKnotsNodes,
-          torNodes: 0,
-          totalBitcoinNodes: totalBitcoinNodes,
+          clearnetNodes: ipv4Nodes + ipv6Nodes,
+          torNodes: torNodes,
+          totalBitcoinNodes: effectiveBitcoinTotal,
           percentageOfTotal: knotsPercentageOfTotal,
-          bipCount: bipcount
+          bipCount: uaiBipCount > 0 ? uaiBipCount : bipcount
         }
       };
 

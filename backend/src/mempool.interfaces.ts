@@ -296,6 +296,14 @@ export const TransactionFlags = {
   sighash_single: 0b00000100_00000000_00000000_00000000_00000000_00000000n,
   sighash_default:0b00001000_00000000_00000000_00000000_00000000_00000000n,
   sighash_acp:    0b00010000_00000000_00000000_00000000_00000000_00000000n,
+  // BIP110 'Reduced Data Temporary Softfork' violations (bits 45-51, within JS 53-bit safe integer range)
+  bip110_large_scriptpubkey:  0b00100000_00000000_00000000_00000000_00000000_00000000n, // bit 45 - Rule 1: scriptPubKey > 34 bytes (OP_RETURN up to 83)
+  bip110_large_pushdata:      0b01000000_00000000_00000000_00000000_00000000_00000000n, // bit 46 - Rule 2: script-argument witness/PUSHDATA item > 256 bytes
+  bip110_undefined_witness:   0b10000000_00000000_00000000_00000000_00000000_00000000n, // bit 47 - Rule 3: undefined witness/Tapleaf version
+  bip110_taproot_annex:       0b00000001_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 48 - Rule 4: Taproot annex present
+  bip110_large_control_block: 0b00000010_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 49 - Rule 5: control block > 257 bytes
+  bip110_op_success:          0b00000100_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 50 - Rule 6: OP_SUCCESS* in tapscript
+  bip110_op_if_notif:         0b00001000_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 51 - Rule 7: OP_IF/OP_NOTIF executing in tapscript
 };
 
 export interface BlockExtension {
@@ -341,6 +349,10 @@ export interface BlockExtension {
   definitionHash: string | undefined;
   // BIP110 'reduced_data' deployment: miner signaling (version bit 4, threshold 1109/2016)
   bip110Signaling?: boolean;
+  // BIP110 violation count: transactions that would be invalid under BIP110 consensus rules
+  bip110ViolationCount?: number;
+  // BIP110 violation weight: total weight of transactions that would violate BIP110 rules
+  bip110ViolationWeight?: number;
 }
 
 /**

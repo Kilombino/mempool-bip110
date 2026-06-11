@@ -346,6 +346,14 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
     return (Number(block.version) & (1 << versionBit)) === (1 << versionBit);
   }
 
+  hasBIP110Violations(block: BlockchainBlock): boolean {
+    return block?.extras?.bip110ViolationCount != null && block.extras.bip110ViolationCount > 0;
+  }
+
+  getBIP110ViolationCount(block: BlockchainBlock): number {
+    return block?.extras?.bip110ViolationCount || 0;
+  }
+
   getStyleForBlock(block: BlockchainBlock, index: number, animateEnterFrom: number = 0) {
     if (!block || block.placeholder) {
       return this.getStyleForPlaceholderBlock(index, animateEnterFrom);

@@ -161,6 +161,7 @@ export class KnotsNodesChartComponent implements OnInit {
       const total = knotsData.totals.totalNodes;
       const ipv4 = knotsData.totals.ipv4Nodes;
       const ipv6 = knotsData.totals.ipv6Nodes;
+      const tor = knotsData.totals.torNodes;
       const pieData = [
         {
           value: ipv4,
@@ -174,10 +175,19 @@ export class KnotsNodesChartComponent implements OnInit {
         {
           value: ipv6,
           name: 'IPv6',
+          itemStyle: { color: '#00ACC1' },
+          label: { color: '#00ACC1' },
+          tooltip: {
+            formatter: () => `<b style=\"color: white\">IPv6</b><br>${ipv6} nodes (${((ipv6/total)*100).toFixed(1)}%)`
+          }
+        },
+        {
+          value: tor,
+          name: 'Tor',
           itemStyle: { color: '#8E24AA' },
           label: { color: '#8E24AA' },
           tooltip: {
-            formatter: () => `<b style=\"color: white\">IPv6</b><br>${ipv6} nodes (${((ipv6/total)*100).toFixed(1)}%)`
+            formatter: () => `<b style=\"color: white\">Tor</b><br>${tor} nodes (${((tor/total)*100).toFixed(1)}%)`
           }
         }
       ];
@@ -192,7 +202,7 @@ export class KnotsNodesChartComponent implements OnInit {
 
       this.chartOptions = {
         animation: true,
-        color: ['#1E88E5', '#8E24AA'],
+        color: ['#1E88E5', '#00ACC1', '#8E24AA'],
         tooltip: {
           trigger: 'item',
           textStyle: {

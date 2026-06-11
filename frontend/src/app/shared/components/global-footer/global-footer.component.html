@@ -116,10 +116,10 @@
     <div class="row version" [style]="{'background-color': isServicesPage ? 'var(--bg)' : ''}">
       <div class="col-sm-12">
         <p *ngIf="officialMempoolSpace">
-          <span>{{ (backendInfo$ | async)?.hostname }} (v{{ (backendInfo$ | async )?.version }}) [<a target="_blank" href="https://github.com/mempool/mempool/commit/{{ (backendInfo$ | async )?.gitCommit | slice:0:8 }}">{{ (backendInfo$ | async )?.gitCommit | slice:0:8 }}</a>]</span>
+          <span>{{ (backendInfo$ | async)?.hostname }} (v{{ (backendInfo$ | async )?.version }}) [<a target="_blank" href="https://github.com/Kilombino/mempool-bip110">{{ (backendInfo$ | async )?.gitCommit | slice:0:8 }}</a>]</span>
           <span *ngIf="stateService.env.GIT_COMMIT_HASH_MEMPOOL_SPACE">[{{ (servicesBackendInfo$ | async )?.gitCommit | slice:0:8 }}]</span>
         </p>
-        <p *ngIf="!officialMempoolSpace">v{{ packetJsonVersion }} [<a target="_blank" href="https://github.com/mempool/mempool/commit/{{ frontendGitCommitHash }}">{{ frontendGitCommitHash }}</a>]</p>
+        <p *ngIf="!officialMempoolSpace">v{{ packetJsonVersion }} [<a target="_blank" href="https://github.com/Kilombino/mempool-bip110">{{ frontendGitCommitHash }}</a>] &middot; <a target="_blank" href="https://github.com/Kilombino/mempool-bip110" i18n="footer.source-code">Source code (AGPL-3.0)</a> &middot; <a target="_blank" href="https://github.com/Retropex/mempool" i18n="footer.based-on-retropex">based on Retropex</a> &middot; <a target="_blank" href="https://github.com/paulscode/mempool-bip110" i18n="footer.bip110-by-paulscode">BIP110 by paulscode</a></p>
       </div>
     </div>
   </div>

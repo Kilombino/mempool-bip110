@@ -377,3 +377,112 @@ h1 {
     box-shadow: 0 0 20px rgba(255, 107, 0, 0.9), 0 0 30px rgba(255, 107, 0, 0.4);
   }
 }
+
+/* ===== BIP110 violation styles (ported from paulscode/mempool-bip110) ===== */
+.badge-bip110-clean {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: #fff;
+  font-weight: bold;
+  animation: bip110-clean-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+  border: none;
+}
+
+@keyframes bip110-clean-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(46, 204, 113, 0.8), 0 0 30px rgba(0, 255, 136, 0.3);
+  }
+}
+
+// Combined: signaling + violations — green border (intent), orange-green interior (transitional)
+.bip110-signaling-glow.bip110-violation-glow {
+  background: linear-gradient(135deg, 
+    rgba(0, 255, 136, 0.10) 0%, 
+    rgba(255, 120, 0, 0.08) 25%,
+    rgba(0, 255, 136, 0.06) 40%,
+    rgba(255, 100, 0, 0.10) 60%,
+    rgba(0, 255, 136, 0.06) 75%,
+    rgba(255, 80, 0, 0.08) 100%) !important;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  box-shadow: 
+    0 0 30px rgba(0, 255, 136, 0.18),
+    0 0 50px rgba(255, 100, 0, 0.12),
+    inset 0 0 40px rgba(255, 100, 0, 0.06);
+  animation: bip110-dual-container-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes bip110-dual-container-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 30px rgba(0, 255, 136, 0.18),
+      0 0 50px rgba(255, 100, 0, 0.12),
+      inset 0 0 40px rgba(255, 100, 0, 0.06);
+    border-color: rgba(0, 255, 136, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 0 50px rgba(0, 255, 136, 0.30),
+      0 0 80px rgba(255, 100, 0, 0.20),
+      inset 0 0 60px rgba(255, 100, 0, 0.10);
+    border-color: rgba(0, 255, 136, 0.45);
+  }
+}
+
+// BIP110 violation glow effect for the block view panel
+.bip110-violation-glow {
+  position: relative;
+  background: linear-gradient(135deg, 
+    rgba(255, 80, 0, 0.12) 0%, 
+    rgba(255, 120, 0, 0.08) 25%,
+    rgba(255, 60, 0, 0.15) 50%,
+    rgba(255, 100, 0, 0.08) 75%,
+    rgba(255, 80, 0, 0.12) 100%) !important;
+  border-radius: 6px;
+  box-shadow: 
+    0 0 30px rgba(255, 100, 0, 0.25),
+    0 0 60px rgba(255, 60, 0, 0.15),
+    inset 0 0 40px rgba(255, 100, 0, 0.08);
+  animation: bip110-container-pulse 2.5s ease-in-out infinite;
+  border: 1px solid rgba(255, 100, 0, 0.3);
+}
+
+.badge-bip110-violation-block {
+  background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 50%, #ff6b00 100%);
+  color: #000;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  animation: bip110-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(255, 107, 0, 0.6);
+}
+
+@keyframes bip110-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 107, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 107, 0, 0.9), 0 0 30px rgba(255, 107, 0, 0.4);
+  }
+}
+
+/* BIP110 violation breakdown (clickable list in block detail) */
+.bip110-violation-list {
+  padding: 0.25rem 0.5rem 0.5rem;
+  .bip110-violation-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    border-top: 1px solid rgba(255, 107, 0, 0.15);
+    font-size: 0.85rem;
+    .bip110-violation-txid { font-family: monospace; }
+    .bip110-violation-rules { color: #ff8c42; font-size: 0.78rem; }
+  }
+  .bip110-violation-item:first-child { border-top: none; }
+}
