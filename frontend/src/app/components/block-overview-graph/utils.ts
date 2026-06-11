@@ -29,15 +29,14 @@ export function setBIP110PulsePhase(phase: number): void {
 
 // Get pulsing BIP110 color based on current phase
 export function getPulsingBIP110Color(): Color {
-  // Pulse between neon orange and yellow-green (halfway to full green)
-  const rawPulse = 0.5 + 0.5 * Math.sin(bip110PulsePhase);
-  // Use power function to spend more time on orange (pulse=0) end
-  const pulse = Math.pow(rawPulse, 5);  // Quintic weighting: even more orange, very brief green flash
-  // Neon orange (ff6b00) at pulse=0 -> Yellow-green (~9cb50a) at pulse=1
+  // Pulse between vivid red and bright orange (never green, so it pops against the
+  // green/blue transaction sea). High-contrast, attention-grabbing.
+  const pulse = 0.5 + 0.5 * Math.sin(bip110PulsePhase);
+  // Deep red (ff1500) at pulse=0 -> bright orange (ff8a00) at pulse=1
   return {
-    r: 1.0 - 0.39 * pulse,   // 1.0 (orange) to 0.61 (yellow-green)
-    g: 0.42 + 0.29 * pulse,  // 0.42 (orange) to 0.71 (yellow-green)
-    b: 0.0 + 0.04 * pulse,   // 0.0 to 0.04
+    r: 1.0,                   // full red channel always
+    g: 0.08 + 0.46 * pulse,   // 0.08 (deep red) to 0.54 (bright orange)
+    b: 0.0,
     a: 1
   };
 }
@@ -130,7 +129,7 @@ export const defaultAuditColors = {
   prioritized: darken(desaturate(hexToColor('0099ff'), 0.3), 0.7),
   accelerated: hexToColor('8f5ff6'),
   // BIP110 violation - neon orange warning
-  bip110_violation: hexToColor('ff6b00'),
+  bip110_violation: hexToColor('ff1500'),
 };
 
 const contrastColors: { [key: string]: ColorPalette } = {
@@ -163,7 +162,7 @@ export const contrastAuditColors = {
   prioritized: darken(desaturate(hexToColor('00bb98'), 0.3), 0.7),
   accelerated: hexToColor('8f5ff6'),
   // BIP110 violation - neon orange warning (brighter for contrast mode)
-  bip110_violation: hexToColor('ff8c00'),
+  bip110_violation: hexToColor('ff3000'),
 };
 
 export function defaultColorFunction(

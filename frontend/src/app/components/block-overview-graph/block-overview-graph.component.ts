@@ -830,10 +830,10 @@ void main() {
       }
     }
     
-    // Blend symbol with subtle transparency
-    float symbolAlpha = symbol * 0.25; // Very subtle
-    // Darken where symbol is present
-    gl_FragColor.rgb = mix(gl_FragColor.rgb, gl_FragColor.rgb * 0.4, symbolAlpha);
+    // Blend symbol — strong dark stamp so the radioactive mark reads clearly
+    float symbolAlpha = symbol * 0.7;
+    // Darken hard where symbol is present (near-black ☢ over the red/orange)
+    gl_FragColor.rgb = mix(gl_FragColor.rgb, gl_FragColor.rgb * 0.12, symbolAlpha);
   }
   
   // premultiply alpha
