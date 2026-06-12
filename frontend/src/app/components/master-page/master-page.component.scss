@@ -328,3 +328,17 @@ main {
   padding-bottom: 20px;
 }
 
+
+.bip110-logo-wrap {
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden; // crop the zoomed-in logo so its edges/border don't show
+
+  .bip110-logo {
+    height: 42px;
+    width: auto;
+    transform: scale(1.3); // ~130% zoom; overflow is clipped by the wrapper
+    transform-origin: center;
+  }
+}

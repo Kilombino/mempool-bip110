@@ -29,7 +29,7 @@
         }
       }
       @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
-        <img src="/resources/bip110-logo.png" alt="BIP110 mempool" height="42px" class="mr-2 bip110-logo">
+        <span class="mr-2 bip110-logo-wrap"><img src="/resources/bip110-logo.png" alt="BIP110 mempool" class="bip110-logo"></span>
         <app-svg-images *ngIf="officialMempoolSpace" name="officialMempoolSpace" viewBox="0 0 500 126"></app-svg-images>
       }
       <div class="connection-badge">
@@ -50,7 +50,7 @@
         }
       }
       @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
-        <img src="/resources/bip110-logo.png" alt="BIP110 mempool" height="42px" class="mr-2 bip110-logo">
+        <span class="mr-2 bip110-logo-wrap"><img src="/resources/bip110-logo.png" alt="BIP110 mempool" class="bip110-logo"></span>
         <app-svg-images *ngIf="officialMempoolSpace" name="officialMempoolSpace" viewBox="0 0 500 126"></app-svg-images>
       }
       <div class="connection-badge">
