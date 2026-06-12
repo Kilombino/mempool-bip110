@@ -411,6 +411,21 @@ export default class BlockScene {
 
   private saveGridToScreenPosition(tx: TxView): void {
     tx.screenPosition = this.gridToScreen(tx.gridPosition);
+    // BIP110-violating txs are often tiny (~150 vB) and get lost as 1px specks among
+    // thousands. Enforce a minimum on-screen size, recentred, so they always stand out
+    // and leave room for the ☢ symbol. Only ever grows a tx, never shrinks a large one.
+    if (hasBIP110Violation(tx)) {
+      const minSize = this.gridSize * 2;
+      if (tx.screenPosition.s < minSize) {
+        const cx = tx.screenPosition.x + (tx.screenPosition.s / 2);
+        const cy = tx.screenPosition.y + (tx.screenPosition.s / 2);
+        tx.screenPosition = {
+          x: cx - (minSize / 2),
+          y: cy - (minSize / 2),
+          s: minSize,
+        };
+      }
+    }
   }
 
   // convert grid coordinates to screen coordinates
