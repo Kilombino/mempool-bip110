@@ -373,12 +373,16 @@ class BitcoinRoutes {
           timeout: 15000,
           headers: { 'User-Agent': 'Mempool.space/1.0' }
         });
-        for (const [ua, data] of Object.entries(uaResponse.data as Record<string, { listening?: number; est_unreachable?: number }>)) {
+        for (const [ua, data] of Object.entries(uaResponse.data as Record<string, { listening?: number; est_unreachable?: number; services?: Record<string, number> }>)) {
           const active = (data.listening || 0) + (data.est_unreachable || 0);
           uaiTotalNodes += active;
           const ual = ua.toLowerCase();
           if (ual.includes('knots')) { uaiKnotsNodes += active; }
-          if (ual.includes('bip110')) { uaiBipCount += active; }
+          // BIP110/RDTS signaling is advertised via service bit 27, not (only) the UA string.
+          // Counting the UA substring "bip110" undercounts (~5%): the latest Knots signal RDTS
+          // readiness via the service bit without putting "bip110" in their user agent (~12%).
+          const rdtsFrac = (data.services && data.services['27']) || 0;
+          uaiBipCount += active * rdtsFrac;
         }
       } catch (e) {
         logger.warn('Could not fetch uainfo.json for Knots/BIP110 percentages');
@@ -398,7 +402,7 @@ class BitcoinRoutes {
           torNodes: torNodes,
           totalBitcoinNodes: effectiveBitcoinTotal,
           percentageOfTotal: knotsPercentageOfTotal,
-          bipCount: uaiBipCount > 0 ? uaiBipCount : bipcount
+          bipCount: uaiBipCount > 0 ? Math.round(uaiBipCount) : bipcount
         }
       };
 
