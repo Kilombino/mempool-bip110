@@ -392,6 +392,28 @@ class BitcoinRoutes {
       const effectiveKnotsTotal = uaiKnotsNodes > 0 ? uaiKnotsNodes : totalKnotsNodes;
       const knotsPercentageOfTotal = effectiveBitcoinTotal > 0 ? (effectiveKnotsTotal / effectiveBitcoinTotal) * 100 : 0;
 
+      // BIP110 node signaling %: primary source is bitdis.org (independent crawler),
+      // falling back to the Luke Dashjr service-bit-27 count if it is unreachable.
+      // Only the % is shown in the UI, so we scale bitdis's ratio onto our node total.
+      let bip110Fraction = uaiTotalNodes > 0 ? (uaiBipCount / uaiTotalNodes)
+                                             : (effectiveBitcoinTotal > 0 ? bipcount / effectiveBitcoinTotal : 0);
+      try {
+        const bdResponse = await axios.get('https://bitdis.org/api/live-data', {
+          timeout: 15000,
+          headers: { 'User-Agent': 'Mempool.space/1.0' }
+        });
+        const widgets = (bdResponse.data && bdResponse.data.widgets) || [];
+        const bipWidget = widgets.find((w: any) => w.id === 'bip110_nodes');
+        const yes = bipWidget && (bipWidget.participants || []).find((p: any) => p.name === 'Yes');
+        if (yes && yes.percentage !== undefined) {
+          const pct = parseFloat(yes.percentage);
+          if (!isNaN(pct) && pct > 0) { bip110Fraction = pct / 100; }
+        }
+      } catch (e) {
+        logger.warn('Could not fetch bitdis.org BIP110 stats; using Luke Dashjr bit-27 fallback');
+      }
+      const bipCountFinal = Math.round(bip110Fraction * effectiveBitcoinTotal);
+
       const result = {
         countries: [],
         totals: {
@@ -402,7 +424,7 @@ class BitcoinRoutes {
           torNodes: torNodes,
           totalBitcoinNodes: effectiveBitcoinTotal,
           percentageOfTotal: knotsPercentageOfTotal,
-          bipCount: uaiBipCount > 0 ? Math.round(uaiBipCount) : bipcount
+          bipCount: bipCountFinal
         }
       };
 
