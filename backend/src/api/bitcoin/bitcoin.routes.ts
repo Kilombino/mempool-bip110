@@ -414,14 +414,24 @@ class BitcoinRoutes {
       }
       const bipCountFinal = Math.round(bip110Fraction * effectiveBitcoinTotal);
 
+      // Network split (IPv4/IPv6/Tor) only exists for reachable Knots (seeds.txt). Scale it
+      // proportionally to the full active Knots census so the three sum exactly to the total
+      // shown ("Total Knots Nodes"). Tor absorbs the rounding remainder.
+      const knotsTotal = Math.round(effectiveKnotsTotal);
+      const reachTotal = ipv4Nodes + ipv6Nodes + torNodes;
+      const scale = reachTotal > 0 ? knotsTotal / reachTotal : 0;
+      const ipv4Scaled = Math.round(ipv4Nodes * scale);
+      const ipv6Scaled = Math.round(ipv6Nodes * scale);
+      const torScaled = Math.max(0, knotsTotal - ipv4Scaled - ipv6Scaled);
+
       const result = {
         countries: [],
         totals: {
-          totalNodes: totalKnotsNodes,
-          ipv4Nodes: ipv4Nodes,
-          ipv6Nodes: ipv6Nodes,
-          clearnetNodes: ipv4Nodes + ipv6Nodes,
-          torNodes: torNodes,
+          totalNodes: knotsTotal,
+          ipv4Nodes: ipv4Scaled,
+          ipv6Nodes: ipv6Scaled,
+          clearnetNodes: ipv4Scaled + ipv6Scaled,
+          torNodes: torScaled,
           totalBitcoinNodes: effectiveBitcoinTotal,
           percentageOfTotal: knotsPercentageOfTotal,
           bipCount: bipCountFinal,
