@@ -306,4 +306,8 @@ export class KnotsNodesChartComponent implements OnInit {
   getbip110count(knotsData: KnotsNodeResponse): number {
     return knotsData.totals.bipCount;
   }
+
+  getRdtsCount(knotsData: KnotsNodeResponse): number {
+    return knotsData.totals.rdtsCount;
+  }
 }

@@ -18,6 +18,7 @@ export interface KnotsNodeTotals {
   totalBitcoinNodes: number;
   percentageOfTotal: number;
   bipCount: number;
+  rdtsCount: number;
 }
 
 export interface KnotsNodeResponse {
@@ -73,6 +74,7 @@ export class BitnodesService {
               totalBitcoinNodes: 0,
               percentageOfTotal: 0,
               bipCount: 0,
+              rdtsCount: 0,
             }
           });
         })

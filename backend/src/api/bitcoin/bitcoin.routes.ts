@@ -424,7 +424,9 @@ class BitcoinRoutes {
           torNodes: torNodes,
           totalBitcoinNodes: effectiveBitcoinTotal,
           percentageOfTotal: knotsPercentageOfTotal,
-          bipCount: bipCountFinal
+          bipCount: bipCountFinal,
+          // Knots nodes signalling RDTS/BIP110 via service bit 27 (count, from Luke Dashjr uainfo.json)
+          rdtsCount: Math.round(uaiBipCount)
         }
       };
 
