@@ -310,4 +310,8 @@ export class KnotsNodesChartComponent implements OnInit {
   getRdtsCount(knotsData: KnotsNodeResponse): number {
     return knotsData.totals.rdtsCount;
   }
+
+  getKnotsActive(knotsData: KnotsNodeResponse): number {
+    return knotsData.totals.knotsActive;
+  }
 }

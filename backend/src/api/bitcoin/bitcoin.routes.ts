@@ -426,7 +426,9 @@ class BitcoinRoutes {
           percentageOfTotal: knotsPercentageOfTotal,
           bipCount: bipCountFinal,
           // Knots nodes signalling RDTS/BIP110 via service bit 27 (count, from Luke Dashjr uainfo.json)
-          rdtsCount: Math.round(uaiBipCount)
+          rdtsCount: Math.round(uaiBipCount),
+          // Total Knots over the full active census (uainfo) so it is always >= rdtsCount
+          knotsActive: Math.round(effectiveKnotsTotal)
         }
       };
 
