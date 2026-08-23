@@ -397,20 +397,27 @@ class BitcoinRoutes {
       // Only the % is shown in the UI, so we scale bitdis's ratio onto our node total.
       let bip110Fraction = uaiTotalNodes > 0 ? (uaiBipCount / uaiTotalNodes)
                                              : (effectiveBitcoinTotal > 0 ? bipcount / effectiveBitcoinTotal : 0);
-      try {
-        const bdResponse = await axios.get('https://bitdis.org/api/live-data', {
-          timeout: 15000,
-          headers: { 'User-Agent': 'Mempool.space/1.0' }
-        });
-        const widgets = (bdResponse.data && bdResponse.data.widgets) || [];
-        const bipWidget = widgets.find((w: any) => w.id === 'bip110_nodes');
-        const yes = bipWidget && (bipWidget.participants || []).find((p: any) => p.name === 'Yes');
-        if (yes && yes.percentage !== undefined) {
-          const pct = parseFloat(yes.percentage);
-          if (!isNaN(pct) && pct > 0) { bip110Fraction = pct / 100; }
+      // Source coherence: the BIP110 % and the "enforcing RDTS" card must come from
+      // the same census (uainfo.json service bit 27), otherwise the dashboard shows
+      // two different numbers for the same thing. The bitdis.org crawler is kept
+      // here but no longer overrides the ratio - flip this to true to go back to it.
+      const USE_BITDIS_AS_BIP110_SOURCE = false;
+      if (USE_BITDIS_AS_BIP110_SOURCE) {
+        try {
+          const bdResponse = await axios.get('https://bitdis.org/api/live-data', {
+            timeout: 15000,
+            headers: { 'User-Agent': 'Mempool.space/1.0' }
+          });
+          const widgets = (bdResponse.data && bdResponse.data.widgets) || [];
+          const bipWidget = widgets.find((w: any) => w.id === 'bip110_nodes');
+          const yes = bipWidget && (bipWidget.participants || []).find((p: any) => p.name === 'Yes');
+          if (yes && yes.percentage !== undefined) {
+            const pct = parseFloat(yes.percentage);
+            if (!isNaN(pct) && pct > 0) { bip110Fraction = pct / 100; }
+          }
+        } catch (e) {
+          logger.warn('Could not fetch bitdis.org BIP110 stats; using Luke Dashjr bit-27 fallback');
         }
-      } catch (e) {
-        logger.warn('Could not fetch bitdis.org BIP110 stats; using Luke Dashjr bit-27 fallback');
       }
       const bipCountFinal = Math.round(bip110Fraction * effectiveBitcoinTotal);
 

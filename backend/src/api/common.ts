@@ -30,6 +30,11 @@ const BIP110_MAX_SCRIPTPUBKEY_SIZE = 34;      // Rule 1: max scriptPubKey size (
 const BIP110_MAX_OPRETURN_SIZE = 83;          // Rule 1: max OP_RETURN size
 const BIP110_MAX_PUSHDATA_SIZE = 256;         // Rule 2: max script-argument witness/PUSHDATA item size
 const BIP110_MAX_CONTROL_BLOCK_SIZE = 257;    // Rule 5: max Taproot control block size (128 script leaves)
+// Opcodes that plausibly end a spendable redeemScript (used only to tell a
+// redeemScript from a data push when prevout data is unavailable): OP_ENDIF,
+// OP_VERIFY, OP_EQUAL(VERIFY), OP_CHECKSIG(VERIFY), OP_CHECKMULTISIG(VERIFY),
+// OP_CHECKLOCKTIMEVERIFY, OP_CHECKSEQUENCEVERIFY.
+const BIP110_REDEEMSCRIPT_TERMINATORS = new Set([0x68, 0x69, 0x87, 0x88, 0xac, 0xad, 0xae, 0xaf, 0xb1, 0xb2]);
 
 export class Common {
   static nativeAssetId = config.MEMPOOL.NETWORK === 'liquidtestnet' ?
@@ -891,8 +896,23 @@ export class Common {
     // For P2SH, the last push is the redeemScript. It is exempt from the
     // *item* size check (it is a script, not a data argument), but its internal
     // OP_PUSHDATA* payloads remain subject to the 256-byte limit.
-    const isP2SH = vin.prevout?.scriptpubkey_type === 'p2sh';
-    const redeemScriptIndex = isP2SH ? parts.length - 1 : -1;
+    //
+    // Without prevout data (the block classification path on non-esplora backends)
+    // the input type is unknown, so the redeemScript is inferred from the scriptSig
+    // instead: the trailing push counts as one when it looks like a redeemScript.
+    // Otherwise every legacy P2SH multisig whose redeemScript exceeds 256 bytes
+    // (a 3-of-4 with uncompressed pubkeys is 267 bytes) is reported as a false
+    // Rule 2 violation.
+    const prevoutType: string | undefined = vin.prevout?.scriptpubkey_type;
+    let redeemScriptIndex = -1;
+    if (prevoutType === 'p2sh') {
+      redeemScriptIndex = parts.length - 1;
+    } else if (!prevoutType) {
+      const lastPart = parts[parts.length - 1];
+      if (lastPart && !lastPart.startsWith('OP_') && this.scriptLooksLikeRedeemScript(lastPart)) {
+        redeemScriptIndex = parts.length - 1;
+      }
+    }
 
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
@@ -918,6 +938,65 @@ export class Common {
     }
 
     return flags;
+  }
+
+  /**
+   * Heuristic: does this hex blob look like a BIP16 redeemScript?
+   *
+   * Used only when prevout data is unavailable and the input type is therefore
+   * unknown. Two conditions must hold: the blob parses cleanly as a script (every
+   * push declares data that is actually present and the walk ends exactly at the
+   * end of the blob), and its last operation is an opcode that plausibly ends a
+   * spendable script rather than a trailing data push.
+   *
+   * Raw data blobs pass neither reliably, so they stay subject to the Rule 2
+   * item-size limit; real redeemScripts (multisig, hashlocks, HTLCs) pass.
+   */
+  static scriptLooksLikeRedeemScript(scriptHex: string): boolean {
+    if (!scriptHex || scriptHex.length % 2 !== 0) return false;
+    let buf: Buffer;
+    try {
+      buf = Buffer.from(scriptHex, 'hex');
+    } catch (e) {
+      return false;
+    }
+    // Buffer.from silently drops invalid hex characters, so verify the round trip
+    if (buf.length === 0 || buf.length * 2 !== scriptHex.length) return false;
+
+    let i = 0;
+    let lastOpcode = -1;
+    while (i < buf.length) {
+      const op = buf[i];
+      let headerLen: number;
+      let dataLen: number;
+
+      if (op >= 0x01 && op <= 0x4b) {
+        headerLen = 1;
+        dataLen = op;
+      } else if (op === 0x4c) { // OP_PUSHDATA1
+        if (i + 2 > buf.length) return false;
+        headerLen = 2;
+        dataLen = buf.readUInt8(i + 1);
+      } else if (op === 0x4d) { // OP_PUSHDATA2
+        if (i + 3 > buf.length) return false;
+        headerLen = 3;
+        dataLen = buf.readUInt16LE(i + 1);
+      } else if (op === 0x4e) { // OP_PUSHDATA4
+        if (i + 5 > buf.length) return false;
+        headerLen = 5;
+        dataLen = buf.readUInt32LE(i + 1);
+      } else {
+        lastOpcode = op;
+        i += 1;
+        continue;
+      }
+
+      if (i + headerLen + dataLen > buf.length) return false;
+      lastOpcode = -1; // ends on a data push, not an opcode
+      i += headerLen + dataLen;
+    }
+
+    return BIP110_REDEEMSCRIPT_TERMINATORS.has(lastOpcode);
   }
 
   /**

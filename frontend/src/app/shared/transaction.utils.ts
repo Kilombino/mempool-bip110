@@ -2976,6 +2976,46 @@ function bip110ScriptHasLargePush(scriptHex: string): boolean {
   return false;
 }
 
+// Opcodes that plausibly end a spendable redeemScript (used only to tell a
+// redeemScript from a data push when prevout data is unavailable): OP_ENDIF,
+// OP_VERIFY, OP_EQUAL(VERIFY), OP_CHECKSIG(VERIFY), OP_CHECKMULTISIG(VERIFY),
+// OP_CHECKLOCKTIMEVERIFY, OP_CHECKSEQUENCEVERIFY.
+const BIP110_REDEEMSCRIPT_TERMINATORS = new Set([0x68, 0x69, 0x87, 0x88, 0xac, 0xad, 0xae, 0xaf, 0xb1, 0xb2]);
+
+/**
+ * Heuristic: does this hex blob look like a BIP16 redeemScript? Used only when
+ * prevout data is unavailable and the input type is therefore unknown. The blob
+ * must parse cleanly as a script (every push declares data that is actually
+ * present, ending exactly at the end of the blob) and its last operation must be
+ * an opcode that plausibly ends a spendable script, not a trailing data push.
+ */
+function bip110LooksLikeRedeemScript(scriptHex: string): boolean {
+  if (!scriptHex || scriptHex.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(scriptHex)) { return false; }
+  const len = scriptHex.length / 2;
+  const byteAt = (i: number): number => parseInt(scriptHex.substr(i * 2, 2), 16);
+  const readLE = (at: number, count: number): number => {
+    let v = 0;
+    for (let k = 0; k < count; k++) { v += byteAt(at + k) * Math.pow(256, k); }
+    return v;
+  };
+  let i = 0;
+  let lastOpcode = -1;
+  while (i < len) {
+    const op = byteAt(i);
+    let headerLen: number;
+    let dataLen: number;
+    if (op >= 0x01 && op <= 0x4b) { headerLen = 1; dataLen = op; }
+    else if (op === 0x4c) { if (i + 2 > len) { return false; } headerLen = 2; dataLen = byteAt(i + 1); }
+    else if (op === 0x4d) { if (i + 3 > len) { return false; } headerLen = 3; dataLen = readLE(i + 1, 2); }
+    else if (op === 0x4e) { if (i + 5 > len) { return false; } headerLen = 5; dataLen = readLE(i + 1, 4); }
+    else { lastOpcode = op; i += 1; continue; } // non-push opcode
+    if (i + headerLen + dataLen > len) { return false; }
+    lastOpcode = -1; // ends on a data push, not an opcode
+    i += headerLen + dataLen;
+  }
+  return BIP110_REDEEMSCRIPT_TERMINATORS.has(lastOpcode);
+}
+
 /**
  * Scan a raw Tapscript (hex) for Rule 6 (OP_SUCCESS*) and Rule 7 (OP_IF/OP_NOTIF),
  * skipping push payloads so data bytes are never mistaken for opcodes. An ASM
@@ -3157,9 +3197,16 @@ function getBIP110Flags(tx: Transaction): bigint {
 
     // Rule 2: scriptSig push data (> 256 bytes). The BIP16 redeemScript (last push
     // in a P2SH scriptSig) is exempt as an item, but its internal pushes still apply.
+    // Without prevout data the input type is unknown, so the redeemScript is
+    // inferred instead: the trailing push counts as one when it looks like a
+    // redeemScript. Otherwise legacy P2SH multisig redeemScripts over 256 bytes
+    // (3-of-4 with uncompressed pubkeys is 267 bytes) are false Rule 2 violations.
     if (vin.scriptsig_asm) {
       const parts = vin.scriptsig_asm.split(' ');
-      const isP2SH = vin.prevout?.scriptpubkey_type === 'p2sh';
+      const prevoutType: string | undefined = vin.prevout?.scriptpubkey_type;
+      const lastPart = parts[parts.length - 1];
+      const isP2SH = prevoutType === 'p2sh'
+        || (!prevoutType && !!lastPart && !lastPart.startsWith('OP_') && bip110LooksLikeRedeemScript(lastPart));
       const redeemScriptIndex = isP2SH ? parts.length - 1 : -1;
       for (let i = 0; i < parts.length; i++) {
         if (parts[i].startsWith('OP_')) { continue; }
