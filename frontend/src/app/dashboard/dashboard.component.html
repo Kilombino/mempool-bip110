@@ -67,20 +67,8 @@
 
   <!-- Knots Nodes + BLAKE2b Peers Section -->
   <div *ngIf="stateService.network === ''">
-    <!-- Knots Cards Grid -->
-    <div class="row row-cols-1 row-cols-md-2">
-      <!-- Bitcoin Knots Nodes -->
-      <div class="col" style="max-height: 410px">
-        <div class="card">
-          <div class="card-body pl-2 pr-2">
-            <h5 class="card-title" i18n="knots.nodes-distribution">Bitcoin Knots Nodes</h5>
-            <div class="mempool-graph">
-              <app-knots-nodes-chart [height]="300" [attr.data-cy]="'knots-nodes'" [widget]=true></app-knots-nodes-chart>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- BLAKE2b Peers by version (connected to this node) -->
+    <!-- BLAKE2b Peers by version (connected to this node) -->
+    <div class="row row-cols-1 row-cols-md-1">
       <div class="col" style="max-height: 410px">
         <div class="card">
           <div class="card-body pl-2 pr-2">

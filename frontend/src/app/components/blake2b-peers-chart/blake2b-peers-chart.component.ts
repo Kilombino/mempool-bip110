@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, NgZone, OnInit, HostBinding } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone, OnInit, HostBinding } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap, shareReplay } from 'rxjs/operators';
 import { EChartsOption } from '../../graphs/echarts';
@@ -34,15 +34,17 @@ export class Blake2bPeersChartComponent implements OnInit {
 
   constructor(
     private bitnodesService: BitnodesService,
+    private cd: ChangeDetectorRef,
     private zone: NgZone,
   ) {}
 
   ngOnInit(): void {
     this.peersObservable$ = this.bitnodesService.getBlake2bPeersByVersion()
       .pipe(
-        tap(() => {
+        tap((data) => {
           this.isLoading = false;
-          this.prepareChartOptions();
+          this.prepareChartOptions(data);
+          this.cd.markForCheck();
         }),
         shareReplay(1)
       );
@@ -54,8 +56,7 @@ export class Blake2bPeersChartComponent implements OnInit {
     return this.palette[index % this.palette.length];
   }
 
-  prepareChartOptions(): void {
-    this.peersObservable$.subscribe(data => {
+  prepareChartOptions(data: Blake2bPeersResponse): void {
       const total = data.total || 0;
       const pieData = (data.versions || []).map((v, i) => ({
         value: v.count,
@@ -110,7 +111,6 @@ export class Blake2bPeersChartComponent implements OnInit {
           }
         ],
       };
-    });
   }
 
   onChartInit(ec): void {
