@@ -331,9 +331,14 @@ class BitcoinRoutes {
       // full UA like "/Satoshi:29.4.1(Knots20260508rc4)/" or "/Knots:20260508rc4/" to a
       // short, human label focused on the BLAKE2b release (rc4, rc3, …).
       const counts: Record<string, { count: number; inbound: number; outbound: number }> = {};
+      // Network type breakdown (from getpeerinfo `network`): ipv4 / ipv6 / onion / i2p / cjdns
+      const netCounts: Record<string, number> = {};
+      // Custom node labels advertised in the subver comment, e.g. "/Satoshi:29.4.1(Iowa Mining Node 1)/Knots.../"
+      const labels: { label: string; version: string }[] = [];
       let total = 0;
       for (const p of peers) {
-        const subver: string = (p.subver || '').replace(/\//g, '');
+        const rawSubver: string = p.subver || '';
+        const subver: string = rawSubver.replace(/\//g, '');
         let label = subver || 'unknown';
         // Prefer the Knots release token if present (…20260508rc4… or (Knots…))
         const rc = subver.match(/(202[0-9]{5})(rc[0-9]+)?/i);
@@ -349,6 +354,16 @@ class BitcoinRoutes {
         if (!counts[label]) counts[label] = { count: 0, inbound: 0, outbound: 0 };
         counts[label].count++;
         if (p.inbound) counts[label].inbound++; else counts[label].outbound++;
+
+        // Network type
+        const net = (p.network || 'unknown').toLowerCase();
+        netCounts[net] = (netCounts[net] || 0) + 1;
+
+        // Custom nick: the parenthetical comment in the raw subver, if any
+        const nick = rawSubver.match(/\(([^)]+)\)/);
+        if (nick && nick[1].trim().length > 1 && !/^Knots/i.test(nick[1])) {
+          labels.push({ label: nick[1].trim(), version: label });
+        }
         total++;
       }
 
@@ -356,7 +371,11 @@ class BitcoinRoutes {
         .map(([version, v]) => ({ version, count: v.count, inbound: v.inbound, outbound: v.outbound }))
         .sort((a, b) => b.count - a.count);
 
-      const result = { total, versions, updatedAt: now };
+      const networks = Object.entries(netCounts)
+        .map(([network, count]) => ({ network, count }))
+        .sort((a, b) => b.count - a.count);
+
+      const result = { total, versions, networks, labels, updatedAt: now };
       this.peersVersionCache = { data: result, lastUpdated: now };
       res.json(result);
     } catch (error) {

@@ -1,0 +1,66 @@
+<div [class]="widget === false ? 'full-container' : ''">
+
+  <div *ngIf="widget">
+    <div class="peers-summary" *ngIf="(peersObservable$ | async) as peersData; else loadingTypes">
+      <div class="item">
+        <h5 class="card-title d-inline-block" i18n="blake2b.total-peers">Connected Peers</h5>
+        <p class="card-text">{{ getTotal(peersData) }}</p>
+      </div>
+      <div class="item">
+        <h5 class="card-title d-inline-block" i18n="blake2b.tor-peers">Tor</h5>
+        <p class="card-text">{{ getTor(peersData) }}</p>
+      </div>
+      <div class="item">
+        <h5 class="card-title d-inline-block" i18n="blake2b.clearnet-peers">Clearnet</h5>
+        <p class="card-text">{{ getClearnet(peersData) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div [class]="!widget ? '' : 'pb-0'" class="container pb-lg-0">
+    <div [class]="widget ? 'chart-widget' : 'chart'" *browserOnly
+         [style]="{ height: widget ? (height + 'px') : null, opacity: isLoading ? 0.5 : 1 }"
+         echarts
+         [initOpts]="chartInitOptions"
+         [options]="chartOptions"
+         (chartInit)="onChartInit($event)">
+    </div>
+
+    <div class="text-center loadingGraphs" *ngIf="isLoading">
+      <div class="spinner-border text-light"></div>
+    </div>
+
+    <!-- Custom node nicks advertised by connected peers -->
+    <div class="nicks" *ngIf="(peersObservable$ | async) as peersData">
+      <ng-container *ngIf="peersData.labels?.length; else noNicks">
+        <h6 class="nicks-title" i18n="blake2b.peer-nicks">Peer nicks</h6>
+        <ul>
+          <li *ngFor="let l of peersData.labels">
+            <span class="nick">{{ l.label }}</span>
+            <span class="nick-ver">{{ l.version }}</span>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #noNicks>
+        <p class="nicks-empty muted" i18n="blake2b.no-nicks">No custom peer nicks right now.</p>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTypes>
+  <div class="peers-summary">
+    <div class="item">
+      <h5 class="card-title" i18n="blake2b.total-peers">Connected Peers</h5>
+      <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
+    </div>
+    <div class="item">
+      <h5 class="card-title" i18n="blake2b.tor-peers">Tor</h5>
+      <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
+    </div>
+    <div class="item">
+      <h5 class="card-title" i18n="blake2b.clearnet-peers">Clearnet</h5>
+      <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
+    </div>
+  </div>
+</ng-template>

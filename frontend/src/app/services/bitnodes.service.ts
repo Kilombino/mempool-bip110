@@ -34,9 +34,21 @@ export interface Blake2bPeerVersion {
   outbound: number;
 }
 
+export interface Blake2bPeerNetwork {
+  network: string;
+  count: number;
+}
+
+export interface Blake2bPeerLabel {
+  label: string;
+  version: string;
+}
+
 export interface Blake2bPeersResponse {
   total: number;
   versions: Blake2bPeerVersion[];
+  networks: Blake2bPeerNetwork[];
+  labels: Blake2bPeerLabel[];
   updatedAt: number;
 }
 
@@ -112,7 +124,7 @@ export class BitnodesService {
         }),
         catchError((error: HttpErrorResponse) => {
           console.error('Error fetching BLAKE2b peers by version:', error);
-          return of({ total: 0, versions: [], updatedAt: Date.now() });
+          return of({ total: 0, versions: [], networks: [], labels: [], updatedAt: Date.now() });
         })
       );
   }
