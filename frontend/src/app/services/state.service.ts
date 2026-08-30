@@ -110,7 +110,7 @@ const defaultEnv: Env = {
   'NGINX_PROTOCOL': 'http',
   'NGINX_HOSTNAME': '127.0.0.1',
   'NGINX_PORT': '80',
-  'BLOCK_WEIGHT_UNITS': 4000000,
+  'BLOCK_WEIGHT_UNITS': 800000, // BLAKE2b fork: bloque máx 800k weight (era 4M)
   'MEMPOOL_BLOCKS_AMOUNT': 8,
   'GIT_COMMIT_HASH': '',
   'PACKAGE_JSON_VERSION': '',

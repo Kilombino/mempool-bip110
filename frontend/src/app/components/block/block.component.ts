@@ -711,8 +711,8 @@ export class BlockComponent implements OnInit, OnDestroy {
     }
 
     // if vsize was rounded, the total weight we calculated isn't exact and can exceed the 4MB limit
-    this.staleStats.totalWeight = Math.min(this.staleStats.totalWeight, 4_000_000);
-    this.canonicalStats.totalWeight = Math.min(this.canonicalStats.totalWeight, 4_000_000);
+    this.staleStats.totalWeight = Math.min(this.staleStats.totalWeight, 800_000);
+    this.canonicalStats.totalWeight = Math.min(this.canonicalStats.totalWeight, 800_000);
 
     this.staleStats.feeDelta = this.canonicalStats.totalFees > 0 ? (this.staleStats.totalFees - this.canonicalStats.totalFees) / this.canonicalStats.totalFees : (this.canonicalStats.totalFees > 0 ? Infinity : -Infinity);
     this.staleStats.weightDelta = this.canonicalStats.totalWeight > 0 ? (this.staleStats.totalWeight - this.canonicalStats.totalWeight) / this.canonicalStats.totalWeight : (this.canonicalStats.totalWeight > 0 ? Infinity : -Infinity);

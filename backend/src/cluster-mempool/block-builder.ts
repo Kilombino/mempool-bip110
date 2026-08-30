@@ -19,7 +19,7 @@ interface ChunkHeapEntry {
   chunkIndex: number;
 }
 
-const BLOCK_WEIGHT_UNITS = 4_000_000;
+const BLOCK_WEIGHT_UNITS = 800_000; // BLAKE2b fork: bloque máx 800k weight
 const MAX_BLOCK_SIGOPS_COST = 80_000;
 const COINBASE_RESERVED_WEIGHT = 8000;
 const MAX_CONSECUTIVE_FAILURES = 1000;

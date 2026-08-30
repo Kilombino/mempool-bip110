@@ -190,7 +190,7 @@ const defaults: IConfig = {
     'CACHE_ENABLED': true,
     'CLEAR_PROTECTION_MINUTES': 20,
     'RECOMMENDED_FEE_PERCENTILE': 50,
-    'BLOCK_WEIGHT_UNITS': 4000000,
+    'BLOCK_WEIGHT_UNITS': 800000, // BLAKE2b fork: bloque máx 800k weight (era 4M)
     'INITIAL_BLOCKS_AMOUNT': 8,
     'MEMPOOL_BLOCKS_AMOUNT': 8,
     'INDEXING_BLOCKS_AMOUNT': 11000, // 0 = disable indexing, -1 = index all blocks
