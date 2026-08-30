@@ -29,6 +29,7 @@ DEFAULTS = {
     'fork': 961640,
 }
 RECHECK = 6  # cached heights re-fetched each run to catch a reorg
+HEADLINE = '8-30 NYPost Deride And Conquer'  # required in every fork-block coinbase; never a miner name
 
 
 def fetch(url, tries=3):
@@ -49,20 +50,34 @@ def load_pools(src):
 
 
 def primary_tag(scriptsig):
-    """Text before the first 0x0F/NUL in the first push after the height push."""
+    """The miner's readable tag: DATUM writes <primary> 0x0F <secondary> 0x00 <extranonce>
+    in the first push after the height push, so take the first 0x0F-separated field
+    that has text (a miner with an empty primary tag still gets named)."""
     sig = bytes.fromhex(scriptsig)
-    i = 1 + sig[0]
-    if i >= len(sig):
-        return ''
-    op = sig[i]
-    i += 1
-    if op == 0x4c:
-        ln = sig[i]
+    i = 1 + sig[0] if sig else 0
+    while i < len(sig):
+        op = sig[i]
         i += 1
-    else:
-        ln = op
-    blob = sig[i:i + ln]
-    return blob.split(b'\x0f')[0].split(b'\x00')[0].decode('latin1').strip()
+        if op == 0x4c:
+            if i >= len(sig):
+                break
+            ln = sig[i]
+            i += 1
+        elif op == 0x4d:
+            if i + 1 >= len(sig):
+                break
+            ln = sig[i] | sig[i + 1] << 8
+            i += 2
+        elif 1 <= op <= 0x4b:
+            ln = op
+        else:
+            continue  # OP_0, OP_1..OP_16 and other opcodes push no bytes
+        for field in sig[i:i + ln].split(b'\x0f'):
+            text = field.split(b'\x00')[0].decode('latin1').strip()
+            if sum(32 <= ord(ch) < 127 for ch in text) >= 3 and text.lower() != HEADLINE.lower():
+                return text
+        i += ln
+    return ''
 
 
 def match(pools, scriptsig, addrs):
