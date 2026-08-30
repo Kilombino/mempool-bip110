@@ -1,0 +1,85 @@
+<div [class]="widget === false ? 'full-container' : ''">
+
+  <div *ngIf="widget">
+    <div class="peers-summary" *ngIf="(peersObservable$ | async) as peersData; else loadingPeers">
+      <div class="item">
+        <h5 class="card-title d-inline-block" i18n="blake2b.total-peers">Connected Peers</h5>
+        <p class="card-text">{{ getTotal(peersData) }}</p>
+      </div>
+      <div class="item">
+        <h5 class="card-title d-inline-block" i18n="blake2b.rc4-peers">On latest (rc4)</h5>
+        <p class="card-text">{{ getRc4(peersData) }}</p>
+      </div>
+      <div class="item">
+        <h5 class="card-title d-inline-block" i18n="blake2b.distinct-versions">Distinct Versions</h5>
+        <p class="card-text">{{ getVersionCount(peersData) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-header" *ngIf="!widget">
+    <div class="d-flex d-md-table-cell align-items-baseline">
+      <span i18n="blake2b.peers-versions">BLAKE2b Peers by Version</span>
+      <button class="btn p-0 pl-2" style="margin: 0 0 4px 0px" (click)="onSaveChart()">
+        <fa-icon [icon]="['fas', 'download']" [fixedWidth]="true"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <div [class]="!widget ? '' : 'pb-0'" class="container pb-lg-0">
+    <div [class]="widget ? 'chart-widget' : 'chart'" *browserOnly
+         [style]="{ height: widget ? (height + 'px') : null, opacity: isLoading ? 0.5 : 1 }"
+         echarts
+         [initOpts]="chartInitOptions"
+         [options]="chartOptions"
+         (chartInit)="onChartInit($event)">
+    </div>
+
+    <div class="text-center loadingGraphs" *ngIf="isLoading">
+      <div class="spinner-border text-light"></div>
+    </div>
+
+    <table *ngIf="widget === false" class="table table-borderless text-center peers-table"
+           [style]="{opacity: isLoading ? 0.5 : 1}">
+      <thead>
+        <tr>
+          <th i18n="blake2b.version">Version</th>
+          <th i18n="blake2b.peers-count">Peers</th>
+          <th class="d-none d-md-table-cell" i18n="blake2b.inout">In / Out</th>
+          <th i18n="blake2b.percentage">Percentage</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="(peersObservable$ | async) as peersData">
+        <tr *ngFor="let v of peersData.versions">
+          <td>{{ v.version }}</td>
+          <td>{{ v.count }}</td>
+          <td class="d-none d-md-table-cell">{{ v.inbound }} / {{ v.outbound }}</td>
+          <td>{{ (v.count / (getTotal(peersData) || 1) * 100) | number: '1.1-1' }}%</td>
+        </tr>
+        <tr style="border-top: 1px solid #555">
+          <td><b i18n="blake2b.all-peers">All Peers</b></td>
+          <td><b>{{ getTotal(peersData) }}</b></td>
+          <td class="d-none d-md-table-cell"></td>
+          <td><b>100.0%</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #loadingPeers>
+  <div class="peers-summary">
+    <div class="item">
+      <h5 class="card-title" i18n="blake2b.total-peers">Connected Peers</h5>
+      <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
+    </div>
+    <div class="item">
+      <h5 class="card-title" i18n="blake2b.rc4-peers">On latest (rc4)</h5>
+      <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
+    </div>
+    <div class="item">
+      <h5 class="card-title" i18n="blake2b.distinct-versions">Distinct Versions</h5>
+      <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
+    </div>
+  </div>
+</ng-template>

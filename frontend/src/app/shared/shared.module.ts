@@ -137,6 +137,7 @@ import { BitcoinInvoiceComponent } from '@components/bitcoin-invoice/bitcoin-inv
 import { OnlyVsizeDirective, OnlyWeightDirective } from '@app/shared/components/weight-directives/weight-directives';
 import { GithubLogin } from '@components/github-login.component/github-login.component';
 import { KnotsNodesChartComponent } from '../components/knots-nodes-chart/knots-nodes-chart.component';
+import { Blake2bPeersChartComponent } from '../components/blake2b-peers-chart/blake2b-peers-chart.component';
 import { OceanHashrateChartComponent } from '../components/ocean-hashrate-chart/ocean-hashrate-chart.component';
 
 @NgModule({
@@ -266,6 +267,7 @@ import { OceanHashrateChartComponent } from '../components/ocean-hashrate-chart/
     GithubLogin,
     BitcoinInvoiceComponent,
     KnotsNodesChartComponent,
+    Blake2bPeersChartComponent,
     OceanHashrateChartComponent,
   ],
   imports: [
@@ -424,6 +426,7 @@ import { OceanHashrateChartComponent } from '../components/ocean-hashrate-chart/
     OnlyVsizeDirective,
     OnlyWeightDirective,
     KnotsNodesChartComponent,
+    Blake2bPeersChartComponent,
     OceanHashrateChartComponent,
   ]
 })

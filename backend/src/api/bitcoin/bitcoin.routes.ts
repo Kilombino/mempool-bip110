@@ -43,6 +43,12 @@ class BitcoinRoutes {
   } | null = null;
   private readonly OCEAN_CACHE_DURATION = 60 * 60 * 1000;
 
+  private peersVersionCache: {
+    data: any;
+    lastUpdated: number;
+  } | null = null;
+  private readonly PEERS_VERSION_CACHE_DURATION = 60 * 1000;
+
   public initRoutes(app: Application) {
     app
       .get(config.MEMPOOL.API_URL_PREFIX + 'transaction-times', this.getTransactionTimes)
@@ -57,6 +63,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'validate-address/:address', this.validateAddress)
       .get(config.MEMPOOL.API_URL_PREFIX + 'bitnodes/knots-stats', this.getBitnodesKnotsStats.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'ocean/hashrate-stats', this.getOceanHashrateStats.bind(this))
+      .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/peers-by-version', this.getBlake2bPeersByVersion.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/rbf', this.getRbfHistory)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/cached', this.getCachedTx)
       .get(config.MEMPOOL.API_URL_PREFIX + 'replacements', this.getRbfReplacements)
@@ -306,6 +313,60 @@ class BitcoinRoutes {
 
   private getBackendInfo(req: Request, res: Response) {
     res.json(backendInfo.getBackendInfo());
+  }
+
+  private async getBlake2bPeersByVersion(req: Request, res: Response) {
+    try {
+      const now = Date.now();
+      if (this.peersVersionCache &&
+          this.peersVersionCache.lastUpdated &&
+          (now - this.peersVersionCache.lastUpdated) < this.PEERS_VERSION_CACHE_DURATION) {
+        res.json(this.peersVersionCache.data);
+        return;
+      }
+
+      const peers: any[] = await bitcoinClient.getPeerInfo();
+
+      // Group connected peers by their advertised subver (user agent). We collapse a
+      // full UA like "/Satoshi:29.4.1(Knots20260508rc4)/" or "/Knots:20260508rc4/" to a
+      // short, human label focused on the BLAKE2b release (rc4, rc3, …).
+      const counts: Record<string, { count: number; inbound: number; outbound: number }> = {};
+      let total = 0;
+      for (const p of peers) {
+        const subver: string = (p.subver || '').replace(/\//g, '');
+        let label = subver || 'unknown';
+        // Prefer the Knots release token if present (…20260508rc4… or (Knots…))
+        const rc = subver.match(/(202[0-9]{5})(rc[0-9]+)?/i);
+        const knots = /knots/i.test(subver);
+        if (rc) {
+          label = (knots ? 'Knots ' : '') + rc[1] + (rc[2] ? ' ' + rc[2] : '');
+        } else if (knots) {
+          label = 'Knots';
+        } else if (/satoshi/i.test(subver)) {
+          const v = subver.match(/Satoshi:([0-9.]+)/i);
+          label = 'Core ' + (v ? v[1] : '');
+        }
+        if (!counts[label]) counts[label] = { count: 0, inbound: 0, outbound: 0 };
+        counts[label].count++;
+        if (p.inbound) counts[label].inbound++; else counts[label].outbound++;
+        total++;
+      }
+
+      const versions = Object.entries(counts)
+        .map(([version, v]) => ({ version, count: v.count, inbound: v.inbound, outbound: v.outbound }))
+        .sort((a, b) => b.count - a.count);
+
+      const result = { total, versions, updatedAt: now };
+      this.peersVersionCache = { data: result, lastUpdated: now };
+      res.json(result);
+    } catch (error) {
+      logger.err(`Error fetching BLAKE2b peers by version: ${error}`);
+      if (this.peersVersionCache && this.peersVersionCache.data) {
+        res.json(this.peersVersionCache.data);
+        return;
+      }
+      res.status(500).json({ total: 0, versions: [], error: 'unavailable' });
+    }
   }
 
   private async getBitnodesKnotsStats(req: Request, res: Response) {
