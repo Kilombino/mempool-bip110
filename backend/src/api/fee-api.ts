@@ -89,12 +89,19 @@ class FeeApi {
   }
 
   private optimizeMedianFee(pBlock: MempoolBlock, nextBlock: MempoolBlock | undefined, previousFee: number | undefined, minFee: number, minIncrement: number = this.minimumIncrement): number {
+    // Escalar los umbrales al tamaño real del bloque. Los originales (500000/950000)
+    // asumían un bloque de ~1.000.000 vbytes (4M weight). El fork BLAKE2b usa 200.000
+    // vbytes (800k weight): sin escalar, TODO bloque queda "por debajo del medio" y las
+    // fees recomendadas colapsan a la mínima.
+    const maxBlockVSize = config.MEMPOOL.BLOCK_WEIGHT_UNITS / 4;
+    const halfBlockVSize = maxBlockVSize / 2;
+    const nearlyFullVSize = maxBlockVSize * 0.95;
     const useFee = previousFee ? (pBlock.medianFee + previousFee) / 2 : pBlock.medianFee;
-    if (pBlock.blockVSize <= 500000 || pBlock.medianFee < minFee) {
+    if (pBlock.blockVSize <= halfBlockVSize || pBlock.medianFee < minFee) {
       return minFee;
     }
-    if (pBlock.blockVSize <= 950000 && !nextBlock) {
-      const multiplier = (pBlock.blockVSize - 500000) / 500000;
+    if (pBlock.blockVSize <= nearlyFullVSize && !nextBlock) {
+      const multiplier = (pBlock.blockVSize - halfBlockVSize) / halfBlockVSize;
       return Math.max(this.roundToNearest(useFee * multiplier, minIncrement), minFee);
     }
     return Math.max(this.roundUpToNearest(useFee, minIncrement), minFee);
