@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="AlphaPool">
+  <rect width="128" height="128" rx="28" fill="#0b0f0d"/>
+  <rect x="5" y="5" width="118" height="118" rx="23" fill="none" stroke="#e8b64a" stroke-width="4.5" stroke-opacity="0.92"/>
+  <g fill="none" stroke="#f7931a" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M48 33 V95" stroke-width="12"/>
+    <path d="M48 40 H68 A12.5 12.5 0 0 1 68 65 H48" stroke-width="11"/>
+    <path d="M48 63 H70 A13.5 13.5 0 0 1 70 88 H48" stroke-width="11"/>
+    <g stroke-width="6">
+      <path d="M54 24 V34"/>
+      <path d="M68 24 V34"/>
+      <path d="M54 94 V104"/>
+      <path d="M68 94 V104"/>
+    </g>
+  </g>
+</svg>
