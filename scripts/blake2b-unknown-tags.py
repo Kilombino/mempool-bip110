@@ -35,7 +35,7 @@ HEADLINE = '8-30 NYPost Deride And Conquer'  # required in every fork-block coin
 def fetch(url, tries=3):
     for i in range(tries):
         try:
-            return urllib.request.urlopen(url, timeout=30).read()
+            return urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'blake2b-unknown-tags'}), timeout=30).read()
         except Exception as e:  # noqa: BLE001
             err = e
             time.sleep(2 * (i + 1))
