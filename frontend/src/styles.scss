@@ -174,6 +174,15 @@ html, body {
 
 body {
   background-color: var(--active-bg);
+  // Fondo BLAKE2b (2B / naranja): ocupa todo el ancho y se repite hacia abajo al hacer
+  // scroll ("otra vez y otra vez"). Va detrás del primer plano (las tarjetas tienen su
+  // propio fondo opaco), así que el naranja asoma en los márgenes sin estorbar. En todas
+  // las páginas (está en el body global).
+  background-image: url('/resources/bg-2b.jpg');
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  background-position: top center;
+  background-attachment: scroll;
   color: var(--fg);
   padding-bottom: 60px;
 }
