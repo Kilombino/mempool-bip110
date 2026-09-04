@@ -204,8 +204,10 @@ export class PoolRankingComponent implements OnInit, OnChanges {
               let hashrate = pool.lastEstimatedHashrate;
               if ('3d' === this.miningWindowPreference) { hashrate = pool.lastEstimatedHashrate3d; }
               if ('1w' === this.miningWindowPreference) { hashrate = pool.lastEstimatedHashrate1w; }
+              // hashrate ya viene dividido por hashrateDivider; deshacemos y pasamos a TH/s (÷1e12)
+              const ths = hashrate * miningStats.miningUnits.hashrateDivider / 1e12;
               return `<b style="color: white">${pool.name} (${pool.share}%)</b><br>` +
-                (hashrate / 1e12).toFixed(2) + ' TH/s' +
+                ths.toFixed(2) + ' TH/s' +
                 `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
             } else {
               return `<b style="color: white">${pool.name} (${pool.share}%)</b><br>` +
@@ -244,7 +246,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
         formatter: () => {
           const i = totalBlockOther.toString();
           if (['24h', '3d', '1w'].includes(this.miningWindowPreference)) {
-            return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + (totalEstimatedHashrateOther / 1e12).toFixed(2) + ' TH/s' + `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
+            return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + (totalEstimatedHashrateOther * miningStats.miningUnits.hashrateDivider / 1e12).toFixed(2) + ' TH/s' + `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
           } else {
             return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + $localize`${ i }:INTERPOLATION: blocks`;
           }
