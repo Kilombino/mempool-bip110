@@ -14,7 +14,7 @@ import { EventType, NavigationStart, Router } from '@angular/router';
 })
 export class MiningDashboardComponent implements OnInit, AfterViewInit {
   hashrateGraphHeight = 335;
-  poolGraphHeight = 375;
+  poolGraphHeight = 860;
   antPoolProxy = false;
 
   constructor(
@@ -52,13 +52,13 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
   onResize(): void {
     if (window.innerWidth >= 992) {
       this.hashrateGraphHeight = 335;
-      this.poolGraphHeight = 375;
+      this.poolGraphHeight = 860;   // queso enorme centrado
     } else if (window.innerWidth >= 768) {
       this.hashrateGraphHeight = 245;
-      this.poolGraphHeight = 265;
+      this.poolGraphHeight = 620;
     } else {
       this.hashrateGraphHeight = 240;
-      this.poolGraphHeight = 240;
+      this.poolGraphHeight = 380;
     }
   }
 }

@@ -91,8 +91,14 @@
               {{ block.extras.pool.minerNames[1] }}
             </ng-container>
             <ng-template #centralisedPool>
-              <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.name"></app-mining-pool>
-              <span *ngIf="poolsWithAntpool.includes(block.extras.pool.slug)"> + <img class="mining-pool-logo" [src]="'/resources/mining-pools/antpool.svg'" [alt]="'Logo of AntPool mining pool'"></span>
+              <ng-container *ngIf="pyblockServiceEmoji[block.extras.pool.slug]; else normalPool">
+                <app-mining-pool [slug]="block.extras.pool.slug" [name]="'PYBLOCK'" [showName]="false"></app-mining-pool>
+                PYBLOCK + {{ pyblockServiceEmoji[block.extras.pool.slug] }}
+              </ng-container>
+              <ng-template #normalPool>
+                <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.name"></app-mining-pool>
+                <span *ngIf="poolsWithAntpool.includes(block.extras.pool.slug)"> + <img class="mining-pool-logo" [src]="'/resources/mining-pools/antpool.svg'" [alt]="'Logo of AntPool mining pool'"></span>
+              </ng-template>
             </ng-template>
           </a>
         </div>

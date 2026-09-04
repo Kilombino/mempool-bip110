@@ -25,6 +25,7 @@ export class Blake2bPeersChartComponent implements OnInit {
   @HostBinding('attr.dir') dir = 'ltr';
 
   peersObservable$: Observable<Blake2bPeersResponse>;
+  private ourVersion = '';   // version de nuestro nodo, para resaltar "latest"
 
   // Palette: highlight the current release (rc4) in green, older ones warmer/greyer.
   private readonly palette = [
@@ -43,6 +44,7 @@ export class Blake2bPeersChartComponent implements OnInit {
       .pipe(
         tap((data) => {
           this.isLoading = false;
+          this.ourVersion = data.ourVersion || '';
           this.prepareChartOptions(data);
           this.cd.markForCheck();
         }),
@@ -51,8 +53,8 @@ export class Blake2bPeersChartComponent implements OnInit {
   }
 
   private colorFor(version: string, index: number): string {
-    if (/rc4/i.test(version)) return '#43A047';
-    if (/unknown/i.test(version)) return '#6b6b6b';
+    if (this.ourVersion && version === this.ourVersion) return '#43A047';  // nuestra version = verde
+    if (/unknown/i.test(version) || version === '') return '#6b6b6b';
     return this.palette[index % this.palette.length];
   }
 
@@ -134,8 +136,14 @@ export class Blake2bPeersChartComponent implements OnInit {
     return data.total || 0;
   }
 
-  getRc4(data: Blake2bPeersResponse): number {
-    return (data.versions || []).filter(v => /rc4/i.test(v.version)).reduce((a, v) => a + v.count, 0);
+  getOnLatest(data: Blake2bPeersResponse): number {
+    const ours = data.ourVersion || '';
+    if (!ours) { return 0; }
+    return (data.versions || []).filter(v => v.version === ours).reduce((a, v) => a + v.count, 0);
+  }
+
+  getOurVersionTag(data: Blake2bPeersResponse): string {
+    return data.ourVersionTag || data.ourVersion || '';
   }
 
   getVersionCount(data: Blake2bPeersResponse): number {

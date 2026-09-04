@@ -7,8 +7,8 @@
         <p class="card-text">{{ getTotal(peersData) }}</p>
       </div>
       <div class="item">
-        <h5 class="card-title d-inline-block" i18n="blake2b.rc4-peers">On latest (rc4)</h5>
-        <p class="card-text">{{ getRc4(peersData) }}</p>
+        <h5 class="card-title d-inline-block" i18n="blake2b.onlatest-peers">On latest</h5>&nbsp;<span class="text-muted">({{ getOurVersionTag(peersData) }})</span>
+        <p class="card-text">{{ getOnLatest(peersData) }}</p>
       </div>
       <div class="item">
         <h5 class="card-title d-inline-block" i18n="blake2b.distinct-versions">Distinct Versions</h5>
@@ -74,7 +74,7 @@
       <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
     </div>
     <div class="item">
-      <h5 class="card-title" i18n="blake2b.rc4-peers">On latest (rc4)</h5>
+      <h5 class="card-title" i18n="blake2b.onlatest-peers">On latest</h5>
       <p class="card-text"><span class="skeleton-loader skeleton-loader-big"></span></p>
     </div>
     <div class="item">

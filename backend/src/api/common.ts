@@ -1800,6 +1800,10 @@ export class OnlineFeeStatsCalculator {
 
   private feeRange: { avg: number, min: number, max: number }[] = [];
   private totalWeight: number = 0;
+  // min/max reales sobre TODAS las txs (no solo la banda), para que el rango
+  // del bloque-montón muestre la tx más barata/cara de verdad.
+  private globalMin: number = Infinity;
+  private globalMax: number = 0;
 
   constructor (maxWeight: number, percentileBandWidth?: number, percentiles?: number[]) {
     this.maxWeight = maxWeight;
@@ -1817,6 +1821,11 @@ export class OnlineFeeStatsCalculator {
   }
 
   processNext(tx: { weight: number, fee: number, effectiveFeePerVsize?: number, feePerVsize?: number, rate?: number, txid: string }): void {
+    const globalRate = (tx.rate || tx.effectiveFeePerVsize || tx.feePerVsize || 0);
+    if (globalRate > 0) {   // ignorar txs sin fee efectiva calculada (evita un falso 0)
+      if (globalRate < this.globalMin) { this.globalMin = globalRate; }
+      if (globalRate > this.globalMax) { this.globalMax = globalRate; }
+    }
     let left = this.totalWeight;
     const right = this.totalWeight + tx.weight;
     if (!this.inBand && right <= this.leftBound) {
@@ -1880,6 +1889,9 @@ export class OnlineFeeStatsCalculator {
 
   getFeeStats(): EffectiveFeeStats {
     const stats = this.getRawFeeStats();
+    // extremos = mín/máx reales de todas las txs del montón (no solo su banda)
+    stats.minFee = (this.globalMin === Infinity) ? stats.minFee : this.globalMin;
+    stats.maxFee = Math.max(stats.maxFee, this.globalMax);
     stats.feeRange[0] = stats.minFee;
     stats.feeRange[stats.feeRange.length - 1] = stats.maxFee;
     return stats;

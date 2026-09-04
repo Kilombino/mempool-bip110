@@ -32,6 +32,8 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
   @Input() getHref?: (index, block) => string = (index, block) => `/block/${block.id}`;
   
   poolsWithAntpool = ['poolin', 'braiinspool', 'ultimuspool', 'binancepool', 'secpool', 'sigmapoolcom', 'rawpool', 'btccom', 'miningsquared'];
+  // Servicios de PyBLOCK: marcador de emoji junto al logo en la fila de bloques
+  pyblockServiceEmoji = { pyblockcarousel: '🎠', pyblockchirp: '🌱', pyblocklotto: '🎰' };
   
   specialBlocks = specialBlocks;
   network = '';

@@ -135,24 +135,39 @@ class PoolsParser {
   public matchBlockMiner(scriptsig: string, addresses: string[], pools: PoolTag[]): PoolTag | undefined {
     const asciiScriptSig = transactionUtils.hex2ascii(scriptsig);
 
+    // PASADA 1: el TAG del coinbase (regex) tiene prioridad sobre la dirección.
+    // Un tag es una señal deliberada del pool/servicio; una dirección de pago puede
+    // ser la del minero ganador o una dirección de comisión compartida (p.ej. PyBLOCK
+    // paga a 1PyBLoCK en todos sus servicios). Sin esto, un pool "Solo <addr>" con id
+    // menor robaba los bloques etiquetados PyBLOCK-CAROUSEL/CHIRP.
+    // Entre varios tags que casan, gana el MÁS ESPECÍFICO (regex más largo): p.ej. un
+    // coinbase "Sovereign TwentyOne.Life" va a "TwentyOne.Life", no al genérico "Sovereign".
+    let bestTagPool: PoolTag | undefined;
+    let bestTagLen = -1;
     for (let i = 0; i < pools.length; ++i) {
-      if (addresses.length) {
+      const regexes: string[] = typeof pools[i].regexes === 'string' ?
+        JSON.parse(pools[i].regexes) : pools[i].regexes;
+      for (let y = 0; y < regexes.length; ++y) {
+        const regex = new RegExp(regexes[y], 'i');
+        if (asciiScriptSig.match(regex) !== null && regexes[y].length > bestTagLen) {
+          bestTagLen = regexes[y].length;
+          bestTagPool = pools[i];
+        }
+      }
+    }
+    if (bestTagPool) {
+      return bestTagPool;
+    }
+
+    // PASADA 2: si ningún tag casó, emparejar por dirección de pago.
+    if (addresses.length) {
+      for (let i = 0; i < pools.length; ++i) {
         const poolAddresses: string[] = typeof pools[i].addresses === 'string' ?
           JSON.parse(pools[i].addresses) : pools[i].addresses;
         for (let y = 0; y < poolAddresses.length; y++) {
           if (addresses.indexOf(poolAddresses[y]) !== -1) {
             return pools[i];
           }
-        }
-      }
-
-      const regexes: string[] = typeof pools[i].regexes === 'string' ?
-        JSON.parse(pools[i].regexes) : pools[i].regexes;
-      for (let y = 0; y < regexes.length; ++y) {
-        const regex = new RegExp(regexes[y], 'i');
-        const match = asciiScriptSig.match(regex);
-        if (match !== null) {
-          return pools[i];
         }
       }
     }

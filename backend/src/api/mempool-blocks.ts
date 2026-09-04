@@ -541,7 +541,7 @@ class MempoolBlocks {
         totalSize,
         totalWeight,
         totalFees,
-        (hasBlockStack && blockIndex === lastBlockIndex && feeStatsCalculator) ? feeStatsCalculator.getRawFeeStats() : undefined,
+        (hasBlockStack && blockIndex === lastBlockIndex && feeStatsCalculator) ? feeStatsCalculator.getFeeStats() : undefined,
       );
     };
 
@@ -650,7 +650,7 @@ class MempoolBlocks {
         totalSize,
         totalWeight,
         totalFees,
-        (hasBlockStack && blockIndex === lastBlockIndex && feeStatsCalculator) ? feeStatsCalculator.getRawFeeStats() : undefined,
+        (hasBlockStack && blockIndex === lastBlockIndex && feeStatsCalculator) ? feeStatsCalculator.getFeeStats() : undefined,
       );
     }
 

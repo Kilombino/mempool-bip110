@@ -9,7 +9,7 @@
 .full-container {
   padding: 0px 15px;
   width: 100%;
-  height: calc(100% - 140px);
+  height: auto;   /* dejar crecer para el queso grande */
   padding-bottom: 20px;
   @media (max-width: 992px) {
     height: calc(100% - 190px);
@@ -20,10 +20,12 @@
 }
 
 .chart {
-  max-height: 400px;
+  max-height: 780px;   /* queso enorme: sitio para todos los mineros y sus nombres */
+  height: 780px;
   margin-bottom: 20px;
   @media (max-width: 767.98px) {
-    max-height: 230px;
+    max-height: 260px;
+    height: 260px;
   }
 }
 .chart-widget {

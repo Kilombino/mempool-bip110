@@ -114,3 +114,14 @@
   text-decoration: none;
   color: inherit;
 }
+
+/* Queso enorme centrado en su propia fila de ancho completo */
+.pool-queso {
+  height: auto;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  @media (min-width: 992px) {
+    min-height: 860px;
+  }
+}

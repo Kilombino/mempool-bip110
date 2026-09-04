@@ -125,11 +125,11 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   }
 
   generatePoolsChartSerieData(miningStats) {
-    let poolShareThreshold = 0.5;
+    let poolShareThreshold = 0;   // 0 = mostrar TODOS los mineros (sin agrupar en "Otros")
     if (isMobile()) {
-      poolShareThreshold = 2;
+      poolShareThreshold = 0.3;   // en móvil el queso es pequeño: agrupamos los diminutos
     } else if (this.widget) {
-      poolShareThreshold = 1;
+      poolShareThreshold = 0;   // en /es/mining (widget) tambien: TODOS los mineros
     }
 
     let pools = miningStats.pools;
@@ -142,7 +142,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     let totalBlockOther = 0;
     let totalEstimatedHashrateOther = 0;
 
-    let edgeDistance: any = '20%';
+    let edgeDistance: any = '8%';
     if (isMobile() && this.widget) {
       edgeDistance = 0;
     } else if (isMobile() && !this.widget || this.widget) {
@@ -198,7 +198,8 @@ export class PoolRankingComponent implements OnInit, OnChanges {
 
     const percentage = totalShareOther.toFixed(2) + '%';
 
-    // 'Other'
+    // 'Other' (solo si queda algo agrupado; con umbral 0 no se pinta)
+    if (totalShareOther > 0) {
     data.push({
       itemStyle: {
         color: '#6b6b6b',
@@ -230,6 +231,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       },
       data: 9999 as any,
     } as PieSeriesOption);
+    }
 
     return data;
   }
@@ -252,11 +254,14 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       series: [
         {
           zlevel: 0,
-          minShowLabelAngle: 1.8,
+          minShowLabelAngle: 0,
           name: 'Mining pool',
           type: 'pie',
           radius: pieSize,
           data: this.generatePoolsChartSerieData(miningStats),
+          labelLayout: {
+            hideOverlap: false,   // no ocultar nombres aunque casi se solapen
+          },
           labelLine: {
             lineStyle: {
               width: 2,
@@ -341,31 +346,33 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   }
 
   regroupAntPoolProxy(pools: any[], miningStats: any): any[] {
-    const antPoolProxyNames = ['Braiins Pool', 'Poolin', 'ULTIMUSPOOL', 'Binance Pool', 'SECPOOL', 'Sigmapool.com', 'Rawpool', 'BTC.com', 'Mining Squared'];
-    
-    const poolsToMerge = pools.filter(p => antPoolProxyNames.includes(p.name));
-    
-    if (poolsToMerge.length === 0) {
-      return pools;
+    // "PYBLOCK Proxy": junta en una sola porcion a todos los mineros cuyo nombre
+    // contenga "PYBLOCK" (PyBLOCK-BIP110, etc.).
+    const isPyblock = (p: any) => /pyblock/i.test(p.name || '');
+
+    const poolsToMerge = pools.filter(isPyblock);
+    if (poolsToMerge.length <= 1) {
+      return pools;   // nada que juntar
     }
 
-    const newPools = pools.filter(p => !antPoolProxyNames.includes(p.name)).map(p => ({...p}));
-    
-    let antPoolIndex = newPools.findIndex(p => p.name === 'AntPool');
-    
-    poolsToMerge.forEach(pool => {
-      newPools[antPoolIndex].blockCount += pool.blockCount;
-      newPools[antPoolIndex].lastEstimatedHashrate += pool.lastEstimatedHashrate;
-      newPools[antPoolIndex].lastEstimatedHashrate3d += pool.lastEstimatedHashrate3d;
-      newPools[antPoolIndex].lastEstimatedHashrate1w += pool.lastEstimatedHashrate1w;
-    });
-    newPools[antPoolIndex].name = 'AntPool & Friends';
-    
+    const newPools = pools.filter(p => !isPyblock(p)).map(p => ({...p}));
+
+    const merged: any = {...poolsToMerge[0]};
+    merged.name = 'PYBLOCK';
+    merged.slug = 'pyblock';
+    for (let i = 1; i < poolsToMerge.length; i++) {
+      merged.blockCount += poolsToMerge[i].blockCount;
+      merged.lastEstimatedHashrate += poolsToMerge[i].lastEstimatedHashrate || 0;
+      merged.lastEstimatedHashrate3d += poolsToMerge[i].lastEstimatedHashrate3d || 0;
+      merged.lastEstimatedHashrate1w += poolsToMerge[i].lastEstimatedHashrate1w || 0;
+    }
+
     const totalBlocks = miningStats.pools.reduce((sum, p) => sum + p.blockCount, 0);
-    newPools[antPoolIndex].share = ((newPools[antPoolIndex].blockCount / totalBlocks) * 100).toFixed(2);
-    
+    merged.share = ((merged.blockCount / totalBlocks) * 100).toFixed(2);
+
+    newPools.push(merged);
     newPools.sort((a, b) => b.blockCount - a.blockCount);
-    
+
     return newPools;
   }
 }

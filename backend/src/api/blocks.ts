@@ -360,6 +360,19 @@ class Blocks {
         if (extras.pool.name === 'OCEAN') {
           extras.pool.minerNames = parseDATUMTemplateCreator(extras.coinbaseRaw);
         }
+
+        // Fallback en vivo: si no casó con ningún pool de la lista, mostrar YA el nombre
+        // deducido del coinbase tag (misma lógica que el autotag), en vez de "Unknown".
+        // Cuando el autotag lo añada a pools-v2.json, obtendrá logo y agrupación.
+        if (extras.pool.name === 'Unknown' && coinbaseTx !== undefined) {
+          const derived = this.blake2bDeriveTagName(
+            extras.coinbaseSignatureAscii ?? transactionUtils.hex2ascii(coinbaseTx.vin[0].scriptsig) ?? '',
+            coinbaseTx.vout.map((v) => v.scriptpubkey_address).find((a) => a),
+          );
+          if (derived) {
+            extras.pool.name = derived;
+          }
+        }
       }
 
       extras.matchRate = null;
@@ -484,6 +497,20 @@ class Blocks {
    *
    * @asyncUnsafe
    */
+  // Deduce un nombre legible del coinbase tag (misma lógica que mempool-pool-autotag/autotag.py:
+  // primer token legible que no sea cabecera común ni puro número; si no hay, "Solo <addr8>").
+  private blake2bDeriveTagName(ascii: string, addr: string | undefined): string {
+    const HEADLINE = /NYPost|Deride|Conquer|Bitcoin|Satoshi|Knots|mainnet|blake2b|BIP110|segwit|Mined|mined|pool|Pool/;
+    const toks = ascii.match(/[A-Za-z][A-Za-z0-9_.\-]{2,24}/g) || [];
+    for (const raw of toks) {
+      const t = raw.trim();
+      if (/^\d+$/.test(t)) { continue; }
+      if (HEADLINE.test(t)) { continue; }
+      if (t.length >= 4) { return t.slice(0, 32); }
+    }
+    return addr ? 'Solo ' + addr.slice(0, 8) : '';
+  }
+
   private async $findBlockMiner(txMinerInfo: TransactionMinerInfo | undefined): Promise<PoolTag> {
     if (txMinerInfo === undefined || txMinerInfo.vout.length < 1) {
       if (config.DATABASE.ENABLED === true) {
