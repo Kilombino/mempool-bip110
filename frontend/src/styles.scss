@@ -176,14 +176,13 @@ body {
   background-color: var(--active-bg);
   // Fondo BLAKE2b (2B / naranja) en todas las páginas. Dos capas:
   //  1) velo oscuro fijo por encima (oscurece el naranja para que no estorbe el primer plano);
-  //  2) la imagen como MOSAICO moderado (480px) que se repite en todo el fondo y al hacer
-  //     scroll ("otra vez y otra vez"). Tamaño moderado para que NO cargue como una imagen
-  //     gigante a pantalla completa. Va detrás del contenido (las tarjetas son opacas).
+  //  2) la imagen GRANDE a todo el ancho, una sola, que al bajar empieza otra y así
+  //     (repetición vertical). Va detrás del contenido (las tarjetas son opacas).
   background-image:
     linear-gradient(rgba(18, 20, 30, 0.82), rgba(18, 20, 30, 0.82)),
     url('/resources/bg-2b.jpg');
-  background-repeat: no-repeat, repeat;
-  background-size: cover, 480px auto;
+  background-repeat: no-repeat, repeat-y;
+  background-size: cover, 100% auto;
   background-position: center, top center;
   background-attachment: fixed, scroll;
   color: var(--fg);
