@@ -260,7 +260,8 @@ export class PoolRankingComponent implements OnInit, OnChanges {
           radius: pieSize,
           data: this.generatePoolsChartSerieData(miningStats),
           labelLayout: {
-            hideOverlap: false,   // no ocultar nombres aunque casi se solapen
+            hideOverlap: false,       // no ocultar nombres aunque casi se solapen
+            moveOverlap: 'shiftY',    // separar verticalmente las etiquetas que chocan (clave para que se lean con muchos pools)
           },
           labelLine: {
             lineStyle: {
@@ -268,7 +269,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
             },
           },
           label: {
-            fontSize: 14,
+            fontSize: 11,   // algo más pequeña para que quepan más nombres sin solaparse
             formatter: (serie) => `${serie.name === 'Binance Pool' ? 'Binance\nPool' : serie.name}`,
           },
           itemStyle: {
