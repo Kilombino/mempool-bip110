@@ -82,8 +82,8 @@
     </form>
   </div>
 
-  <div [class]="!widget ? '' : 'pb-0'" class="container pb-lg-0">
-    <div [class]="widget ? 'chart-widget' : 'chart'" *browserOnly [style]="{ height: widget ? (height + 'px') : null, opacity: isLoading ? 0.5 : 1 }" echarts [initOpts]="chartInitOptions" [options]="chartOptions"
+  <div [ngClass]="widget ? 'container-fluid pb-0 px-0' : 'container pb-lg-0'">
+    <div [class]="widget ? 'chart-widget' : 'chart'" *browserOnly [style]="{ height: widget ? (chartHeight + 'px') : null, opacity: isLoading ? 0.5 : 1 }" echarts [initOpts]="chartInitOptions" [options]="chartOptions"
       (chartInit)="onChartInit($event)">
     </div>
 

@@ -25,6 +25,8 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   @Input() widget = false;
   @Input() antPoolProxy = false;
 
+  chartHeight: number = 300; // alto real del chart (adaptativo al nº de pools en la vista grande)
+
   miningWindowPreference: string;
   radioGroupForm: UntypedFormGroup;
 
@@ -137,20 +139,22 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       pools = this.regroupAntPoolProxy(miningStats.pools, miningStats);
     }
 
-    // "Independent miners": en la vista grande (/mining) agrupamos la cola de mineros
-    // más pequeños hasta que el grupo represente ~13% del total, para no saturar el
-    // queso con cientos de nombres ilegibles. Los pools grandes se mantienen sueltos.
+    // "Independent miners": opcionalmente agrupamos la cola de mineros más pequeños
+    // en una sola porción. GROUP_INDEPENDENT=false → se muestran TODOS los mineros
+    // (el queso se estira en alto para que quepan, ver chartHeight). Poner a true y
+    // ajustar INDEP_TARGET para volver a agrupar la cola en ~ese % del total.
+    const GROUP_INDEPENDENT = false;
+    const INDEP_TARGET = 13; // % objetivo del grupo agrupado (si GROUP_INDEPENDENT)
     const grouped = new Set<any>();
-    if (this.widget && !isMobile()) {
-      const INDEP_TARGET = 13; // % objetivo que representará el grupo agrupado
+    if (GROUP_INDEPENDENT && this.widget && !isMobile()) {
       const asc = [...pools].sort((a, b) => parseFloat(a.share) - parseFloat(b.share));
       let acc = 0;
       for (const p of asc) {
         const s = parseFloat(p.share);
-        if (acc + s > 15) { break; } // no pasarse del ~15%
+        if (acc + s > 15) { break; }
         grouped.add(p);
         acc += s;
-        if (acc >= INDEP_TARGET) { break; } // ya representa ~13%+, paramos
+        if (acc >= INDEP_TARGET) { break; }
       }
     }
 
@@ -201,7 +205,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
               if ('3d' === this.miningWindowPreference) { hashrate = pool.lastEstimatedHashrate3d; }
               if ('1w' === this.miningWindowPreference) { hashrate = pool.lastEstimatedHashrate1w; }
               return `<b style="color: white">${pool.name} (${pool.share}%)</b><br>` +
-                hashrate.toFixed(2) + ' ' + miningStats.miningUnits.hashrateUnit +
+                (hashrate / 1e12).toFixed(2) + ' TH/s' +
                 `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
             } else {
               return `<b style="color: white">${pool.name} (${pool.share}%)</b><br>` +
@@ -240,7 +244,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
         formatter: () => {
           const i = totalBlockOther.toString();
           if (['24h', '3d', '1w'].includes(this.miningWindowPreference)) {
-            return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + totalEstimatedHashrateOther.toFixed(2) + ' ' + miningStats.miningUnits.hashrateUnit + `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
+            return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + (totalEstimatedHashrateOther / 1e12).toFixed(2) + ' TH/s' + `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
           } else {
             return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + $localize`${ i }:INTERPOLATION: blocks`;
           }
@@ -259,6 +263,18 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       pieSize = ['15%', '60%'];
     }
 
+    const serieData = this.generatePoolsChartSerieData(miningStats);
+
+    // Alto adaptativo: con muchos pools sin agrupar, las etiquetas se reparten en las
+    // dos columnas (izq/dcha). Damos ~24px por etiqueta y columna para que TODAS quepan
+    // sin solaparse, aunque la página quede muy larga. Nunca menos que el alto pedido.
+    if (this.widget && !isMobile()) {
+      const perColumn = Math.ceil(serieData.length / 2);
+      this.chartHeight = Math.max(this.height, perColumn * 24 + 220);
+    } else {
+      this.chartHeight = this.height;
+    }
+
     this.chartOptions = {
       animation: false,
       color: chartColors.filter(color => color !== '#FDD835'),
@@ -275,7 +291,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
           name: 'Mining pool',
           type: 'pie',
           radius: pieSize,
-          data: this.generatePoolsChartSerieData(miningStats),
+          data: serieData,
           labelLayout: {
             hideOverlap: false,       // no ocultar nombres aunque casi se solapen
             moveOverlap: 'shiftY',    // separar verticalmente las etiquetas que chocan (clave para que se lean con muchos pools)

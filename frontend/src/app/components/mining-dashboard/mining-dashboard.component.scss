@@ -117,12 +117,14 @@
 
 /* Queso enorme centrado en su propia fila de ancho completo */
 // Rompe el .container-xl para que el queso ocupe TODO el ancho de la ventana (apaisado).
+// Es un flex item (.col dentro de .row), así que forzamos su base a 100vw y lo
+// centramos con márgenes negativos calculados respecto al ancho del contenedor.
 .queso-fullbleed {
   @media (min-width: 992px) {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+    flex: 0 0 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
   }
 }
 
