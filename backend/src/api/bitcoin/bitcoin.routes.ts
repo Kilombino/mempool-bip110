@@ -64,6 +64,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'bitnodes/knots-stats', this.getBitnodesKnotsStats.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'ocean/hashrate-stats', this.getOceanHashrateStats.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/peers-by-version', this.getBlake2bPeersByVersion.bind(this))
+      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/blake2b-header', this.getBlake2bBlockHeader.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/rbf', this.getRbfHistory)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/cached', this.getCachedTx)
       .get(config.MEMPOOL.API_URL_PREFIX + 'replacements', this.getRbfReplacements)
@@ -315,6 +316,58 @@ class BitcoinRoutes {
     res.json(backendInfo.getBackendInfo());
   }
 
+  // Campos de cabecera propios del hardfork BLAKE2b (header v2): extranonce, nonce2/3,
+  // flags, y sobre todo la clave XOR anti-block-withholding (oblivious shares de Rosenfeld).
+  // Se leen en vivo del nodo (getblock verbosity 1) para NO requerir columnas nuevas en la DB
+  // y valer igual para bloques históricos. Hoy la clave XOR va a cero en toda la red porque
+  // el mecanismo está definido pero aún sin activar (minado solo no lo usa).
+  private async getBlake2bBlockHeader(req: Request, res: Response) {
+    if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
+      handleError(req, res, 400, `Invalid block hash`);
+      return;
+    }
+    try {
+      const b: any = await bitcoinClient.getBlock(req.params.hash, 1);
+      res.json({
+        header_version: b.header_version ?? null,
+        nonce2: b.nonce2 ?? null,
+        nonce3: b.nonce3 ?? null,
+        extranonce: b.extranonce ?? null,
+        time_offset: b.time_offset ?? null,
+        header_flags: b.header_flags ?? null,
+        xor_key_mask_clear_bits: b.xor_key_mask_clear_bits ?? null,
+        xor_key: b.xor_key ?? null,
+        mm_rhs: b.mm_rhs ?? null,
+      });
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get BLAKE2b block header fields');
+    }
+  }
+
+  // Etiqueta corta y humana de una subversion (user agent): "Knots 20260508 rc5",
+  // "Core 29.1.0", etc. Usada para peers y para nuestro propio nodo.
+  private blake2bVersionLabel(rawSubver: string): string {
+    const subver: string = (rawSubver || '').replace(/\//g, '');
+    let label = subver || 'unknown';
+    const rc = subver.match(/(202[0-9]{5})(rc[0-9]+)?/i);
+    const knots = /knots/i.test(subver);
+    if (rc) {
+      label = (knots ? 'Knots ' : '') + rc[1] + (rc[2] ? ' ' + rc[2] : '');
+    } else if (knots) {
+      label = 'Knots';
+    } else if (/satoshi/i.test(subver)) {
+      const v = subver.match(/Satoshi:([0-9.]+)/i);
+      label = 'Core ' + (v ? v[1] : '');
+    }
+    return label;
+  }
+
+  // Alias legibles para nodos públicos conocidos que no anuncian nick propio.
+  // Ampliar según se identifiquen más (clave = IP, sin puerto).
+  private static readonly KNOWN_ALIASES: Record<string, string> = {
+    '82.67.102.15': 'mempool.guide',
+  };
+
   private async getBlake2bPeersByVersion(req: Request, res: Response) {
     try {
       const now = Date.now();
@@ -338,19 +391,7 @@ class BitcoinRoutes {
       let total = 0;
       for (const p of peers) {
         const rawSubver: string = p.subver || '';
-        const subver: string = rawSubver.replace(/\//g, '');
-        let label = subver || 'unknown';
-        // Prefer the Knots release token if present (…20260508rc4… or (Knots…))
-        const rc = subver.match(/(202[0-9]{5})(rc[0-9]+)?/i);
-        const knots = /knots/i.test(subver);
-        if (rc) {
-          label = (knots ? 'Knots ' : '') + rc[1] + (rc[2] ? ' ' + rc[2] : '');
-        } else if (knots) {
-          label = 'Knots';
-        } else if (/satoshi/i.test(subver)) {
-          const v = subver.match(/Satoshi:([0-9.]+)/i);
-          label = 'Core ' + (v ? v[1] : '');
-        }
+        const label = this.blake2bVersionLabel(rawSubver);
         if (!counts[label]) counts[label] = { count: 0, inbound: 0, outbound: 0 };
         counts[label].count++;
         if (p.inbound) counts[label].inbound++; else counts[label].outbound++;
@@ -359,10 +400,18 @@ class BitcoinRoutes {
         const net = (p.network || 'unknown').toLowerCase();
         netCounts[net] = (netCounts[net] || 0) + 1;
 
-        // Custom nick: the parenthetical comment in the raw subver, if any
+        // Custom nick: primero el comentario entre paréntesis del subver, si lo hay;
+        // si no, un alias conocido por IP (nodos públicos como mempool.guide).
         const nick = rawSubver.match(/\(([^)]+)\)/);
+        const addr: string = p.addr || '';
+        const ip = addr.replace(/^\[/, '').split(']')[0].split(':')[0];
         if (nick && nick[1].trim().length > 1 && !/^Knots/i.test(nick[1])) {
           labels.push({ label: nick[1].trim(), version: label });
+        } else {
+          const alias = BitcoinRoutes.KNOWN_ALIASES[ip] || (addr.includes('.onion') ? '' : '');
+          if (alias) {
+            labels.push({ label: alias, version: label });
+          }
         }
         total++;
       }
@@ -375,7 +424,17 @@ class BitcoinRoutes {
         .map(([network, count]) => ({ network, count }))
         .sort((a, b) => b.count - a.count);
 
-      const result = { total, versions, networks, labels, updatedAt: now };
+      // Nuestra propia version (para marcar "latest" = la del nodo, no la mas comun)
+      let ourVersion = '';
+      let ourVersionTag = '';
+      try {
+        const netinfo: any = await bitcoinClient.getNetworkInfo();
+        ourVersion = this.blake2bVersionLabel(netinfo?.subversion || '');
+        const t = (netinfo?.subversion || '').match(/(rc[0-9]+)/i);
+        ourVersionTag = t ? t[1] : ourVersion;
+      } catch (e) { /* si falla, ourVersion queda vacio y el front cae al mas comun */ }
+
+      const result = { total, versions, networks, labels, ourVersion, ourVersionTag, updatedAt: now };
       this.peersVersionCache = { data: result, lastUpdated: now };
       res.json(result);
     } catch (error) {

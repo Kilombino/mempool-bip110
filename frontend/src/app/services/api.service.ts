@@ -322,6 +322,12 @@ export class ApiService {
     return this.httpClient.get<BlockExtended>(this.apiBaseUrl + this.apiBasePath + '/api/v1/block/' + hash);
   }
 
+  // Campos de cabecera del hardfork BLAKE2b (extranonce, flags, clave XOR anti-withholding).
+  // Se leen en vivo del nodo, no de la DB.
+  getBlake2bBlockHeader$(hash: string): Observable<any> {
+    return this.httpClient.get<any>(this.apiBaseUrl + this.apiBasePath + '/api/v1/block/' + hash + '/blake2b-header');
+  }
+
   getBlockDataFromTimestamp$(timestamp: number): Observable<any> {
     return this.httpClient.get<number>(this.apiBaseUrl + this.apiBasePath + '/api/v1/mining/blocks/timestamp/' + timestamp);
   }

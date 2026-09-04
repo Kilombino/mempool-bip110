@@ -61,6 +61,7 @@ export class BlockComponent implements OnInit, OnDestroy {
   bip110ViolationCount: number = 0;
   bip110ViolationTxs: TransactionStripped[] = [];
   showBip110List = false;
+  blake2bHeader: any = null; // campos de cabecera BLAKE2b (extranonce, flags, clave XOR) leídos en vivo del nodo
   accelerations: Acceleration[];
   overviewTransitionDirection: string;
   isLoadingOverview = true;
@@ -279,6 +280,12 @@ export class BlockComponent implements OnInit, OnDestroy {
         }
         this.updateAuditAvailableFromBlockHeight(block.height);
         this.block = block;
+        // Campos de cabecera BLAKE2b (clave XOR anti-withholding, extranonce, flags): en vivo del nodo.
+        this.blake2bHeader = null;
+        this.apiService.getBlake2bBlockHeader$(block.id).subscribe(
+          (h) => { this.blake2bHeader = h; this.cd.markForCheck(); },
+          () => { this.blake2bHeader = null; }
+        );
         if (block.extras) {
           block.extras.minFee = this.getMinBlockFee(block);
           block.extras.maxFee = this.getMaxBlockFee(block);

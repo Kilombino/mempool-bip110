@@ -380,6 +380,24 @@
                   <td i18n="block.header">Block Header Hex</td>
                   <td><a target="_blank" href="{{ network === '' ? '' : '/' + network }}/api/block/{{block.id}}/header"><fa-icon [icon]="['fas', 'external-link-alt']" [fixedWidth]="true"></fa-icon></a></td>
                 </tr>
+                <ng-container *ngIf="blake2bHeader">
+                  <tr *ngIf="blake2bHeader.extranonce != null">
+                    <td>Extranonce</td>
+                    <td><p class="break-all mb-0">{{ blake2bHeader.extranonce }}</p></td>
+                  </tr>
+                  <tr *ngIf="blake2bHeader.header_flags != null">
+                    <td>H1 flags</td>
+                    <td>{{ blake2bHeader.header_flags }}</td>
+                  </tr>
+                  <tr *ngIf="blake2bHeader.xor_key != null">
+                    <td>XOR key<a class="info-link" ngbTooltip="Clave XOR anti-block-withholding (oblivious shares de Rosenfeld). Va a cero mientras el mecanismo no esté activo." i18n-ngbTooltip><fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon></a></td>
+                    <td><p class="break-all mb-0">{{ blake2bHeader.xor_key }}</p></td>
+                  </tr>
+                  <tr *ngIf="blake2bHeader.xor_key_mask_clear_bits != null">
+                    <td>XOR key mask clear bits</td>
+                    <td>{{ blake2bHeader.xor_key_mask_clear_bits }}</td>
+                  </tr>
+                </ng-container>
               </tbody>
             </table>
           </div>
