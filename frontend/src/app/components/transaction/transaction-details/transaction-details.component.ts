@@ -50,6 +50,11 @@ export class TransactionDetailsComponent implements OnChanges {
 
   acceleratorSavingsSats = 0;
   officialMempoolSpace: boolean;
+  // El badge "Priorizado / prioridad fuera de banda" solo tiene sentido con un mercado de
+  // aceleración. En esta fork no hay accelerator (ACCELERATOR=false) y el heurístico que lo
+  // deduce (orden del bloque vs fee efectiva) da falsos positivos porque el minado solo/DATUM
+  // no ordena estrictamente por fee. Así que solo lo mostramos si ACCELERATOR está activo.
+  oobPriorityEnabled: boolean;
 
   constructor(
     private stateService: StateService,
@@ -57,6 +62,7 @@ export class TransactionDetailsComponent implements OnChanges {
     private cd: ChangeDetectorRef,
   ) {
     this.officialMempoolSpace = this.stateService.env.OFFICIAL_MEMPOOL_SPACE;
+    this.oobPriorityEnabled = this.stateService.env.ACCELERATOR;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

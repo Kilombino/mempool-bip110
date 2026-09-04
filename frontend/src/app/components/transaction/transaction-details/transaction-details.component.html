@@ -140,7 +140,7 @@
               @if (auditStatus.added) {
                 <span class="badge bg-warning me-1" i18n-ngbTooltip="Added transaction tooltip" ngbTooltip="This transaction may have been added out-of-band" placement="bottom" i18n="tx-features.tag.added|Added">Added</span>
               }
-              @if (auditStatus.prioritized) {
+              @if (auditStatus.prioritized && oobPriorityEnabled) {
                 <span class="badge bg-warning me-1" i18n-ngbTooltip="Prioritized transaction tooltip" ngbTooltip="This transaction may have been prioritized out-of-band" placement="bottom" i18n="tx-features.tag.prioritized|Prioritized">Prioritized</span>
               }
               @if (auditStatus.conflict) {
