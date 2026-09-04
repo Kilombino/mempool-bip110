@@ -201,11 +201,9 @@ export class PoolRankingComponent implements OnInit, OnChanges {
           formatter: () => {
             const i = pool.blockCount.toString();
             if (['24h', '3d', '1w'].includes(this.miningWindowPreference)) {
-              let hashrate = pool.lastEstimatedHashrate;
-              if ('3d' === this.miningWindowPreference) { hashrate = pool.lastEstimatedHashrate3d; }
-              if ('1w' === this.miningWindowPreference) { hashrate = pool.lastEstimatedHashrate1w; }
-              // hashrate ya viene dividido por hashrateDivider; deshacemos y pasamos a TH/s (÷1e12)
-              const ths = hashrate * miningStats.miningUnits.hashrateDivider / 1e12;
+              // Usamos SIEMPRE el hashrate actual (lastEstimatedHashrate): el 1w/3d del fork
+              // viene inflado (~300x). Ya está dividido por hashrateDivider; deshacemos y ÷1e12 → TH/s.
+              const ths = pool.lastEstimatedHashrate * miningStats.miningUnits.hashrateDivider / 1e12;
               return `<b style="color: white">${pool.name} (${pool.share}%)</b><br>` +
                 ths.toFixed(2) + ' TH/s' +
                 `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
