@@ -85,3 +85,13 @@ Mempool can be installed in other ways too, but we only recommend doing so if yo
 - See the [`docker/`](./docker/) directory for instructions on deploying Mempool with Docker.
 - See the [`backend/`](./backend/) and [`frontend/`](./frontend/) directories for manual install instructions oriented for developers.
 - See the [`production/`](./production/) directory for guidance on setting up a more serious Mempool instance designed for high performance at scale.
+## Keeping `pools-v2.json` current for the BLAKE2b chain
+
+`pools-v2.json` at the repo root is the miner list the backend imports (see `MEMPOOL.POOLS_JSON_URL`). `scripts/blake2b-unknown-tags.py` reports coinbases since the fork height that the list does not name, using the backend's own matching rules (per entry: payout addresses, then case-insensitive regex tags):
+
+```sh
+python3 scripts/blake2b-unknown-tags.py                # against mempool.guide's public API
+python3 scripts/blake2b-unknown-tags.py --api http://127.0.0.1:8999/api/v1 --pools pools-v2.json
+```
+
+It prints one line per unmatched identity (block count, first height, coinbase tag, payout address) and one per entry that matched by address while the coinbase carries a different tag, which usually means a placeholder name. Blocks are cached in `~/.cache/blake2b-unknown-tags.json`, so a cron run fetches only new blocks; `--quiet` prints nothing when the list is complete. Standard library only.
