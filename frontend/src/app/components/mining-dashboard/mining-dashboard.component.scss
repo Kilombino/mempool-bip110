@@ -116,10 +116,20 @@
 }
 
 /* Queso enorme centrado en su propia fila de ancho completo */
+// Rompe el .container-xl para que el queso ocupe TODO el ancho de la ventana (apaisado).
+.queso-fullbleed {
+  @media (min-width: 992px) {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 .pool-queso {
   height: auto;
   width: 100%;
-  max-width: 1600px;   // apaisado: más ancho para dar espacio horizontal a las etiquetas y sus líneas
+  max-width: 1900px;   // apaisado: aprovecha el ancho completo, con tope en pantallas enormes
   margin: 0 auto;
   @media (min-width: 992px) {
     min-height: 1200px;

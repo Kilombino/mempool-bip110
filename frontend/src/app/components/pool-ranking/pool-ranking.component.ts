@@ -137,6 +137,23 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       pools = this.regroupAntPoolProxy(miningStats.pools, miningStats);
     }
 
+    // "Independent miners": en la vista grande (/mining) agrupamos la cola de mineros
+    // más pequeños hasta que el grupo represente ~13% del total, para no saturar el
+    // queso con cientos de nombres ilegibles. Los pools grandes se mantienen sueltos.
+    const grouped = new Set<any>();
+    if (this.widget && !isMobile()) {
+      const INDEP_TARGET = 13; // % objetivo que representará el grupo agrupado
+      const asc = [...pools].sort((a, b) => parseFloat(a.share) - parseFloat(b.share));
+      let acc = 0;
+      for (const p of asc) {
+        const s = parseFloat(p.share);
+        if (acc + s > 15) { break; } // no pasarse del ~15%
+        grouped.add(p);
+        acc += s;
+        if (acc >= INDEP_TARGET) { break; } // ya representa ~13%+, paramos
+      }
+    }
+
     const data: object[] = [];
     let totalShareOther = 0;
     let totalBlockOther = 0;
@@ -150,7 +167,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     }
 
     pools.forEach((pool) => {
-      if (parseFloat(pool.share) < poolShareThreshold) {
+      if (grouped.has(pool) || parseFloat(pool.share) < poolShareThreshold) {
         totalShareOther += parseFloat(pool.share);
         totalBlockOther += pool.blockCount;
         totalEstimatedHashrateOther += pool.lastEstimatedHashrate;
@@ -205,7 +222,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
         color: '#6b6b6b',
       },
       value: totalShareOther,
-      name:  $localize`Other (${percentage})`,
+      name:  $localize`Independent miners (${percentage})`,
       label: {
         overflow: 'none',
         color: 'var(--grey)',
@@ -223,9 +240,9 @@ export class PoolRankingComponent implements OnInit, OnChanges {
         formatter: () => {
           const i = totalBlockOther.toString();
           if (['24h', '3d', '1w'].includes(this.miningWindowPreference)) {
-            return `<b style="color: white">` + $localize`Other (${percentage})` + `</b><br>` + totalEstimatedHashrateOther.toFixed(2) + ' ' + miningStats.miningUnits.hashrateUnit + `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
+            return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + totalEstimatedHashrateOther.toFixed(2) + ' ' + miningStats.miningUnits.hashrateUnit + `<br>` + $localize`${ i }:INTERPOLATION: blocks`;
           } else {
-            return `<b style="color: white">` + $localize`Other (${percentage})` + `</b><br>` + $localize`${ i }:INTERPOLATION: blocks`;
+            return `<b style="color: white">` + $localize`Independent miners (${percentage})` + `</b><br>` + $localize`${ i }:INTERPOLATION: blocks`;
           }
         }
       },
