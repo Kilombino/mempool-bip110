@@ -116,8 +116,8 @@
       <!-- Rendimiento por TH/s (como pool.awokenlazarus.xyz) -->
       <li class="nav-item" id="btn-yield" *ngIf="thsBtcDay !== null">
         <span class="nav-link yield-info" title="Rendimiento estimado de 1 TH/s (subsidio × bloques/día ÷ hashrate de red)">
-          <span class="yield-label">1 TH/s</span>
-          <span class="yield-value">~{{ thsBtcDay | number: '1.4-4' }} ₿/día<span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></span>
+          <span class="yield-label">1 TH/s yields (est.)</span>
+          <span class="yield-value">{{ thsBtcDay | number: '1.4-4' }} Poolcoins/Day<span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></span>
         </span>
       </li>
       <!-- Precio de Bitcoin-Blake2b (BTCB2/USDC) en neoxa -->
@@ -129,7 +129,7 @@
       <!-- Precio de Bitcoin-Blake2b contra BTC (BTCB2/BTC) en neoxa -->
       <li class="nav-item" id="btn-price-btc" *ngIf="btcb2BtcSats !== null">
         <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b contra BTC en neoxa.exchange (BTCB2/BTC)">
-          <span class="price-value">BTC= {{ btcb2BtcSats | number: '1.0-0' }} sats</span>
+          <span class="price-value">BTC= {{ btcb2BtcSats | number: '1.0-0' }} Poolsats</span>
         </a>
       </li>
       <!-- Enlace a la web personal de Kilombino -->

@@ -46,8 +46,8 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   btcb2BtcSats: number | null = null;
   btcb2BtcChangePercent: number | null = null;
   priceSub: Subscription;
-  // Rendimiento por TH/s (como pool.awokenlazarus.xyz): 1 TH/s ≈ X BTC/día · $Y
-  networkHashps: number | null = null;
+  // Rendimiento por TH/s (como pool.awokenlazarus.xyz): 1 TH/s ≈ X Poolcoins/Day · $Y
+  networkDifficulty: number | null = null;
   blockSubsidyBtc: number | null = null;
   thsBtcDay: number | null = null;
   thsUsdDay: number | null = null;
@@ -82,10 +82,10 @@ export class MasterPageComponent implements OnInit, OnDestroy {
           this.btcb2BtcChangePercent = typeof t.changePercent === 'number' ? t.changePercent : null;
         }
       });
-      // Hashrate de red (para el rendimiento por TH/s), como hace la web de Lazarus.
+      // Dificultad de red (para el rendimiento por TH/s), igual que la web de Lazarus.
       this.http.get<any>('/api/v1/mining/hashrate/3d').pipe(catchError(() => of(null))).subscribe((res) => {
-        if (res && typeof res.currentHashrate === 'number' && res.currentHashrate > 0) {
-          this.networkHashps = res.currentHashrate;
+        if (res && typeof res.currentDifficulty === 'number' && res.currentDifficulty > 0) {
+          this.networkDifficulty = res.currentDifficulty;
           this.recomputeYields();
         }
       });
@@ -99,10 +99,15 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** 1 TH/s ≈ X BTCB2/día · $Y — rendimiento por TH/s (subsidio × 144 bloques/día × cuota). */
+  /**
+   * 1 TH/s ≈ X Poolcoins/Day · $Y. Se mide como en pool.awokenlazarus.xyz, a partir de
+   * la DIFICULTAD (no del hashrate medio): coins/día por TH/s = subsidio × 86400 × 1e12 /
+   * (dificultad × 2^34). El 2^34 es la relación work↔dificultad de este PoW BLAKE2b
+   * (verificado contra su /api/pool: da ~0.055, no ~0.085 del hashrate medio de 3 días).
+   */
   private recomputeYields(): void {
-    if (!this.networkHashps || !this.blockSubsidyBtc) { return; }
-    this.thsBtcDay = this.blockSubsidyBtc * 144 * (1e12 / this.networkHashps);
+    if (!this.networkDifficulty || !this.blockSubsidyBtc) { return; }
+    this.thsBtcDay = this.blockSubsidyBtc * 86400 * 1e12 / (this.networkDifficulty * Math.pow(2, 34));
     this.thsUsdDay = this.btcb2Price ? this.thsBtcDay * this.btcb2Price : null;
   }
 
