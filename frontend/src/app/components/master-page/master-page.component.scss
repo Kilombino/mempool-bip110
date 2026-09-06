@@ -376,7 +376,7 @@ main {
 #btn-price .price-change.down, #btn-price-btc .price-change.down { color: #ff6b5e; }
 
 /* Rendimiento por TH/s en el header */
-#btn-yield .yield-info {
+#btn-yield .yield-info, #btn-rent .yield-info {
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -385,11 +385,11 @@ main {
   font-size: 0.85rem;
   cursor: pointer;
 }
-#btn-yield .yield-label {
+#btn-yield .yield-label, #btn-rent .yield-label {
   color: #ff9d1c;
   font-weight: 600;
 }
-#btn-yield .yield-value {
+#btn-yield .yield-value, #btn-rent .yield-value {
   color: #d9b48a;
 }
 
