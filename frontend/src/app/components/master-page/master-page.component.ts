@@ -51,6 +51,10 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   blockSubsidyBtc: number | null = null;
   thsBtcDay: number | null = null;
   thsUsdDay: number | null = null;
+  // Coste de alquiler más barato de 1 TH/s en MiningRigRentals (BTC real) + su equivalente en $.
+  mrrBtcPerThDay: number | null = null;
+  mrrUsdPerThDay: number | null = null;
+  private realBtcUsd: number | null = null;
 
   @ViewChild(MenuComponent)
   public menuComponent!: MenuComponent;
@@ -96,7 +100,25 @@ export class MasterPageComponent implements OnInit, OnDestroy {
           this.recomputeYields();
         }
       });
+      // Coste de alquiler más barato de 1 TH/s en MiningRigRentals (BTC real) + precio BTC real para el $.
+      this.http.get<any>('/mrr-cheapest').pipe(catchError(() => of(null))).subscribe((res) => {
+        const rec = res && res.data && res.data.records && res.data.records[0];
+        const p = rec && rec.price && rec.price.BTC ? parseFloat(rec.price.BTC.price) : NaN;
+        if (!isNaN(p) && p > 0) { this.mrrBtcPerThDay = p; this.recomputeRentCost(); }
+      });
+      this.http.get<any>('/btc-usd').pipe(catchError(() => of(null))).subscribe((res) => {
+        const r = res && res.result ? res.result : null;
+        const key = r ? Object.keys(r)[0] : null;
+        const px = key && r[key] && r[key].c ? parseFloat(r[key].c[0]) : NaN;
+        if (!isNaN(px) && px > 0) { this.realBtcUsd = px; this.recomputeRentCost(); }
+      });
     });
+  }
+
+  private recomputeRentCost(): void {
+    if (this.mrrBtcPerThDay && this.realBtcUsd) {
+      this.mrrUsdPerThDay = this.mrrBtcPerThDay * this.realBtcUsd;
+    }
   }
 
   /**
