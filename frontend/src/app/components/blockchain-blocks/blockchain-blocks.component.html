@@ -86,10 +86,10 @@
         </div>
         <div class="animated" *ngIf="block.extras?.pool != undefined && showPools">
           <a [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i + '-pool'" class="badge" [class.miner-name]="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''" [routerLink]="[('/mining/pool/' + block.extras.pool.slug) | relativeUrl]">
-            <!-- DATUM: engloba muchos mineros con distintos secondary tag; lo unificamos como "DATUM miner" con su logo -->
+            <!-- DATUM: logo del pool + nombre del minero individual (del coinbase); "DATUM miner" solo si no hay nombre -->
             <ng-container *ngIf="block.extras.pool.slug === 'datum'; else nonDatum">
-              <app-mining-pool [slug]="'datum'" [name]="'DATUM miner'" [showName]="false"></app-mining-pool>
-              DATUM miner
+              <app-mining-pool [slug]="'datum'" [name]="'DATUM'" [showName]="false"></app-mining-pool>
+              {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1]) ? block.extras.pool.minerNames[1] : 'DATUM miner' }}
             </ng-container>
             <ng-template #nonDatum>
             <ng-container *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''; else centralisedPool">
