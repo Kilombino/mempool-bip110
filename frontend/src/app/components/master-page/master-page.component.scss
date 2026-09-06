@@ -342,3 +342,52 @@ main {
     transform-origin: center;
   }
 }
+
+/* Icono de la web personal de Kilombino en el header */
+.kilombino-nav-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+  border: 1px solid rgba(255, 157, 28, 0.5);
+}
+#btn-kilombino .nav-link:hover .kilombino-nav-icon {
+  border-color: #ff9d1c;
+}
+
+/* Pestaña de precio BTCB2 (neoxa) en el header */
+#btn-price .price-link, #btn-price-btc .price-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+#btn-price .price-value, #btn-price-btc .price-value {
+  color: #ff9d1c;
+  font-weight: 600;
+}
+#btn-price .price-change, #btn-price-btc .price-change {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+#btn-price .price-change.up, #btn-price-btc .price-change.up { color: #46d16a; }
+#btn-price .price-change.down, #btn-price-btc .price-change.down { color: #ff6b5e; }
+
+/* Rendimiento por TH/s en el header */
+#btn-yield .yield-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  cursor: default;
+}
+#btn-yield .yield-label {
+  color: #ff9d1c;
+  font-weight: 600;
+}
+#btn-yield .yield-value {
+  color: #d9b48a;
+}

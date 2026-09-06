@@ -37,7 +37,7 @@ import { calculateGoodBlockCpfp } from './cpfp';
 import blockProcessor, { BlockProcessingResult, detectTemplateAlgorithm, saveCpfpDataToCpfpSummary } from './block-processor';
 import mempool from './mempool';
 import CpfpRepository from '../repositories/CpfpRepository';
-import { parseDATUMTemplateCreator } from '../utils/bitcoin-script';
+import { parseDATUMTemplateCreator, reorderMinerNames } from '../utils/bitcoin-script';
 import database from '../database';
 import { getBlockFirstSeenFromLogs, getOldestLogTimestampFromLogs, scanLogsForBlocksFirstSeen } from '../utils/file-read';
 
@@ -357,8 +357,8 @@ class Blocks {
           minerNames: null,
         };
 
-        if (extras.pool.name === 'OCEAN') {
-          extras.pool.minerNames = parseDATUMTemplateCreator(extras.coinbaseRaw);
+        if (['OCEAN', 'Lazarus', 'DATUM miners', 'TIDES'].includes(extras.pool.name)) {
+          extras.pool.minerNames = reorderMinerNames(extras.pool.name, parseDATUMTemplateCreator(extras.coinbaseRaw));
         }
 
         // Fallback en vivo: si no casó con ningún pool de la lista, mostrar YA el nombre

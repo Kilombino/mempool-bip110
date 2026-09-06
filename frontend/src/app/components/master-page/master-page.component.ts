@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { Env, StateService } from '@app/services/state.service';
-import { Observable, merge, of, Subscription } from 'rxjs';
+import { Observable, merge, of, Subscription, timer } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { LanguageService } from '@app/services/language.service';
 import { EnterpriseService } from '@app/services/enterprise.service';
 import { NavigationService } from '@app/services/navigation.service';
@@ -38,6 +40,18 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   enterpriseInfo: any;
   enterpriseInfo$: Subscription;
 
+  // Precio de Bitcoin-Blake2b desde neoxa, mostrado en el header (par USDC y par BTC).
+  btcb2Price: number | null = null;
+  btcb2ChangePercent: number | null = null;
+  btcb2BtcSats: number | null = null;
+  btcb2BtcChangePercent: number | null = null;
+  priceSub: Subscription;
+  // Rendimiento por TH/s (como pool.awokenlazarus.xyz): 1 TH/s ≈ X BTC/día · $Y
+  networkHashps: number | null = null;
+  blockSubsidyBtc: number | null = null;
+  thsBtcDay: number | null = null;
+  thsUsdDay: number | null = null;
+
   @ViewChild(MenuComponent)
   public menuComponent!: MenuComponent;
 
@@ -48,10 +62,53 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private storageService: StorageService,
     private router: Router,
+    private http: HttpClient,
   ) { }
+
+  private startBtcb2PricePolling(): void {
+    this.priceSub = timer(0, 60000).subscribe(() => {
+      this.http.get<any>('/neoxa-ticker').pipe(catchError(() => of(null))).subscribe((res) => {
+        const t = res && res.ticker ? res.ticker : null;
+        if (t && typeof t.lastPrice === 'number') {
+          this.btcb2Price = t.lastPrice;
+          this.btcb2ChangePercent = typeof t.changePercent === 'number' ? t.changePercent : null;
+          this.recomputeYields();
+        }
+      });
+      this.http.get<any>('/neoxa-ticker-btc').pipe(catchError(() => of(null))).subscribe((res) => {
+        const t = res && res.ticker ? res.ticker : null;
+        if (t && typeof t.lastPrice === 'number') {
+          this.btcb2BtcSats = Math.round(t.lastPrice * 100000000);
+          this.btcb2BtcChangePercent = typeof t.changePercent === 'number' ? t.changePercent : null;
+        }
+      });
+      // Hashrate de red (para el rendimiento por TH/s), como hace la web de Lazarus.
+      this.http.get<any>('/api/v1/mining/hashrate/3d').pipe(catchError(() => of(null))).subscribe((res) => {
+        if (res && typeof res.currentHashrate === 'number' && res.currentHashrate > 0) {
+          this.networkHashps = res.currentHashrate;
+          this.recomputeYields();
+        }
+      });
+      this.http.get<any>('/api/blocks/tip/height').pipe(catchError(() => of(null))).subscribe((h) => {
+        const height = typeof h === 'number' ? h : parseInt(h, 10);
+        if (!isNaN(height)) {
+          this.blockSubsidyBtc = 50 / Math.pow(2, Math.floor(height / 210000));
+          this.recomputeYields();
+        }
+      });
+    });
+  }
+
+  /** 1 TH/s ≈ X BTCB2/día · $Y — rendimiento por TH/s (subsidio × 144 bloques/día × cuota). */
+  private recomputeYields(): void {
+    if (!this.networkHashps || !this.blockSubsidyBtc) { return; }
+    this.thsBtcDay = this.blockSubsidyBtc * 144 * (1e12 / this.networkHashps);
+    this.thsUsdDay = this.btcb2Price ? this.thsBtcDay * this.btcb2Price : null;
+  }
 
   ngOnInit(): void {
     this.env = this.stateService.env;
+    this.startBtcb2PricePolling();
     this.connectionState$ = this.stateService.connectionState$;
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.urlLanguage = this.languageService.getLanguageForUrl();
@@ -137,6 +194,9 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.enterpriseInfo$) {
       this.enterpriseInfo$.unsubscribe();
+    }
+    if (this.priceSub) {
+      this.priceSub.unsubscribe();
     }
   }
 

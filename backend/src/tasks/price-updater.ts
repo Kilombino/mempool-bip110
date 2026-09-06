@@ -3,12 +3,9 @@ import path from 'path';
 import config from '../config';
 import logger from '../logger';
 import PricesRepository, { ApiPrice, MAX_PRICES } from '../repositories/PricesRepository';
-import BitfinexApi from './price-feeds/bitfinex-api';
-import BitflyerApi from './price-feeds/bitflyer-api';
-import CoinbaseApi from './price-feeds/coinbase-api';
-import GeminiApi from './price-feeds/gemini-api';
 import KrakenApi from './price-feeds/kraken-api';
 import FreeCurrencyApi from './price-feeds/free-currency-api';
+import NeoxaApi from './price-feeds/neoxa-api';
 
 export interface PriceFeed {
   name: string;
@@ -54,7 +51,7 @@ class PriceUpdater {
   private lastHistoricalRun = 0;
   private running = false;
   private feeds: PriceFeed[] = [];
-  private currencies: string[] = ['USD', 'EUR', 'GBP', 'CAD', 'CHF', 'AUD', 'JPY'];
+  private currencies: string[] = ['USD']; // fork BLAKE2b: solo BTCB2/USDC via neoxa
   private latestPrices: ApiPrice;
   private latestGoodPrices: ApiPrice;
   private currencyConversionFeed: ConversionFeed | undefined;
@@ -67,11 +64,8 @@ class PriceUpdater {
     this.latestPrices = this.getEmptyPricesObj();
     this.latestGoodPrices = this.getEmptyPricesObj();
 
-    this.feeds.push(new BitflyerApi()); // Does not have historical endpoint
-    this.feeds.push(new KrakenApi());
-    this.feeds.push(new CoinbaseApi());
-    this.feeds.push(new BitfinexApi());
-    this.feeds.push(new GeminiApi());
+    // Fork BLAKE2b: el precio es el de Bitcoin-Blake2b (BTCB2) en neoxa, no el BTC real.
+    this.feeds.push(new NeoxaApi());
 
     this.currencyConversionFeed = new FreeCurrencyApi();
     this.setCyclePosition();
@@ -313,7 +307,13 @@ class PriceUpdater {
   private async $insertHistoricalPrices(): Promise<void> {
     const existingPriceTimes = await PricesRepository.$getPricesTimes();
 
-    // Insert MtGox weekly prices
+    // Fork BLAKE2b: NO insertar histórico de BTC real (MtGox/Kraken); no aplica a BTCB2.
+    if (true) {
+      await this.$insertMissingRecentPrices('day');
+      await this.$insertMissingRecentPrices('hour');
+      return;
+    }
+    // eslint-disable-next-line no-unreachable
     const pricesJson: any[] = JSON.parse(fs.readFileSync(path.join(__dirname, 'mtgox-weekly.json')).toString());
     const prices = this.getEmptyPricesObj();
     let insertedCount: number = 0;

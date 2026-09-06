@@ -14,7 +14,7 @@ import chainTips from '../api/chain-tips';
 import blocks from '../api/blocks';
 import BlocksAuditsRepository from './BlocksAuditsRepository';
 import transactionUtils from '../api/transaction-utils';
-import { parseDATUMTemplateCreator } from '../utils/bitcoin-script';
+import { parseDATUMTemplateCreator, reorderMinerNames } from '../utils/bitcoin-script';
 import poolsUpdater from '../tasks/pools-updater';
 
 interface DatabaseBlock {
@@ -1342,8 +1342,8 @@ class BlocksRepository {
       }
     }
 
-    if (extras.pool.name === 'OCEAN') {
-      extras.pool.minerNames = parseDATUMTemplateCreator(extras.coinbaseRaw);
+    if (['OCEAN', 'Lazarus', 'DATUM miners', 'TIDES'].includes(extras.pool.name)) {
+      extras.pool.minerNames = reorderMinerNames(extras.pool.name, parseDATUMTemplateCreator(extras.coinbaseRaw));
     }
 
     // BIP110 'reduced_data' signaling detection (version bit 4, 55% threshold)

@@ -225,3 +225,30 @@ export function parseDATUMTemplateCreator(coinbaseRaw: string): string[] | null 
 
   return tagString.split('\x0f').map((name) => name.replace(/[^a-zA-Z0-9 ]/g, ''));
 }
+
+/**
+ * En pools descentralizados (DATUM/Lazarus/TIDES) el coinbase trae dos cadenas: una
+ * genérica del pool/software y otra con el nombre del usuario. El ORDEN varía según
+ * cómo lo configure cada minero (unos ponen el nombre primero, otros el genérico).
+ * Reordena para que minerNames[1] sea SIEMPRE el nombre del usuario (el no genérico),
+ * que es lo que muestran la UI y la tarta.
+ */
+export function reorderMinerNames(poolName: string, names: string[] | null): string[] | null {
+  if (!names || names.length < 2) {
+    return names;
+  }
+  const pn = (poolName || '').toLowerCase();
+  const isGeneric = (n: string): boolean => {
+    const l = (n || '').toLowerCase().trim();
+    if (pn.includes('datum')) { return l.includes('datum'); }
+    if (pn.includes('lazarus') || pn.includes('tides')) { return l === 'lazarus' || l === 'tides'; }
+    return false;
+  };
+  const g0 = isGeneric(names[0]);
+  const g1 = isGeneric(names[1]);
+  // Queremos [genérico, usuario]. Si el usuario está en [0] y el genérico en [1], swap.
+  if (!g0 && g1) {
+    return [names[1], names[0], ...names.slice(2)];
+  }
+  return names;
+}

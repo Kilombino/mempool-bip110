@@ -113,6 +113,31 @@
           <div class="svg-wrapper"><app-svg-images name="nav-faucet-drip" width="21.59" height="100%"></app-svg-images></div>
         </a>
       </li>
+      <!-- Rendimiento por TH/s (como pool.awokenlazarus.xyz) -->
+      <li class="nav-item" id="btn-yield" *ngIf="thsBtcDay !== null">
+        <span class="nav-link yield-info" title="Rendimiento estimado de 1 TH/s (subsidio × bloques/día ÷ hashrate de red)">
+          <span class="yield-label">1 TH/s</span>
+          <span class="yield-value">~{{ thsBtcDay | number: '1.4-4' }} ₿/día<span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></span>
+        </span>
+      </li>
+      <!-- Precio de Bitcoin-Blake2b (BTCB2/USDC) en neoxa -->
+      <li class="nav-item" id="btn-price" *ngIf="btcb2Price !== null">
+        <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_USDC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b en neoxa.exchange (BTCB2/USDC)">
+          <span class="price-value">${{ btcb2Price | number: '1.2-2' }}</span>
+        </a>
+      </li>
+      <!-- Precio de Bitcoin-Blake2b contra BTC (BTCB2/BTC) en neoxa -->
+      <li class="nav-item" id="btn-price-btc" *ngIf="btcb2BtcSats !== null">
+        <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b contra BTC en neoxa.exchange (BTCB2/BTC)">
+          <span class="price-value">BTC= {{ btcb2BtcSats | number: '1.0-0' }} sats</span>
+        </a>
+      </li>
+      <!-- Enlace a la web personal de Kilombino -->
+      <li class="nav-item" id="btn-kilombino">
+        <a class="nav-link" href="https://kilombino.com" target="_blank" rel="noopener noreferrer" title="kilombino.com">
+          <div class="svg-wrapper"><img src="/resources/kilombino-icon.jpg" alt="kilombino.com" class="kilombino-nav-icon"></div>
+        </a>
+      </li>
     </ul>
     <app-search-form [hamburgerOpen]="enterpriseInfo === null && user != null" class="search-form-container" location="top" (searchTriggered)="collapse()"></app-search-form>
   </div>

@@ -31,7 +31,20 @@ form {
 
 .search-submit {
   width: 62px;
+  color: #ff9d1c; // lupa naranja brillante (arriba derecha)
+  font-size: 1.05rem;
+}
+
+// Barra de búsqueda: naranja un poco más claro que el fondo, texto claro legible
+input.form-control {
+  background-color: #4a2c10;
   color: #fff;
+  border-color: #6b4a20;
+  &::placeholder { color: #d9b48a; }
+  &:focus {
+    background-color: #4a2c10;
+    color: #fff;
+  }
 }
 
 .search-box-container {

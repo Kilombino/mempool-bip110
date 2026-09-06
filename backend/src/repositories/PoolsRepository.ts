@@ -32,6 +32,30 @@ class PoolsRepository {
    * Get basic pool info and block count
    * @asyncSafe
    */
+  /**
+   * Coinbases (raw) de todos los bloques de un pool (por nombre) en un intervalo.
+   * Se usa para trocear pools descentralizados (DATUM/Lazarus) por finder en la tarta.
+   */
+  public async $getCoinbasesForPoolName(poolName: string, interval: string | null = null): Promise<string[]> {
+    interval = Common.getSqlInterval(interval);
+    let query = `
+      SELECT blocks.coinbase_raw AS coinbaseRaw
+      FROM blocks
+      JOIN pools ON pools.id = blocks.pool_id
+      WHERE blocks.stale = 0 AND pools.name = ?
+    `;
+    if (interval) {
+      query += ` AND blocks.blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`;
+    }
+    try {
+      const [rows]: any[] = await DB.query(query, [poolName]);
+      return (rows as any[]).map((r) => r.coinbaseRaw).filter((c) => !!c);
+    } catch (e) {
+      logger.err(`Cannot fetch coinbases for pool ${poolName}. Reason: ` + (e instanceof Error ? e.message : e));
+      return [];
+    }
+  }
+
   public async $getPoolsInfo(interval: string | null = null): Promise<PoolInfo[]> {
     interval = Common.getSqlInterval(interval);
 

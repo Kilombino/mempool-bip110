@@ -13,6 +13,7 @@ import BlocksAuditsRepository from '../../repositories/BlocksAuditsRepository';
 import PricesRepository from '../../repositories/PricesRepository';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
 import { IEsploraApi } from '../bitcoin/esplora-api.interface';
+import { parseDATUMTemplateCreator, reorderMinerNames } from '../../utils/bitcoin-script';
 import database from '../../database';
 
 interface DifficultyBlock {
@@ -136,7 +137,46 @@ class Mining {
       poolsStats.push(poolStat);
     });
 
-    poolsStatistics['pools'] = poolsStats;
+    // Pools descentralizados (plantillas individuales): en vez de un solo trozo por
+    // pool, trocear la tarta por FINDER — el nombre secundario del coinbase — con el
+    // mismo logo del pool. Así se ven los usuarios individuales de DATUM/Lazarus.
+    const splitPoolNames = ['DATUM miners', 'Lazarus', 'TIDES'];
+    const keptStats: PoolStats[] = [];
+    const finderStats: PoolStats[] = [];
+    let syntheticId = 900000;
+    for (const ps of poolsStats) {
+      if (!splitPoolNames.includes(ps.name)) {
+        keptStats.push(ps);
+        continue;
+      }
+      const coinbases = await PoolsRepository.$getCoinbasesForPoolName(ps.name, interval);
+      const counts: { [finder: string]: number } = {};
+      for (const cb of coinbases) {
+        const names = reorderMinerNames(ps.name, parseDATUMTemplateCreator(cb));
+        const finder = (names && names.length > 1 && names[1]) ? names[1].trim() : '';
+        const label = finder !== '' ? finder : ps.name;
+        counts[label] = (counts[label] || 0) + 1;
+      }
+      if (Object.keys(counts).length === 0) {
+        keptStats.push(ps); // sin coinbases parseables: dejar el pool tal cual
+        continue;
+      }
+      for (const [finder, count] of Object.entries(counts)) {
+        finderStats.push({
+          ...ps,
+          name: finder,           // nombre del finder (del coinbase)
+          slug: ps.slug,          // mismo logo del pool
+          blockCount: count,
+          poolId: ++syntheticId,  // id sintético único por finder
+          poolUniqueId: syntheticId,
+        });
+      }
+    }
+    const combinedStats = keptStats.concat(finderStats)
+      .sort((a, b) => b.blockCount - a.blockCount);
+    combinedStats.forEach((p, i) => { p.rank = i + 1; });
+
+    poolsStatistics['pools'] = combinedStats;
 
     const blockCount: number = await BlocksRepository.$blockCount(null, interval);
     poolsStatistics['blockCount'] = blockCount;
