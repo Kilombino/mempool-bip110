@@ -60,6 +60,14 @@
     </ng-container>
   </a>
 
+  <!-- Precio y rendimiento en MÓVIL: apilados junto al logo (en escritorio van en la nav) -->
+  <div class="header-extras-mobile d-lg-none" *ngIf="btcb2Price !== null">
+    <a href="https://neoxa.exchange/trade/BTCB2_USDC" target="_blank" rel="noopener noreferrer">1BTC = <b>${{ btcb2Price | number: '1.2-2' }}</b></a>
+    <a *ngIf="btcb2BtcSats !== null" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer">1BTC = <b>{{ btcb2BtcSats | number: '1.0-0' }}</b> Poolsats</a>
+    <a *ngIf="thsBtcDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s earns (est.) <b>{{ thsBtcDay | number: '1.4-4' }} BTC/Day</b><span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></a>
+    <a *ngIf="mrrBtcPerThDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s rent <b>{{ mrrBtcPerThDay | number: '1.5-5' }} Poolcoins/day</b><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></a>
+  </div>
+
   <div (window:resize)="onResize()" ngbDropdown class="dropdown-container" *ngIf="isDropdownVisible">
     <button ngbDropdownToggle type="button" class="btn btn-secondary dropdown-toggle-split d-flex justify-content-center align-items-center" aria-haspopup="true" [attr.aria-label]="'Select network. Current: ' + networkDisplayName" [attr.title]="'Select network. Current: ' + networkDisplayName">
       <app-svg-images class="d-flex justify-content-center align-items-center current-network-svg" [name]="network.val === '' ? 'bitcoin' : network.val" width="20" height="20" viewBox="0 0 65 65"></app-svg-images>
@@ -124,7 +132,7 @@
       <li class="nav-item d-none d-lg-flex" id="btn-rent" *ngIf="mrrBtcPerThDay !== null">
         <a class="nav-link yield-info" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer" title="Alquiler más barato de 1 TH/s en MiningRigRentals (precio en BTC real)">
           <span class="yield-label">1 TH/s rent</span>
-          <span class="yield-value">{{ mrrBtcPerThDay | number: '1.5-5' }} ₿/day<span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></span>
+          <span class="yield-value">{{ mrrBtcPerThDay | number: '1.5-5' }} Poolcoins/day<span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></span>
         </a>
       </li>
       <!-- Precio de Bitcoin-Blake2b (BTCB2/USDC) en neoxa -->
