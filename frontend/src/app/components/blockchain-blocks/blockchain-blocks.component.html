@@ -92,6 +92,12 @@
               {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1]) ? block.extras.pool.minerNames[1] : 'DATUM miner' }}
             </ng-container>
             <ng-template #nonDatum>
+            <!-- CONVOY: símbolo de Convoy + nombre del minero individual (del coinbase); "CONVOY miner" si no hay nombre -->
+            <ng-container *ngIf="block.extras.pool.slug === 'convoy' || block.extras.pool.slug === 'convoymining'; else nonConvoy">
+              <app-mining-pool [slug]="block.extras.pool.slug" [name]="'CONVOY'" [showName]="false"></app-mining-pool>
+              {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1]) ? block.extras.pool.minerNames[1] : 'CONVOY miner' }}
+            </ng-container>
+            <ng-template #nonConvoy>
             <ng-container *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''; else centralisedPool">
               <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.minerNames[1]" [logoStyle]="'filter: grayscale(100%) brightness(1.5);'" [showName]="false"></app-mining-pool>
               {{ block.extras.pool.minerNames[1] }}
@@ -111,6 +117,7 @@
                 <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.name"></app-mining-pool>
                 <span *ngIf="poolsWithAntpool.includes(block.extras.pool.slug)"> + <img class="mining-pool-logo" [src]="'/resources/mining-pools/antpool.svg'" [alt]="'Logo of AntPool mining pool'"></span>
               </ng-template>
+            </ng-template>
             </ng-template>
             </ng-template>
             </ng-template>
