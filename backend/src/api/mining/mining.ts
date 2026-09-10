@@ -140,7 +140,7 @@ class Mining {
     // Pools descentralizados (plantillas individuales): en vez de un solo trozo por
     // pool, trocear la tarta por FINDER — el nombre secundario del coinbase — con el
     // mismo logo del pool. Así se ven los usuarios individuales de DATUM/Lazarus.
-    const splitPoolNames = ['DATUM miners', 'Lazarus', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining'];
+    const splitPoolNames = ['DATUM miners', 'Lazarus', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES'];
     const keptStats: PoolStats[] = [];
     const finderStats: PoolStats[] = [];
     let syntheticId = 900000;

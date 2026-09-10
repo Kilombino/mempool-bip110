@@ -209,6 +209,20 @@ export function parseDATUMTemplateCreator(coinbaseRaw: string): string[] | null 
       bytes.push(parseInt(coinbaseRaw.slice(c, c + 2), 16));
   }
 
+  // PyBLOCK WAVICLES: el coinbase trae "...WAVICLES-BLAKE2b/<autor>" (el autor va tras
+  // la barra, precedido de bytes de control). Lo sacamos como minerNames[1] para que la
+  // UI muestre [logo PyBLOCK] + [autor] + [ᛞ]. Los bytes no imprimibles hacen de separador.
+  const printable = bytes.map((b) => (b >= 32 && b < 127) ? String.fromCharCode(b) : '\x00').join('');
+  const wIdx = printable.indexOf('WAVICLES-BLAKE2b/');
+  if (wIdx >= 0) {
+    const after = printable.slice(wIdx + 'WAVICLES-BLAKE2b/'.length);
+    const m = after.match(/[\x00]*([\x20-\x7e]+?)\x00/);
+    const author = (m ? m[1] : after.replace(/\x00/g, '')).trim();
+    if (author) {
+      return ['PYBLOCK WAVICLES', author];
+    }
+  }
+
   // Skip block height
   let tagLengthByte = 1 + bytes[0];
 

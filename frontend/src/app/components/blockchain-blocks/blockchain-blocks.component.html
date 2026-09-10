@@ -103,10 +103,10 @@
               {{ block.extras.pool.minerNames[1] }}
             </ng-container>
             <ng-template #centralisedPool>
-              <!-- WAVICLES: logo de PYBLOCK + "WAVICLES" + su propio icono -->
+              <!-- WAVICLES: logo de PYBLOCK + autor del coinbase + runa ᛞ -->
               <ng-container *ngIf="block.extras.pool.slug === 'pyblockwavicles'; else pyblockEmojiOrNormal">
                 <app-mining-pool [slug]="'pyblock'" [name]="'PYBLOCK'" [showName]="false"></app-mining-pool>
-                WAVICLES <img class="mining-pool-logo" src="/resources/mining-pools/wavicles-mark.png" alt="Logo of Wavicles">
+                {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1]) ? block.extras.pool.minerNames[1] : 'PyBLOCK' }} <span class="wavicles-rune" title="WAVICLES">ᛞ</span>
               </ng-container>
               <ng-template #pyblockEmojiOrNormal>
               <ng-container *ngIf="pyblockServiceEmoji[block.extras.pool.slug]; else normalPool">
