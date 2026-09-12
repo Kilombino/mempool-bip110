@@ -104,11 +104,14 @@
               {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] && block.extras.pool.minerNames[1].toLowerCase().indexOf('iohzrd') < 0) ? block.extras.pool.minerNames[1] : 'iohzrd' }}
             </ng-container>
             <ng-template #nonIohzrd>
-            <!-- AlphaPool (DATUM): [logo alphapool] + autor del coinbase + [logo DATUM] -->
+            <!-- AlphaPool: [logo alphapool] + autor. Solo los personalizados (autor != 'AlphaPool')
+                 son DATUM y llevan el logo DATUM al final; los que ponen "AlphaPool" son stratum v1. -->
             <ng-container *ngIf="block.extras.pool.slug === 'alphapool'; else nonAlpha">
               <app-mining-pool [slug]="'alphapool'" [name]="'AlphaPool'" [showName]="false"></app-mining-pool>
-              {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1]) ? block.extras.pool.minerNames[1] : 'AlphaPool' }}
-              <app-mining-pool [slug]="'datum'" [name]="'DATUM'" [showName]="false"></app-mining-pool>
+              <ng-container *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] && block.extras.pool.minerNames[1] !== 'AlphaPool'; else alphaPlain">
+                {{ block.extras.pool.minerNames[1] }} <app-mining-pool [slug]="'datum'" [name]="'DATUM'" [showName]="false"></app-mining-pool>
+              </ng-container>
+              <ng-template #alphaPlain>AlphaPool</ng-template>
             </ng-container>
             <ng-template #nonAlpha>
             <ng-container *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''; else centralisedPool">
