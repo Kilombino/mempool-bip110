@@ -357,7 +357,7 @@ class Blocks {
           minerNames: null,
         };
 
-        if (['OCEAN', 'Lazarus', 'DATUM miners', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES', 'iohzrd'].includes(extras.pool.name)) {
+        if (['OCEAN', 'Lazarus', 'DATUM miners', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES', 'iohzrd', 'AlphaPool'].includes(extras.pool.name)) {
           extras.pool.minerNames = reorderMinerNames(extras.pool.name, parseDATUMTemplateCreator(extras.coinbaseRaw));
         }
 
