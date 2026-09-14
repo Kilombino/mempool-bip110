@@ -257,6 +257,7 @@ export function reorderMinerNames(poolName: string, names: string[] | null): str
     if (pn.includes('datum')) { return l.includes('datum'); }
     if (pn.includes('lazarus') || pn.includes('tides') || pn.includes('riptide')) { return l === 'lazarus' || l === 'tides' || l === 'riptide'; }
     if (pn.includes('convoy')) { return l.includes('convoy'); }
+    if (pn === 'solo') { return l === 'solo'; }
     return false;
   };
   const g0 = isGeneric(names[0]);
