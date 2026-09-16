@@ -143,10 +143,11 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     // en UNA cuña por pool; los mineros internos se dibujan como BANDAS CONCÉNTRICAS (serie
     // 'custom' aparte, encima). Los no-DATUM (un minero) quedan sólidos. Igual que mempool.guide.
     const POOL_DISPLAY: { [slug: string]: string } = {
-      datumminers: 'DATUM miners', alphapool: 'AlphaPool', iohzrd: 'iohzrd',
-      lazarus: 'Lazarus', convoy: 'CONVOY', convoymining: 'CONVOY', solo: 'solo',
+      datumminers: 'DATUM miners', datum: 'DATUM', alphapool: 'AlphaPool', iohzrd: 'iohzrd',
+      lazarus: 'Lazarus', convoy: 'CONVOY', convoymining: 'CONVOY', solo: 'solo', b2pool: 'B2Pool',
       tides: 'TIDES', riptide: 'RIPTIDE', pyblockwavicles: 'PYBLOCK WAVICLES', ocean: 'OCEAN',
     };
+    const prettySlug = (s: string): string => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
     const palette = chartColors.filter((c) => c !== '#FDD835');
     const hashSlug = (s: string): number => {
@@ -168,7 +169,9 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     const groups = Array.from(meta.values());
     groups.sort((a, b) => b.blockCount - a.blockCount);
     groups.forEach((g) => {
-      g.name = (g.miners.length > 1 && POOL_DISPLAY[g.slug]) ? POOL_DISPLAY[g.slug] : g.miners[0].name;
+      // Cuña multi-minero (pool DATUM): SIEMPRE el nombre del pool, nunca el de un minero
+      // suelto (evita que la cuña 'datum' salga como 'CONVOY' o 'solo' como 'Quai Network').
+      g.name = (g.miners.length > 1) ? (POOL_DISPLAY[g.slug] || prettySlug(g.slug)) : g.miners[0].name;
       g.miners.sort((a, b) => b.blockCount - a.blockCount);
       const key = (g.name || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
       g.color = poolsColor[key] || poolsColor[g.slug] || palette[hashSlug(g.slug) % palette.length];
