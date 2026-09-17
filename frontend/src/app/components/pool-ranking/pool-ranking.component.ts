@@ -145,7 +145,8 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     const POOL_DISPLAY: { [slug: string]: string } = {
       datumminers: 'DATUM miners', datum: 'DATUM', alphapool: 'AlphaPool', iohzrd: 'iohzrd',
       lazarus: 'Lazarus', convoy: 'CONVOY', convoymining: 'CONVOY', solo: 'solo', b2pool: 'B2Pool',
-      tides: 'TIDES', riptide: 'RIPTIDE', pyblockwavicles: 'PYBLOCK WAVICLES', ocean: 'OCEAN',
+      tides: 'TIDES', riptide: 'RIPTIDE', pyblockwavicles: 'PYBLOCK WAVICLES',
+      pyblockcarouseldatum: 'PYBLOCK CAROUSEL', ocean: 'OCEAN',
     };
     const prettySlug = (s: string): string => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 

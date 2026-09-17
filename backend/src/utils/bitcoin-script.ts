@@ -223,6 +223,18 @@ export function parseDATUMTemplateCreator(coinbaseRaw: string): string[] | null 
     }
   }
 
+  // PyBLOCK CAROUSEL sobre DATUM: "...PyBLOCK-CAROUSEL-DATUM/<autor>" (autor tras la
+  // barra, separado por \x0f). La UI muestra [logo PyBLOCK teñido de azul DATUM] + [autor].
+  const cIdx = printable.indexOf('PyBLOCK-CAROUSEL-DATUM/');
+  if (cIdx >= 0) {
+    const after = printable.slice(cIdx + 'PyBLOCK-CAROUSEL-DATUM/'.length);
+    const m = after.match(/[\x00\x0f]*([\x20-\x7e]+?)[\x00\x0f]/);
+    const author = (m ? m[1] : after.replace(/[\x00\x0f]/g, '')).trim();
+    if (author) {
+      return ['PYBLOCK CAROUSEL DATUM', author];
+    }
+  }
+
   // Skip block height
   let tagLengthByte = 1 + bytes[0];
 
