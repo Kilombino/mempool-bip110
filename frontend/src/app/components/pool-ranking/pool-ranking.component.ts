@@ -146,7 +146,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       datumminers: 'DATUM miners', datum: 'DATUM', alphapool: 'AlphaPool', iohzrd: 'iohzrd',
       lazarus: 'Lazarus', convoy: 'CONVOY', convoymining: 'CONVOY', solo: 'solo', b2pool: 'B2Pool',
       tides: 'TIDES', riptide: 'RIPTIDE', pyblockwavicles: 'PYBLOCK WAVICLES',
-      pyblockcarouseldatum: 'PYBLOCK CAROUSEL', ocean: 'OCEAN',
+      pyblockcarouseldatum: 'PYBLOCK CAROUSEL', pyblock: 'PYBLOCK', ocean: 'OCEAN',
     };
     const prettySlug = (s: string): string => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
@@ -157,11 +157,16 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       return h;
     };
 
+    // Consolidar todos los servicios PyBLOCK (carousel/chirp/wavicles/lotto/carousel-datum)
+    // en UNA sola cuña 'PYBLOCK', como hace mempool.guide; los servicios quedan como bandas
+    // internas. En la línea de bloques se siguen distinguiendo (eso es otro componente).
+    const groupSlug = (s: string): string => (s && s.startsWith('pyblock')) ? 'pyblock' : s;
     // Agrupamos las entradas por slug → una cuña por pool, con su lista de mineros internos.
     const meta = new Map<string, any>();
     pools.forEach((pool) => {
-      let m = meta.get(pool.slug);
-      if (!m) { m = { slug: pool.slug, blockCount: 0, shareSum: 0, hashrate: 0, miners: [] }; meta.set(pool.slug, m); }
+      const gs = groupSlug(pool.slug);
+      let m = meta.get(gs);
+      if (!m) { m = { slug: gs, blockCount: 0, shareSum: 0, hashrate: 0, miners: [] }; meta.set(gs, m); }
       m.blockCount += pool.blockCount;
       m.shareSum += parseFloat(pool.share);
       m.hashrate += pool.lastEstimatedHashrate || 0;
