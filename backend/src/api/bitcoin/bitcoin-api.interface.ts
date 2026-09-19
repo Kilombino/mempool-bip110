@@ -49,6 +49,7 @@ export namespace IBitcoinApi {
     nonce: number;                   //  (numeric) The nonce
     bits: string;                    //  (string) The bits
     difficulty: number;              //  (numeric) The difficulty
+    difficulty_blake2b?: number;     //  (numeric) BLAKE2b PoW difficulty; en 29.4.2+ `difficulty` viene null y el valor real va aquí
     chainwork: string;               //  (string) Expected number of hashes required to produce the chain up to this block (in hex)
     nTx: number;                     //  (numeric) The number of transactions in the block
     previousblockhash: string;       //  (string) The hash of the previous block
@@ -139,6 +140,7 @@ export namespace IBitcoinApi {
     headers: number;                 // (numeric) the current number of headers we have validated
     bestblockhash: string,           // (string) the hash of the currently best block
     difficulty: number;              // (numeric) the current difficulty
+    difficulty_blake2b?: number;     // (numeric) BLAKE2b PoW difficulty; en 29.4.2+ `difficulty` viene null
     mediantime: number;              // (numeric) median time for the current best block
     verificationprogress: number;    // (numeric) estimate of verification progress [0..1]
     initialblockdownload: boolean;   // (bool) (debug information) estimate of whether this node is in Initial Block Download mode.
