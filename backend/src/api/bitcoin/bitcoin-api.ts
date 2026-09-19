@@ -24,7 +24,10 @@ class BitcoinApi implements AbstractBitcoinApi {
       timestamp: block.time,
       bits: parseInt(block.bits, 16),
       nonce: block.nonce,
-      difficulty: block.difficulty ?? block.difficulty_blake2b,
+      // 29.4.2+ da `difficulty` null y el valor real en `difficulty_blake2b`, pero en
+      // escala ×2^32 respecto a la que reportaba el nodo antes (con la que están
+      // calibrados el histórico de la BD y el stat de rendimiento TH/s). Normalizamos /2^32.
+      difficulty: block.difficulty ?? (block.difficulty_blake2b != null ? block.difficulty_blake2b / 4294967296 : undefined),
       merkle_root: block.merkleroot,
       tx_count: block.nTx,
       size: block.size,
