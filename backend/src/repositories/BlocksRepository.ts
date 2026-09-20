@@ -1342,7 +1342,7 @@ class BlocksRepository {
       }
     }
 
-    if (['OCEAN', 'Lazarus', 'DATUM miners', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES', 'PYBLOCK CAROUSEL DATUM', 'iohzrd', 'AlphaPool', 'solo', 'B2Pool'].includes(extras.pool.name)) {
+    if (['OCEAN', 'Lazarus', 'DATUM miners', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES', 'PYBLOCK CAROUSEL DATUM', 'iohzrd', 'AlphaPool', 'solo', 'B2Pool', 'OmegaPool', 'RATUM'].includes(extras.pool.name)) {
       extras.pool.minerNames = reorderMinerNames(extras.pool.name, parseDATUMTemplateCreator(extras.coinbaseRaw));
     }
 
