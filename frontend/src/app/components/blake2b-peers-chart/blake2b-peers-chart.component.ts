@@ -25,7 +25,7 @@ export class Blake2bPeersChartComponent implements OnInit {
   @HostBinding('attr.dir') dir = 'ltr';
 
   peersObservable$: Observable<Blake2bPeersResponse>;
-  private ourVersion = '';   // version de nuestro nodo, para resaltar "latest"
+  private latestVersion = ''; // la version mas nueva presente en la red, para resaltar "latest"
 
   // Palette: highlight the current release (rc4) in green, older ones warmer/greyer.
   private readonly palette = [
@@ -44,7 +44,7 @@ export class Blake2bPeersChartComponent implements OnInit {
       .pipe(
         tap((data) => {
           this.isLoading = false;
-          this.ourVersion = data.ourVersion || '';
+          this.latestVersion = data.latestVersion || '';
           this.prepareChartOptions(data);
           this.cd.markForCheck();
         }),
@@ -53,7 +53,7 @@ export class Blake2bPeersChartComponent implements OnInit {
   }
 
   private colorFor(version: string, index: number): string {
-    if (this.ourVersion && version === this.ourVersion) return '#43A047';  // nuestra version = verde
+    if (this.latestVersion && version === this.latestVersion) return '#43A047';  // la mas nueva = verde
     if (/unknown/i.test(version) || version === '') return '#6b6b6b';
     return this.palette[index % this.palette.length];
   }
@@ -137,13 +137,13 @@ export class Blake2bPeersChartComponent implements OnInit {
   }
 
   getOnLatest(data: Blake2bPeersResponse): number {
-    const ours = data.ourVersion || '';
-    if (!ours) { return 0; }
-    return (data.versions || []).filter(v => v.version === ours).reduce((a, v) => a + v.count, 0);
+    const latest = data.latestVersion || '';
+    if (!latest) { return 0; }
+    return (data.versions || []).filter(v => v.version === latest).reduce((a, v) => a + v.count, 0);
   }
 
-  getOurVersionTag(data: Blake2bPeersResponse): string {
-    return data.ourVersionTag || data.ourVersion || '';
+  getLatestVersionTag(data: Blake2bPeersResponse): string {
+    return data.latestVersionTag || data.latestVersion || '';
   }
 
   getVersionCount(data: Blake2bPeersResponse): number {

@@ -49,8 +49,10 @@ export interface Blake2bPeersResponse {
   versions: Blake2bPeerVersion[];
   networks: Blake2bPeerNetwork[];
   labels: Blake2bPeerLabel[];
-  ourVersion?: string;      // etiqueta de la version de NUESTRO nodo (p.ej. "Knots 20260508 rc5")
-  ourVersionTag?: string;   // token corto (p.ej. "rc5")
+  ourVersion?: string;      // etiqueta de la version de NUESTRO nodo (p.ej. "Knots 29.4.2 rc1")
+  ourVersionTag?: string;   // token corto (p.ej. "rc1")
+  latestVersion?: string;   // la version MAS NUEVA presente en la red (para marcar "latest")
+  latestVersionTag?: string; // token corto de la latest (p.ej. "29.4.2 rc2")
   updatedAt: number;
 }
 
@@ -126,7 +128,7 @@ export class BitnodesService {
         }),
         catchError((error: HttpErrorResponse) => {
           console.error('Error fetching BLAKE2b peers by version:', error);
-          return of({ total: 0, versions: [], networks: [], labels: [], ourVersion: '', ourVersionTag: '', updatedAt: Date.now() });
+          return of({ total: 0, versions: [], networks: [], labels: [], ourVersion: '', ourVersionTag: '', latestVersion: '', latestVersionTag: '', updatedAt: Date.now() });
         })
       );
   }

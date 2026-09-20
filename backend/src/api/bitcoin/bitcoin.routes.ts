@@ -348,18 +348,32 @@ class BitcoinRoutes {
   // "Core 29.1.0", etc. Usada para peers y para nuestro propio nodo.
   private blake2bVersionLabel(rawSubver: string): string {
     const subver: string = (rawSubver || '').replace(/\//g, '');
-    let label = subver || 'unknown';
-    const rc = subver.match(/(202[0-9]{5})(rc[0-9]+)?/i);
     const knots = /knots/i.test(subver);
-    if (rc) {
-      label = (knots ? 'Knots ' : '') + rc[1] + (rc[2] ? ' ' + rc[2] : '');
-    } else if (knots) {
-      label = 'Knots';
-    } else if (/satoshi/i.test(subver)) {
-      const v = subver.match(/Satoshi:([0-9.]+)/i);
-      label = 'Core ' + (v ? v[1] : '');
+    const core = subver.match(/Satoshi:([0-9]+\.[0-9]+\.[0-9]+)/i); // 29.4.1, 29.4.2, …
+    const rc = subver.match(/(202[0-9]{5})(rc[0-9]+)?/i);           // 20260508 (+ optional rc)
+    if (knots) {
+      // The BLAKE2b release is the Knots core version (29.4.1, 29.4.2, …) plus its rc. The
+      // 20260508 date is constant across the series, so we drop it — but we MUST keep the core
+      // version, or 29.4.1-final and 29.4.2-rcN collapse into one label and "latest" lies.
+      if (core) return 'Knots ' + core[1] + (rc && rc[2] ? ' ' + rc[2] : '');
+      if (rc) return 'Knots ' + rc[1] + (rc[2] ? ' ' + rc[2] : '');
+      return 'Knots';
     }
-    return label;
+    if (core) return 'Core ' + core[1];
+    return subver || 'unknown';
+  }
+
+  // Rank a version label so the newest sorts highest: by core version (major.minor.build), then
+  // rc number, with a final (no rc) release ranking above any rc of the same version. Non-Knots or
+  // unversioned labels rank below every real release, so they can never be picked as "latest".
+  private blake2bVersionRank(label: string): number {
+    if (!/^Knots/i.test(label)) return -1;
+    const v = label.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/);
+    if (!v) return -1;
+    const rc = label.match(/rc([0-9]+)/i);
+    const maj = parseInt(v[1], 10), min = parseInt(v[2], 10), bld = parseInt(v[3], 10);
+    const rcNum = rc ? parseInt(rc[1], 10) : 100000; // no rc = final = newest of its version
+    return ((maj * 1000 + min) * 1000 + bld) * 1000000 + rcNum;
   }
 
   // Alias legibles para nodos públicos conocidos que no anuncian nick propio.
@@ -434,7 +448,17 @@ class BitcoinRoutes {
         ourVersionTag = t ? t[1] : ourVersion;
       } catch (e) { /* si falla, ourVersion queda vacio y el front cae al mas comun */ }
 
-      const result = { total, versions, networks, labels, ourVersion, ourVersionTag, updatedAt: now };
+      // "Latest" is the newest version actually present on the network — the highest-ranked of
+      // the versions seen — NOT our own node's version, which may lag behind the network.
+      let latestVersion = '';
+      let latestRank = -1;
+      for (const v of versions) {
+        const r = this.blake2bVersionRank(v.version);
+        if (r > latestRank) { latestRank = r; latestVersion = v.version; }
+      }
+      const latestVersionTag = latestVersion.replace(/^Knots\s*/i, '') || latestVersion;
+
+      const result = { total, versions, networks, labels, ourVersion, ourVersionTag, latestVersion, latestVersionTag, updatedAt: now };
       this.peersVersionCache = { data: result, lastUpdated: now };
       res.json(result);
     } catch (error) {
