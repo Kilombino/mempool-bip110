@@ -353,7 +353,9 @@ export class PoolRankingComponent implements OnInit, OnChanges {
           name: R.name,
           blockCount: R.blockCount || 0,
           poolName: baseName,
-          poolShare: (100 * (R.blockCount || 0) / poolTotal).toFixed(1),
+          // % del TOTAL del queso (no intra-pool): (share del pool sobre el total) × (bloques banda / total pool).
+          // Así una banda que es el pool entero (p.ej. nodeStratum) muestra su % real del total, no 100%.
+          poolShare: (parseFloat(String(d.value)) * (R.blockCount || 0) / poolTotal).toFixed(1),
           color: this.bandColor((d.itemStyle && d.itemStyle.color) || '#888', L),
           startAngle: startFrac,
           endAngle: endFrac,
