@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { WebsocketResponse } from '@interfaces/websocket.interface';
 import { StateService } from '@app/services/state.service';
@@ -20,6 +21,9 @@ const initData = makeStateKey('/api/v1/init-data');
   providedIn: 'root'
 })
 export class WebsocketService {
+  // Precio de 1 BTC (de esta cadena BLAKE2b) en USD según Neoxa, para que las
+  // conversiones a fiat (fees, importes) usen la tasa real del fork y no 0.
+  private btcb2UsdPrice: number | null = null;
   private webSocketProtocol = (document.location.protocol === 'https:') ? 'wss:' : 'ws:';
   private webSocketUrl = this.webSocketProtocol + '//' + document.location.hostname + ':' + document.location.port + '{network}/api/v1/ws';
 
@@ -51,7 +55,12 @@ export class WebsocketService {
     private apiService: ApiService,
     private transferState: TransferState,
     private cacheService: CacheService,
+    private http: HttpClient,
   ) {
+    if (this.stateService.isBrowser) {
+      this.refreshBtcb2Price();
+      setInterval(() => this.refreshBtcb2Price(), 5 * 60 * 1000);
+    }
     if (!this.stateService.isBrowser) {
       // @ts-ignore
       this.websocketSubject = { next: () => {}};
@@ -347,6 +356,23 @@ export class WebsocketService {
     }, OFFLINE_PING_CHECK_AFTER_MS);
   }
 
+  private refreshBtcb2Price(): void {
+    this.http.get<any>('/neoxa-ticker').subscribe({
+      next: (res) => {
+        const p = res && res.ticker ? parseFloat(res.ticker.lastPrice) : NaN;
+        if (!isNaN(p) && p > 0) { this.btcb2UsdPrice = p; }
+      },
+      error: () => {},
+    });
+  }
+
+  // Sustituye la tasa USD que manda el backend (0 en el fork) por el precio real de
+  // Neoxa, para que fees e importes en US$ salgan con la tasa correcta.
+  private applyBtcb2Price(conversions: Record<string, number>): Record<string, number> {
+    if (this.btcb2UsdPrice == null || !conversions) { return conversions; }
+    return { ...conversions, USD: this.btcb2UsdPrice };
+  }
+
   handleResponse(response: WebsocketResponse) {
     let reinitBlocks = false;
 
@@ -384,7 +410,7 @@ export class WebsocketService {
     }
 
     if (response.conversions) {
-      this.stateService.conversions$.next(response.conversions);
+      this.stateService.conversions$.next(this.applyBtcb2Price(response.conversions));
     }
 
     if (response.rbfTransaction) {
