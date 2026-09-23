@@ -98,6 +98,13 @@
               {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1]) ? block.extras.pool.minerNames[1] : 'CONVOY miner' }}
             </ng-container>
             <ng-template #nonConvoy>
+            <!-- PaperclipPool: logo del clip + autor del coinbase (minerNames[1], p.ej. YUMM-DATUM).
+                 Rama propia para que el logo salga a COLOR (la genérica lo pinta en gris). -->
+            <ng-container *ngIf="block.extras.pool.slug === 'paperclippool'; else nonPaperclip">
+              <app-mining-pool [slug]="'paperclippool'" [name]="'PaperclipPool'" [showName]="false"></app-mining-pool>
+              {{ (block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] && block.extras.pool.minerNames[1].toLowerCase().indexOf('paperclip') < 0) ? block.extras.pool.minerNames[1] : 'PaperclipPool' }}
+            </ng-container>
+            <ng-template #nonPaperclip>
             <!-- iohzrd: logo de iohzrd + autor del coinbase (minerNames[1]); "iohzrd" si no hay autor real -->
             <ng-container *ngIf="block.extras.pool.slug === 'iohzrd'; else nonIohzrd">
               <app-mining-pool [slug]="'iohzrd'" [name]="'iohzrd'" [showName]="false"></app-mining-pool>
@@ -139,6 +146,7 @@
                 <app-mining-pool [slug]="block.extras.pool.slug" [name]="block.extras.pool.name"></app-mining-pool>
                 <span *ngIf="poolsWithAntpool.includes(block.extras.pool.slug)"> + <img class="mining-pool-logo" [src]="'/resources/mining-pools/antpool.svg'" [alt]="'Logo of AntPool mining pool'"></span>
               </ng-template>
+            </ng-template>
             </ng-template>
             </ng-template>
             </ng-template>

@@ -66,6 +66,8 @@
     <a *ngIf="btcb2BtcSats !== null" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer">1BTC = <b>{{ btcb2BtcSats | number: '1.0-0' }}</b> Poolsats</a>
     <a *ngIf="thsBtcDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s earns (est.) <b>{{ thsBtcDay | number: '1.4-4' }} BTC/Day</b><span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></a>
     <a *ngIf="mrrBtcPerThDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s rent <b>{{ mrrBtcPerThDay | number: '1.5-5' }} Poolcoins/day</b><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></a>
+    <a *ngIf="kwhPerBtc !== null" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer">1BTC = <b>{{ kwhPerBtc | number: '1.0-0' }} kWh</b> ({{ minerName }})</a>
+    <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
   </div>
 
   <div (window:resize)="onResize()" ngbDropdown class="dropdown-container" *ngIf="isDropdownVisible">
@@ -146,6 +148,20 @@
         <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b contra BTC en neoxa.exchange (BTCB2/BTC)">
           <span class="price-value">1BTC = {{ btcb2BtcSats | number: '1.0-0' }} Poolsats</span>
         </a>
+      </li>
+      <!-- Energía equivalente a 1 BTC (Bitcoin-Blake2b) con el ASIC de referencia -->
+      <li class="nav-item d-none d-lg-flex" id="btn-energy" *ngIf="kwhPerBtc !== null">
+        <a class="nav-link price-link" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer" [title]="'Energía necesaria para minar 1 BTC de Bitcoin-Blake2b con un ' + minerName + ' (14 TH/s, 3300 W), a la dificultad actual'">
+          <span class="price-value">1BTC = {{ kwhPerBtc | number: '1.0-0' }} kWh</span>
+          <span class="price-miner">({{ minerName }})</span>
+        </a>
+      </li>
+      <!-- Lo que pesa la cadena Bitcoin-Blake2b en disco -->
+      <li class="nav-item d-none d-lg-flex" id="btn-chainsize" *ngIf="chainSizeGB !== null">
+        <span class="nav-link yield-info chain-size" title="Lo que ocupa en disco la cadena Bitcoin-Blake2b completa, según el nodo BIP110 que sirve esta web">
+          <span class="yield-label">Blockchain</span>
+          <span class="yield-value">{{ chainSizeGB | number: '1.2-2' }} GB</span>
+        </span>
       </li>
       <!-- Enlace a la web personal de Kilombino -->
       <li class="nav-item d-none d-lg-flex" id="btn-kilombino">

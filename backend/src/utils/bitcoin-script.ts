@@ -249,7 +249,10 @@ export function parseDATUMTemplateCreator(coinbaseRaw: string): string[] | null 
   let tagString = String.fromCharCode(...tags);
   tagString = tagString.replace('\x00', '');
 
-  return tagString.split('\x0f').map((name) => name.replace(/[^a-zA-Z0-9 ]/g, ''));
+  // Se conservan guion, punto y guion bajo: son corrientes en los nombres que ponen los
+  // mineros ("YUMM-DATUM", "pool.iohzrd.tech") y quitarlos los deformaba. El resto de
+  // caracteres raros sí se filtran.
+  return tagString.split('\x0f').map((name) => name.replace(/[^a-zA-Z0-9 ._-]/g, ''));
 }
 
 /**
@@ -266,6 +269,9 @@ export function reorderMinerNames(poolName: string, names: string[] | null): str
   const pn = (poolName || '').toLowerCase();
   const isGeneric = (n: string): boolean => {
     const l = (n || '').toLowerCase().trim();
+    // PaperclipPool va ANTES que el caso 'datum': sus autores suelen llevar "DATUM" en el
+    // nombre (p.ej. "YUMM-DATUM") y con la regla de datum se tomarían por el genérico.
+    if (pn.includes('paperclip')) { return l.includes('paperclip'); }
     if (pn.includes('datum')) { return l.includes('datum'); }
     if (pn.includes('lazarus') || pn.includes('tides') || pn.includes('riptide')) { return l === 'lazarus' || l === 'tides' || l === 'riptide'; }
     if (pn.includes('convoy')) { return l.includes('convoy'); }

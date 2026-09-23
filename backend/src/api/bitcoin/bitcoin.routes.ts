@@ -49,6 +49,12 @@ class BitcoinRoutes {
   } | null = null;
   private readonly PEERS_VERSION_CACHE_DURATION = 60 * 1000;
 
+  private chainSizeCache: {
+    data: any;
+    lastUpdated: number;
+  } | null = null;
+  private readonly CHAIN_SIZE_CACHE_DURATION = 60 * 1000;
+
   public initRoutes(app: Application) {
     app
       .get(config.MEMPOOL.API_URL_PREFIX + 'transaction-times', this.getTransactionTimes)
@@ -64,6 +70,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'bitnodes/knots-stats', this.getBitnodesKnotsStats.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'ocean/hashrate-stats', this.getOceanHashrateStats.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/peers-by-version', this.getBlake2bPeersByVersion.bind(this))
+      .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/chain-size', this.getBlake2bChainSize.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/blake2b-header', this.getBlake2bBlockHeader.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/rbf', this.getRbfHistory)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/cached', this.getCachedTx)
@@ -468,6 +475,47 @@ class BitcoinRoutes {
         return;
       }
       res.status(500).json({ total: 0, versions: [], error: 'unavailable' });
+    }
+  }
+
+  /**
+   * Lo que pesa la cadena Bitcoin-Blake2b en disco, tal como lo cuenta el propio nodo
+   * (`size_on_disk` de getblockchaininfo), en el estilo de learnmeabitcoin.com/technical/blockchain/.
+   * OJO: es el tamaño de ESTE nodo; varía un poco entre nodos según los bloques huérfanos
+   * que cada uno haya guardado. Cacheado 60s porque el frontend lo pide cada minuto.
+   */
+  private async getBlake2bChainSize(req: Request, res: Response) {
+    try {
+      const now = Date.now();
+      if (this.chainSizeCache &&
+          this.chainSizeCache.lastUpdated &&
+          (now - this.chainSizeCache.lastUpdated) < this.CHAIN_SIZE_CACHE_DURATION) {
+        res.json(this.chainSizeCache.data);
+        return;
+      }
+
+      const bci: any = await bitcoinClient.getBlockchainInfo();
+      const sizeOnDisk = typeof bci?.size_on_disk === 'number' ? bci.size_on_disk : null;
+      if (sizeOnDisk === null) {
+        throw new Error('size_on_disk missing from getblockchaininfo');
+      }
+
+      const result = {
+        sizeOnDisk,                          // bytes
+        sizeGB: sizeOnDisk / 1e9,            // GB decimales, como learnmeabitcoin
+        blocks: bci.blocks ?? null,
+        pruned: bci.pruned === true,
+        updatedAt: now,
+      };
+      this.chainSizeCache = { data: result, lastUpdated: now };
+      res.json(result);
+    } catch (error) {
+      logger.err(`Error fetching BLAKE2b chain size: ${error}`);
+      if (this.chainSizeCache && this.chainSizeCache.data) {
+        res.json(this.chainSizeCache.data);
+        return;
+      }
+      res.status(500).json({ error: 'unavailable' });
     }
   }
 

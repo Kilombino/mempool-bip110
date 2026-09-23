@@ -55,6 +55,19 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   mrrBtcPerThDay: number | null = null;
   mrrUsdPerThDay: number | null = null;
   private realBtcUsd: number | null = null;
+  // Lo que pesa la cadena Bitcoin-Blake2b en disco (GB), como learnmeabitcoin.com/technical/blockchain/.
+  chainSizeGB: number | null = null;
+  // Energía equivalente a 1 BTC (Bitcoin-Blake2b) minándolo con el ASIC de referencia.
+  kwhPerBtc: number | null = null;
+
+  /**
+   * Minero de referencia para la equivalencia en kWh: Goldshell SC5 Pro II,
+   * 14 TH/s a 3300 W (≈235,7 J/TH), el ASIC BLAKE2b más habitual en esta red.
+   * Para cambiar de modelo basta con tocar estas tres constantes.
+   */
+  readonly minerName = 'Goldshell SC5 Pro II';
+  private readonly minerThs = 14;
+  private readonly minerWatts = 3300;
 
   @ViewChild(MenuComponent)
   public menuComponent!: MenuComponent;
@@ -106,6 +119,12 @@ export class MasterPageComponent implements OnInit, OnDestroy {
         const p = rec && rec.price && rec.price.BTC ? parseFloat(rec.price.BTC.price) : NaN;
         if (!isNaN(p) && p > 0) { this.mrrBtcPerThDay = p; this.recomputeRentCost(); }
       });
+      // Lo que pesa la cadena en disco, según getblockchaininfo del propio nodo BIP110.
+      this.http.get<any>('/api/v1/blake2b/chain-size').pipe(catchError(() => of(null))).subscribe((res) => {
+        if (res && typeof res.sizeGB === 'number' && res.sizeGB > 0) {
+          this.chainSizeGB = res.sizeGB;
+        }
+      });
       this.http.get<any>('/btc-usd').pipe(catchError(() => of(null))).subscribe((res) => {
         const r = res && res.result ? res.result : null;
         const key = r ? Object.keys(r)[0] : null;
@@ -131,6 +150,19 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     if (!this.networkDifficulty || !this.blockSubsidyBtc) { return; }
     this.thsBtcDay = this.blockSubsidyBtc * 86400 * 1e12 / (this.networkDifficulty * Math.pow(2, 34));
     this.thsUsdDay = this.btcb2Price ? this.thsBtcDay * this.btcb2Price : null;
+    this.recomputeEnergy();
+  }
+
+  /**
+   * Cuánta energía cuesta 1 BTC (Bitcoin-Blake2b) recién emitido, con el minero de referencia.
+   * Se apoya en el rendimiento ya calculado: si 1 TH/s produce `thsBtcDay` BTC al día, para
+   * sacar 1 BTC hacen falta 1/thsBtcDay TH·día, y cada TH·día consume (W/TH × 24 / 1000) kWh.
+   * Cuenta solo el subsidio del bloque, igual que el "earns" de al lado (las comisiones no entran).
+   */
+  private recomputeEnergy(): void {
+    if (!this.thsBtcDay || this.thsBtcDay <= 0) { this.kwhPerBtc = null; return; }
+    const kwhPerThDay = (this.minerWatts / this.minerThs) * 24 / 1000;
+    this.kwhPerBtc = kwhPerThDay / this.thsBtcDay;
   }
 
   ngOnInit(): void {
