@@ -143,12 +143,18 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   /**
    * 1 TH/s ≈ X Poolcoins/Day · $Y. Se mide como en pool.awokenlazarus.xyz, a partir de
    * la DIFICULTAD (no del hashrate medio): coins/día por TH/s = subsidio × 86400 × 1e12 /
-   * (dificultad × 2^34). El 2^34 es la relación work↔dificultad de este PoW BLAKE2b
-   * (verificado contra su /api/pool: da ~0.055, no ~0.085 del hashrate medio de 3 días).
+   * (dificultad × 2^32), que es la relación work↔dificultad de siempre: una cabecera válida
+   * cuesta `dificultad × 2^32` hashes, y el PoW BLAKE2b no cambia esa convención.
+   *
+   * ⚠️ Aquí ponía 2^34 desde el 6 sep 2026 y daba CUATRO VECES MENOS de lo real. Comprobado
+   * por dos caminos el 23 sep 2026: (1) con 2^34 saldría un bloque de red cada 38 min y los
+   * últimos 100 bloques van a 9,9 min, que es lo que predice 2^32; (2) la API del propio pool
+   * donde minamos, pool.awokenlazarus.xyz/api/pool, publica `ths_btc_day = 0.0135920`, idéntico
+   * a lo que da esta fórmula con 2^32 (con 2^34 daba 0.0034). NO volver a subirlo a 2^34.
    */
   private recomputeYields(): void {
     if (!this.networkDifficulty || !this.blockSubsidyBtc) { return; }
-    this.thsBtcDay = this.blockSubsidyBtc * 86400 * 1e12 / (this.networkDifficulty * Math.pow(2, 34));
+    this.thsBtcDay = this.blockSubsidyBtc * 86400 * 1e12 / (this.networkDifficulty * Math.pow(2, 32));
     this.thsUsdDay = this.btcb2Price ? this.thsBtcDay * this.btcb2Price : null;
     this.recomputeEnergy();
   }
