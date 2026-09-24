@@ -161,33 +161,56 @@ export class YshComponent implements OnInit, OnDestroy {
     return mined / target;
   }
 
+  /** Qué parte de TODA la red controla lo que mina el usuario, en %. */
+  get minedSharePercent(): number | null {
+    const mined = this.minedHashrate;
+    if (mined === null || !this.networkHashrate) { return null; }
+    return 100 * mined / this.networkHashrate;
+  }
+
   /**
-   * El veredicto. Los umbrales son deliberadamente anchos (±25 %) porque ni el hashrate
+   * El veredicto, como clave: el texto vive en la plantilla para que pase por i18n.
+   *
+   * Los umbrales de equilibrio son deliberadamente anchos (±25 %) porque ni el hashrate
    * de red ni lo que uno mina son cifras estables: afinar más sería precisión falsa.
+   *
+   * 🔑 Pasarse del YSH NO es lo que te convierte en atacante: eso depende de la parte de
+   * la RED que controlas, no de la proporción con lo que guardas. Quien tenga 0,001 BTC
+   * puede minar mil veces su YSH y seguir siendo irrelevante para la seguridad de la
+   * cadena. Por eso la cuota de red se comprueba PRIMERO y manda sobre la proporción:
+   * con mayoría de hashrate eres un peligro aunque tengas monedas de sobra para
+   * "justificarlo". Umbrales: 50 % = mayoría (reorganizar la cadena y gastar dos veces);
+   * 25 % = a partir de ahí retener bloques empieza a ser rentable (Eyal-Sirer).
    */
-  get balanceVerdict(): { key: string; title: string; detail: string } | null {
+  get balanceKey(): string | null {
+    const share = this.minedSharePercent;
+    if (share !== null) {
+      if (share >= 50) { return 'attack'; }
+      if (share >= 25) { return 'danger'; }
+    }
     const r = this.balanceRatio;
     if (r === null) { return null; }
-    const target = this.formatHashrate(this.yourHashrate);
-    if (r < 0.75) {
-      return {
-        key: 'under',
-        title: 'Te quedas corto',
-        detail: `Minas ${this.adaptive(r * 100, 0)} % de tu YSH. La diferencia hasta ${target} la están pagando otros mineros: tu dinero lo está vigilando gente que no eres tú.`,
-      };
-    }
-    if (r > 1.25) {
-      return {
-        key: 'over',
-        title: 'Te pasas',
-        detail: `Minas ${this.adaptive(r, 2)} veces tu YSH. Estás aportando más seguridad de la que te corresponde por lo que guardas, así que parte de lo que pagas protege monedas ajenas.`,
-      };
-    }
-    return {
-      key: 'even',
-      title: 'En equilibrio',
-      detail: `Minas ${this.adaptive(r * 100, 0)} % de tu YSH. Estás pagando aproximadamente la parte de seguridad que te toca por lo que tienes.`,
-    };
+    if (r < 0.75) { return 'under'; }
+    if (r > 1.25) { return 'over'; }
+    return 'even';
+  }
+
+  /** El % de su YSH que mina, ya formateado (para el texto del veredicto). */
+  get ratioPercentText(): string {
+    const r = this.balanceRatio;
+    return r === null ? '—' : this.adaptive(r * 100, 0);
+  }
+
+  /** Cuántas VECES su YSH mina, ya formateado. */
+  get ratioTimesText(): string {
+    const r = this.balanceRatio;
+    return r === null ? '—' : this.adaptive(r, 2);
+  }
+
+  /** Su cuota de la red, ya formateada. */
+  get sharePercentText(): string {
+    const s = this.minedSharePercent;
+    return s === null ? '—' : this.adaptive(s, 1);
   }
 
   /**
@@ -210,27 +233,39 @@ export class YshComponent implements OnInit, OnDestroy {
     return s === null ? '—' : `${this.adaptive(s, 4)} %`;
   }
 
-  get wattsText(): string {
+  /**
+   * Los textos van troceados en cifra + unidad porque las palabras ("W", "kWh/day",
+   * "a whole machine would back…") viven en la plantilla, que es donde pasan por i18n.
+   * Montarlos aquí dejaría la página en un solo idioma.
+   */
+  get wattsValueText(): string {
     const w = this.watts;
-    if (w === null) { return '—'; }
-    return `${this.adaptive(w)} W (${this.adaptive(w / 1000 * 24)} kWh/día)`;
+    return w === null ? '—' : this.adaptive(w);
+  }
+
+  get kwhPerDayText(): string {
+    const w = this.watts;
+    return w === null ? '—' : this.adaptive(w / 1000 * 24);
   }
 
   /**
    * Con cantidades normales hace falta una fracción mínima de un ASIC, y "0,00 equipos"
-   * no dice nada. Por debajo de un equipo se le da la vuelta a la frase: cuántos BTC
-   * respalda UNO de esos mineros, que sí se entiende.
+   * no dice nada. Por debajo de un equipo la plantilla le da la vuelta a la frase:
+   * cuántos BTC respalda UNO de esos mineros, que sí se entiende.
    */
-  get minersText(): string {
+  get minersAtLeastOne(): boolean {
     const m = this.minersNeeded;
-    if (m === null) { return '—'; }
-    if (m >= 1) {
-      return `${this.adaptive(m)} × ${this.minerName}`;
-    }
+    return m !== null && m >= 1;
+  }
+
+  get minersNeededText(): string {
+    const m = this.minersNeeded;
+    return m === null ? '—' : this.adaptive(m);
+  }
+
+  get btcPerMinerText(): string {
     const per = this.hashPerBtc;
-    if (!per) { return '—'; }
-    const btcPerMiner = (this.minerThs * 1e12) / per;
-    return `una fracción de equipo — uno entero respaldaría ${this.adaptive(btcPerMiner, 0)} BTC`;
+    return per ? this.adaptive((this.minerThs * 1e12) / per, 0) : '—';
   }
 
   /**

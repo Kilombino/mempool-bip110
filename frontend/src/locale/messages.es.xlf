@@ -11490,6 +11490,180 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="ysh.title" datatype="html">
+        <target>Your Security Hashrate</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.intro" datatype="html">
+        <target>Tu YSH es el punto de equilibrio entre lo que minas y lo que tienes en Bitcoin-Blake2b: el hashrate de la red repartido entre todas las monedas en circulación, multiplicado por las que guardas. Es la parte de la seguridad de la cadena que te toca pagar por tu propio dinero.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.intro2" datatype="html">
+        <target>La idea es rondarlo. Quedarte muy corto significa que tu dinero lo está vigilando gente que no eres tú; pasarte mucho, que estás pagando la vigilancia del dinero de otros.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.hint-hold" datatype="html">
+        <target>Lo que tienes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.your-ysh" datatype="html">
+        <target>Tu YSH</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.share-of-network" datatype="html">
+        <target><x id="INTERPOLATION" equiv-text="{{ x }}"/> de la red</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.placeholder-optional" datatype="html">
+        <target>opcional</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.hint-mine" datatype="html">
+        <target>Lo que minas, si quieres ver si estás en equilibrio.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.under.title" datatype="html">
+        <target>Te quedas corto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.under.detail" datatype="html">
+        <target>Minas <x id="INTERPOLATION" equiv-text="{{ x }}"/> % de tu YSH. El resto lo están pagando otros mineros: tu dinero lo está vigilando gente que no eres tú.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.even.title" datatype="html">
+        <target>En equilibrio</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.even.detail" datatype="html">
+        <target>Minas <x id="INTERPOLATION" equiv-text="{{ x }}"/> % de tu YSH. Estás pagando aproximadamente la parte de seguridad que te toca por lo que tienes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.over.title" datatype="html">
+        <target>Te pasas</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.over.detail" datatype="html">
+        <target>Minas <x id="INTERPOLATION" equiv-text="{{ x }}"/> veces tu YSH. Estás aportando más seguridad de la que te corresponde por lo que guardas, así que parte de lo que pagas protege monedas ajenas.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.danger.title" datatype="html">
+        <target>Terreno peligroso</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.danger.detail" datatype="html">
+        <target>Controlas el <x id="INTERPOLATION" equiv-text="{{ x }}"/> % de la red. Pasado más o menos un cuarto del total, retener bloques empieza a ser rentable y la cadena deja de ser segura para todos, tú incluido. Esto ya no va de tus monedas.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.attack.title" datatype="html">
+        <target>Estarías atacando la red</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.attack.detail" datatype="html">
+        <target>Controlas el <x id="INTERPOLATION" equiv-text="{{ x }}"/> % de la red. Con la mayoría del hashrate puedes reorganizar la cadena y gastar dos veces las mismas monedas. Esto ya no es pagar seguridad: es justo el ataque que la red está hecha para resistir.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.equivalent-to" datatype="html">
+        <target>Equivale a</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.miner-fraction" datatype="html">
+        <target>una fracción de equipo — uno entero respaldaría <x id="INTERPOLATION" equiv-text="{{ x }}"/> BTC</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.power" datatype="html">
+        <target>Consumo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.power-value" datatype="html">
+        <target><x id="INTERPOLATION" equiv-text="{{ x }}"/> W (<x id="INTERPOLATION_1" equiv-text="{{ x }}"/> kWh/día)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.rent-cost" datatype="html">
+        <target>Alquilarlo costaría</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.rent-per-day" datatype="html">
+        <target>$<x id="INTERPOLATION" equiv-text="{{ x }}"/> al día</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.network-hashrate" datatype="html">
+        <target>Hashrate de la red</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.coins-in-circulation" datatype="html">
+        <target>Monedas en circulación</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.per-coin" datatype="html">
+        <target>YSH por moneda</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.block-height" datatype="html">
+        <target>Altura del bloque</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.footnote" datatype="html">
+        <target>Los datos se refrescan cada minuto. El hashrate de la red es una estimación a partir de los bloques recientes, así que baila un poco de una lectura a otra; por eso el veredicto de equilibrio se da con un margen ancho, de más o menos un 25 %. El suministro es el emitido hasta la altura actual, sumando el subsidio de cada época de halving.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,16 +1,17 @@
 <div class="container-xl ysh">
 
   <div class="text-center">
-    <h2>Your Security Hashrate <span class="sigla">YSH</span></h2>
-    <p class="lead">
-      Tu <strong>YSH</strong> es el punto de equilibrio entre lo que minas y lo que tienes en
-      Bitcoin-Blake2b: el hashrate de la red repartido entre todas las monedas en circulación,
-      multiplicado por las que guardas. Es la parte de la seguridad de la cadena que te toca
-      pagar por tu propio dinero.
+    <h2><ng-container i18n="@@ysh.title">Your Security Hashrate</ng-container> <span class="sigla">YSH</span></h2>
+    <p class="lead" i18n="@@ysh.intro">
+      Your YSH is the break-even point between what you mine and what you hold
+      in Bitcoin-Blake2b: the network's hashrate shared out among every coin in circulation,
+      multiplied by the coins you keep. It is the share of the chain's security that your own
+      money calls for.
     </p>
-    <p class="lead">
-      La idea es rondarlo. Quedarte muy corto significa que tu dinero lo está vigilando gente
-      que no eres tú; pasarte mucho, que estás pagando la vigilancia del dinero de otros.
+    <p class="lead" i18n="@@ysh.intro2">
+      The idea is to stay close to it. Falling well short means your money is being guarded by
+      people other than you; overshooting by a lot means you are paying to guard other people's
+      money.
     </p>
   </div>
 
@@ -24,41 +25,86 @@
           <input type="text" inputmode="decimal" class="form-control" [value]="amount"
                  (input)="onAmountChange($any($event.target).value)" placeholder="1.0">
         </div>
-        <p class="field-hint">Lo que tienes.</p>
+        <p class="field-hint" i18n="@@ysh.hint-hold">What you hold.</p>
 
         <div class="result-box text-center mb-3">
-          <div class="result-label">Tu YSH</div>
+          <div class="result-label" i18n="@@ysh.your-ysh">Your YSH</div>
           <div class="result-value">{{ formatHashrate(yourHashrate) }}</div>
-          <div class="result-sub" *ngIf="shareOfNetwork !== null">
-            el {{ shareText }} de la red
+          <div class="result-sub" *ngIf="shareOfNetwork !== null" i18n="@@ysh.share-of-network">
+            {{ shareText }} of the network
           </div>
         </div>
 
         <div class="input-group input-group-lg mb-2">
           <span class="input-group-text">TH/s</span>
           <input type="text" inputmode="decimal" class="form-control"
-                 (input)="onMinedChange($any($event.target).value)" placeholder="opcional">
+                 (input)="onMinedChange($any($event.target).value)"
+                 placeholder="optional" i18n-placeholder="@@ysh.placeholder-optional">
         </div>
-        <p class="field-hint">Lo que minas, si quieres ver si estás en equilibrio.</p>
+        <p class="field-hint" i18n="@@ysh.hint-mine">What you mine, if you want to see whether you are in balance.</p>
 
-        <div class="verdict mb-4" *ngIf="balanceVerdict as v" [ngClass]="'verdict-' + v.key">
-          <div class="verdict-title">{{ v.title }}</div>
-          <div class="verdict-detail">{{ v.detail }}</div>
+        <div class="verdict mb-4" *ngIf="balanceKey as key" [ngClass]="'verdict-' + key">
+
+          <ng-container *ngIf="key === 'under'">
+            <div class="verdict-title" i18n="@@ysh.under.title">You are falling short</div>
+            <div class="verdict-detail" i18n="@@ysh.under.detail">
+              You mine {{ ratioPercentText }} % of your YSH. The rest is being paid for by other
+              miners: your money is being guarded by people other than you.
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="key === 'even'">
+            <div class="verdict-title" i18n="@@ysh.even.title">In balance</div>
+            <div class="verdict-detail" i18n="@@ysh.even.detail">
+              You mine {{ ratioPercentText }} % of your YSH. You are paying roughly the share of
+              security that your holdings call for.
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="key === 'over'">
+            <div class="verdict-title" i18n="@@ysh.over.title">You are overshooting</div>
+            <div class="verdict-detail" i18n="@@ysh.over.detail">
+              You mine {{ ratioTimesText }} times your YSH. You are contributing more security
+              than your holdings call for, so part of what you pay protects other people's coins.
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="key === 'danger'">
+            <div class="verdict-title" i18n="@@ysh.danger.title">Dangerous territory</div>
+            <div class="verdict-detail" i18n="@@ysh.danger.detail">
+              You control {{ sharePercentText }} % of the network. Past roughly a quarter of the
+              total, withholding blocks starts to pay off and the chain stops being safe for
+              everyone — you included. This is no longer about your own coins.
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="key === 'attack'">
+            <div class="verdict-title" i18n="@@ysh.attack.title">You would be attacking the network</div>
+            <div class="verdict-detail" i18n="@@ysh.attack.detail">
+              You control {{ sharePercentText }} % of the network. With a majority of the hashrate
+              you can reorganise the chain and spend the same coins twice. That is not paying for
+              security any more: it is the very attack the network is built to resist.
+            </div>
+          </ng-container>
+
         </div>
 
         <table class="table table-borderless detail-table">
           <tbody>
             <tr>
-              <td>Equivale a</td>
-              <td class="text-end">{{ minersText }}</td>
+              <td i18n="@@ysh.equivalent-to">Equivalent to</td>
+              <td class="text-end">
+                <ng-container *ngIf="minersAtLeastOne; else minerFraction">{{ minersNeededText }} &times; {{ minerName }}</ng-container>
+                <ng-template #minerFraction><span i18n="@@ysh.miner-fraction">a fraction of one unit — a whole machine would back {{ btcPerMinerText }} BTC</span></ng-template>
+              </td>
             </tr>
             <tr>
-              <td>Consumo</td>
-              <td class="text-end">{{ wattsText }}</td>
+              <td i18n="@@ysh.power">Power draw</td>
+              <td class="text-end" i18n="@@ysh.power-value">{{ wattsValueText }} W ({{ kwhPerDayText }} kWh/day)</td>
             </tr>
             <tr *ngIf="rentUsdPerDay !== null">
-              <td>Alquilarlo costaría</td>
-              <td class="text-end">${{ rentUsdPerDay | number: '1.2-4' }} al día</td>
+              <td i18n="@@ysh.rent-cost">Renting it would cost</td>
+              <td class="text-end" i18n="@@ysh.rent-per-day">${{ rentUsdPerDay | number: '1.2-4' }} a day</td>
             </tr>
           </tbody>
         </table>
@@ -68,30 +114,29 @@
         <table class="table table-borderless detail-table muted-table">
           <tbody>
             <tr>
-              <td>Hashrate de la red</td>
+              <td i18n="@@ysh.network-hashrate">Network hashrate</td>
               <td class="text-end">{{ formatHashrate(networkHashrate) }}</td>
             </tr>
             <tr>
-              <td>Monedas en circulación</td>
+              <td i18n="@@ysh.coins-in-circulation">Coins in circulation</td>
               <td class="text-end">{{ circulatingSupply | number: '1.0-0' }} BTC</td>
             </tr>
             <tr>
-              <td>YSH por moneda</td>
+              <td i18n="@@ysh.per-coin">YSH per coin</td>
               <td class="text-end">1 BTC = {{ formatHashrate(hashPerBtc) }}</td>
             </tr>
             <tr>
-              <td>Altura del bloque</td>
+              <td i18n="@@ysh.block-height">Block height</td>
               <td class="text-end">{{ blockHeight | number: '1.0-0' }}</td>
             </tr>
           </tbody>
         </table>
 
-        <p class="footnote">
-          Los datos se refrescan cada minuto. El hashrate de la red es una estimación a partir
-          de los bloques recientes, así que baila un poco de una lectura a otra; por eso el
-          veredicto de equilibrio se da con un margen ancho, de más o menos un 25 %. El
-          suministro es el emitido hasta la altura actual, sumando el subsidio de cada época
-          de halving.
+        <p class="footnote" i18n="@@ysh.footnote">
+          The figures refresh every minute. The network hashrate is an estimate from recent
+          blocks, so it wobbles a little between readings; that is why the balance verdict is
+          given with a wide margin, give or take 25 %. The supply is what has been issued up to
+          the current height, adding up the subsidy of each halving epoch.
         </p>
 
       </div>
