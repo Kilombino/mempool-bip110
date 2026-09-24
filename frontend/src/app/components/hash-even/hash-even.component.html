@@ -1,0 +1,88 @@
+<div class="container-xl hash-even">
+
+  <div class="text-center">
+    <h2>Hash-even</h2>
+    <p class="lead">
+      El hashrate de la red repartido entre todas las monedas en circulación. Pon cuántos BTC
+      tienes y te dice el hashrate que te correspondería aportar para pagar, en proporción, la
+      seguridad que la red te está dando. Como contratar la vigilancia de tu propia caja fuerte.
+    </p>
+  </div>
+
+  <ng-container *ngIf="ready; else loading">
+
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+
+        <div class="input-group input-group-lg mb-4">
+          <span class="input-group-text">BTC</span>
+          <input type="text" inputmode="decimal" class="form-control" [value]="amount"
+                 (input)="onAmountChange($any($event.target).value)" placeholder="1.0">
+        </div>
+
+        <div class="result-box text-center mb-4">
+          <div class="result-label">Te correspondería aportar</div>
+          <div class="result-value">{{ formatHashrate(yourHashrate) }}</div>
+          <div class="result-sub" *ngIf="shareOfNetwork !== null">
+            el {{ shareText }} de la red
+          </div>
+        </div>
+
+        <table class="table table-borderless detail-table">
+          <tbody>
+            <tr>
+              <td>Equivale a</td>
+              <td class="text-end">{{ minersText }}</td>
+            </tr>
+            <tr>
+              <td>Consumo</td>
+              <td class="text-end">{{ wattsText }}</td>
+            </tr>
+            <tr *ngIf="rentUsdPerDay !== null">
+              <td>Alquilarlo costaría</td>
+              <td class="text-end">${{ rentUsdPerDay | number: '1.2-4' }} al día</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr>
+
+        <table class="table table-borderless detail-table muted-table">
+          <tbody>
+            <tr>
+              <td>Hashrate de la red</td>
+              <td class="text-end">{{ formatHashrate(networkHashrate) }}</td>
+            </tr>
+            <tr>
+              <td>Monedas en circulación</td>
+              <td class="text-end">{{ circulatingSupply | number: '1.0-0' }} BTC</td>
+            </tr>
+            <tr>
+              <td>Hash-even</td>
+              <td class="text-end">1 BTC = {{ formatHashrate(hashPerBtc) }}</td>
+            </tr>
+            <tr>
+              <td>Altura del bloque</td>
+              <td class="text-end">{{ blockHeight | number: '1.0-0' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="footnote">
+          Los datos se refrescan cada minuto. El hashrate de la red es una estimación a partir
+          de los bloques recientes, así que baila un poco de una lectura a otra. El suministro
+          es el emitido hasta la altura actual, sumando el subsidio de cada época de halving.
+        </p>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="text-center">
+      <div class="spinner-border text-light"></div>
+    </div>
+  </ng-template>
+
+</div>

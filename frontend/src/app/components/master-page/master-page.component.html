@@ -159,7 +159,7 @@
       </li>
       <!-- Hash-even: hashrate de red repartido entre las monedas en circulación -->
       <li class="nav-item d-none d-lg-flex" id="btn-hasheven" *ngIf="hashEvenValue !== null">
-        <a class="nav-link yield-info" [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]" title="Hash-even: el hashrate de la red repartido entre todas las monedas en circulación, o sea el que respalda cada BTC. Lo que te tocaría aportar por cada moneda tuya para pagar la seguridad que te da la red.">
+        <a class="nav-link yield-info" [routerLink]="['/tools/hash-even' | relativeUrl]" title="Hash-even: el hashrate de la red repartido entre todas las monedas en circulación, o sea el que respalda cada BTC. Pincha para calcular el que te correspondería por lo que tengas.">
           <span class="yield-label">Hash-even</span>
           <span class="yield-value">1 BTC = {{ hashEvenValue | number: '1.2-2' }} {{ hashEvenUnit }}</span>
         </a>
