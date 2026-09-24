@@ -77,6 +77,16 @@
     margin: 0 0 18px 4px;
   }
 
+  // La caja del calculo inverso se distingue de la del YSH: es una respuesta distinta,
+  // no el mismo dato repetido.
+  .protect-box {
+    border: 1px solid rgba(255, 157, 28, 0.25);
+    background: transparent;
+    .result-value {
+      font-size: 32px;
+    }
+  }
+
   .verdict {
     border-radius: 6px;
     padding: 14px 16px;
@@ -103,6 +113,13 @@
   .verdict-even {
     border-left-color: #46d16a;
     .verdict-title { color: #46d16a; }
+  }
+  // Ojo: estas reglas han de ir DESPUÉS de `.verdict`, que fija `border-left: 4px solid`
+  // como atajo; puesto antes, ese atajo le devuelve el color a currentColor y el borde
+  // sale gris. Me pasó al añadir la de "suspicious".
+  .verdict-suspicious {
+    border-left-color: #ff6b5e;
+    .verdict-title { color: #ff6b5e; }
   }
   .verdict-over {
     border-left-color: #ff9d1c;

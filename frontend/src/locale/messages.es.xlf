@@ -11533,7 +11533,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="ysh.hint-mine" datatype="html">
-        <target>Lo que minas, si quieres ver si estás en equilibrio.</target>
+        <target>Lo que minas. Rellénalo para ver si estás en equilibrio y cuánto podrías proteger.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
         </context-group>
@@ -11604,12 +11604,6 @@
           <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="ysh.miner-fraction" datatype="html">
-        <target>una fracción de equipo — uno entero respaldaría <x id="INTERPOLATION" equiv-text="{{ x }}"/> BTC</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="ysh.power" datatype="html">
         <target>Consumo</target>
         <context-group purpose="location">
@@ -11660,6 +11654,36 @@
       </trans-unit>
       <trans-unit id="ysh.footnote" datatype="html">
         <target>Los datos se refrescan cada minuto. El hashrate de la red es una estimación a partir de los bloques recientes, así que baila un poco de una lectura a otra; por eso el veredicto de equilibrio se da con un margen ancho, de más o menos un 25 %. El suministro es el emitido hasta la altura actual, sumando el subsidio de cada época de halving.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.protects.label" datatype="html">
+        <target>Ese hashrate protege hasta</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.protects.sub" datatype="html">
+        <target>las monedas cuya seguridad paga ese hashrate</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.miner-percent" datatype="html">
+        <target><x id="INTERPOLATION" equiv-text="{{ x }}"/> % de un <x id="INTERPOLATION_1" equiv-text="{{ x }}"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.suspicious.title" datatype="html">
+        <target>Podrías estar atacando la red</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ysh.suspicious.detail" datatype="html">
+        <target>Minas <x id="INTERPOLATION" equiv-text="{{ x }}"/> veces tu YSH. Eso va mucho más allá de lo que piden tus propias monedas, así que no lo haces para proteger tu dinero: a ese ritmo, o vendes el hashrate o estás montando una posición contra la cadena. Lo que decide cuál de las dos es tu cuota del total, ahora mismo el <x id="INTERPOLATION_1" equiv-text="{{ x }}"/> %.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
         </context-group>

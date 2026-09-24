@@ -41,7 +41,13 @@
                  (input)="onMinedChange($any($event.target).value)"
                  placeholder="optional" i18n-placeholder="@@ysh.placeholder-optional">
         </div>
-        <p class="field-hint" i18n="@@ysh.hint-mine">What you mine, if you want to see whether you are in balance.</p>
+        <p class="field-hint" i18n="@@ysh.hint-mine">What you mine. Fill it in to see whether you are in balance, and how much you could protect.</p>
+
+        <div class="result-box protect-box text-center mb-3" *ngIf="protectableBtc !== null">
+          <div class="result-label" i18n="@@ysh.protects.label">That hashrate protects up to</div>
+          <div class="result-value">{{ protectableBtcText }} BTC</div>
+          <div class="result-sub" i18n="@@ysh.protects.sub">the holdings whose security that hashrate pays for</div>
+        </div>
 
         <div class="verdict mb-4" *ngIf="balanceKey as key" [ngClass]="'verdict-' + key">
 
@@ -66,6 +72,16 @@
             <div class="verdict-detail" i18n="@@ysh.over.detail">
               You mine {{ ratioTimesText }} times your YSH. You are contributing more security
               than your holdings call for, so part of what you pay protects other people's coins.
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="key === 'suspicious'">
+            <div class="verdict-title" i18n="@@ysh.suspicious.title">You could be attacking the network</div>
+            <div class="verdict-detail" i18n="@@ysh.suspicious.detail">
+              You mine {{ ratioTimesText }} times your YSH. That is far beyond anything your own
+              coins call for, so you are not doing it to protect your money: at this rate you are
+              either selling the hashrate or building a position against the chain. What settles
+              which of the two it is, is your share of the total — right now {{ sharePercentText }} %.
             </div>
           </ng-container>
 
@@ -95,7 +111,7 @@
               <td i18n="@@ysh.equivalent-to">Equivalent to</td>
               <td class="text-end">
                 <ng-container *ngIf="minersAtLeastOne; else minerFraction">{{ minersNeededText }} &times; {{ minerName }}</ng-container>
-                <ng-template #minerFraction><span i18n="@@ysh.miner-fraction">a fraction of one unit — a whole machine would back {{ btcPerMinerText }} BTC</span></ng-template>
+                <ng-template #minerFraction><span i18n="@@ysh.miner-percent">{{ minersPercentText }} % of one {{ minerName }}</span></ng-template>
               </td>
             </tr>
             <tr>

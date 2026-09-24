@@ -191,6 +191,9 @@ export class YshComponent implements OnInit, OnDestroy {
     const r = this.balanceRatio;
     if (r === null) { return null; }
     if (r < 0.75) { return 'under'; }
+    // Un orden de magnitud por encima de lo que tus monedas justifican ya no se explica
+    // como generosidad: a esa altura minas por algo que no es proteger tu propio dinero.
+    if (r > 10) { return 'suspicious'; }
     if (r > 1.25) { return 'over'; }
     return 'even';
   }
@@ -263,9 +266,28 @@ export class YshComponent implements OnInit, OnDestroy {
     return m === null ? '—' : this.adaptive(m);
   }
 
-  get btcPerMinerText(): string {
+  /**
+   * Por debajo de un equipo se expresa como PORCENTAJE de una máquina ("el 0,012 % de un
+   * Goldshell"), que se entiende solo. Antes se le daba la vuelta a la frase contando
+   * cuántos BTC respaldaría un equipo entero, y Kilombino dijo que no lo entendía: era
+   * responder a otra pregunta en medio de la tabla. Esa pregunta tiene ahora su propio
+   * sitio, el cálculo inverso de "cuánto puedes proteger".
+   */
+  get minersPercentText(): string {
+    const m = this.minersNeeded;
+    return m === null ? '—' : this.adaptive(m * 100, 2);
+  }
+
+  /** Cálculo inverso: con el hashrate que has puesto, cuántos BTC llegas a proteger. */
+  get protectableBtc(): number | null {
+    const mined = this.minedHashrate;
     const per = this.hashPerBtc;
-    return per ? this.adaptive((this.minerThs * 1e12) / per, 0) : '—';
+    return mined === null || !per ? null : mined / per;
+  }
+
+  get protectableBtcText(): string {
+    const b = this.protectableBtc;
+    return b === null ? '—' : this.adaptive(b, 2);
   }
 
   /**
