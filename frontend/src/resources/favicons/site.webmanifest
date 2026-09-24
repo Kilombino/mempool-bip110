@@ -1,6 +1,6 @@
 {
-    "name": "mempool",
-    "short_name": "mempool",
+    "name": "mempool BIP110",
+    "short_name": "BIP110",
     "icons": [
         {
             "src": "/resources/favicons/android-chrome-192x192.png",
