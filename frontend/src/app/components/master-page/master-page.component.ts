@@ -57,6 +57,13 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   private realBtcUsd: number | null = null;
   // Lo que pesa la cadena Bitcoin-Blake2b en disco (GB), como learnmeabitcoin.com/technical/blockchain/.
   chainSizeGB: number | null = null;
+  // "Hash-even": hashrate de red repartido entre las monedas en circulación, o sea el hashrate
+  // que respalda cada BTC. Es lo que tendrías que aportar por cada moneda tuya para pagarle a
+  // la red la seguridad que te está dando, como contratar la vigilancia de tu propia caja fuerte.
+  hashEvenValue: number | null = null;
+  hashEvenUnit = 'GH/s';
+  private networkHashrate: number | null = null;  // H/s
+  private circulatingSupply: number | null = null; // BTC emitidos hasta la punta
   // Energía equivalente a 1 BTC (Bitcoin-Blake2b) minándolo con el ASIC de referencia.
   kwhPerBtc: number | null = null;
 
@@ -105,12 +112,18 @@ export class MasterPageComponent implements OnInit, OnDestroy {
           this.networkDifficulty = res.currentDifficulty;
           this.recomputeYields();
         }
+        if (res && typeof res.currentHashrate === 'number' && res.currentHashrate > 0) {
+          this.networkHashrate = res.currentHashrate;
+          this.recomputeHashEven();
+        }
       });
       this.http.get<any>('/api/blocks/tip/height').pipe(catchError(() => of(null))).subscribe((h) => {
         const height = typeof h === 'number' ? h : parseInt(h, 10);
         if (!isNaN(height)) {
           this.blockSubsidyBtc = 50 / Math.pow(2, Math.floor(height / 210000));
+          this.circulatingSupply = this.supplyAtHeight(height);
           this.recomputeYields();
+          this.recomputeHashEven();
         }
       });
       // Coste de alquiler más barato de 1 TH/s en MiningRigRentals (BTC real) + precio BTC real para el $.
@@ -165,6 +178,43 @@ export class MasterPageComponent implements OnInit, OnDestroy {
    * sacar 1 BTC hacen falta 1/thsBtcDay TH·día, y cada TH·día consume (W/TH × 24 / 1000) kWh.
    * Cuenta solo el subsidio del bloque, igual que el "earns" de al lado (las comisiones no entran).
    */
+  /**
+   * BTC emitidos hasta una altura: suma de los subsidios de cada época de halving.
+   * Es el suministro teórico; el real es algo menor (monedas quemadas, coinbases no
+   * reclamados), pero la diferencia es de unas decenas de BTC sobre 20 millones.
+   */
+  private supplyAtHeight(height: number): number {
+    let supply = 0;
+    let subsidy = 50;
+    let start = 0;
+    while (start <= height && subsidy > 0) {
+      supply += Math.min(height - start + 1, 210000) * subsidy;
+      subsidy /= 2;
+      start += 210000;
+    }
+    return supply;
+  }
+
+  /**
+   * "Hash-even": hashrate de red ÷ monedas en circulación = el hashrate que respalda cada BTC.
+   * La unidad se ajusta sola al orden de magnitud (hoy sale ~1,7 GH/s por BTC; en TH/s serían
+   * 0,0017 y no se leería). Si algún día la red crece lo bastante, pasará a TH/s por sí solo.
+   */
+  private recomputeHashEven(): void {
+    if (!this.networkHashrate || !this.circulatingSupply) { return; }
+    const hsPerBtc = this.networkHashrate / this.circulatingSupply;
+    const units: [number, string][] = [[1e18, 'EH/s'], [1e15, 'PH/s'], [1e12, 'TH/s'], [1e9, 'GH/s'], [1e6, 'MH/s'], [1e3, 'kH/s']];
+    for (const [factor, label] of units) {
+      if (hsPerBtc >= factor) {
+        this.hashEvenValue = hsPerBtc / factor;
+        this.hashEvenUnit = label;
+        return;
+      }
+    }
+    this.hashEvenValue = hsPerBtc;
+    this.hashEvenUnit = 'H/s';
+  }
+
   private recomputeEnergy(): void {
     if (!this.thsBtcDay || this.thsBtcDay <= 0) { this.kwhPerBtc = null; return; }
     const kwhPerThDay = (this.minerWatts / this.minerThs) * 24 / 1000;

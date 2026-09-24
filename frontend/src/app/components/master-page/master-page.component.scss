@@ -409,7 +409,7 @@ main {
       flex-grow: 0;
     }
   }
-  #btn-yield .yield-info, #btn-rent .yield-info, #btn-chainsize .chain-size {
+  #btn-yield .yield-info, #btn-rent .yield-info, #btn-hasheven .yield-info, #btn-chainsize .chain-size {
     font-size: 0.75rem;
     gap: 4px;
   }
@@ -421,7 +421,7 @@ main {
     font-size: 0.7rem;
   }
   #btn-yield .nav-link, #btn-rent .nav-link, #btn-price .nav-link, #btn-price-btc .nav-link,
-  #btn-energy .nav-link, #btn-chainsize .nav-link {
+  #btn-energy .nav-link, #btn-hasheven .nav-link, #btn-chainsize .nav-link {
     padding-left: 9px;
     padding-right: 9px;
   }
@@ -443,7 +443,7 @@ main {
   color: #d9b48a;
   font-size: 0.78rem;
 }
-#btn-chainsize .chain-size {
+#btn-hasheven .yield-info, #btn-chainsize .chain-size {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -451,11 +451,16 @@ main {
   font-size: 0.85rem;
   cursor: default;
 }
-#btn-chainsize .yield-label {
+/* El hash-even sí es enlace (lleva al gráfico de hashrate), así que mano y sin subrayado */
+#btn-hasheven .yield-info {
+  cursor: pointer;
+  text-decoration: none;
+}
+#btn-hasheven .yield-label, #btn-chainsize .yield-label {
   color: #ff9d1c;
   font-weight: 600;
 }
-#btn-chainsize .yield-value {
+#btn-hasheven .yield-value, #btn-chainsize .yield-value {
   color: #d9b48a;
 }
 
