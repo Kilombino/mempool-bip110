@@ -125,7 +125,7 @@ import { ClockchainComponent } from '@components/clockchain/clockchain.component
 import { ClockFaceComponent } from '@components/clock-face/clock-face.component';
 import { ClockComponent } from '@components/clock/clock.component';
 import { CalculatorComponent } from '@components/calculator/calculator.component';
-import { HashEvenComponent } from '@components/hash-even/hash-even.component';
+import { YshComponent } from '@components/ysh/ysh.component';
 import { BitcoinsatoshisPipe } from '@app/shared/pipes/bitcoinsatoshis.pipe';
 import { HttpErrorComponent } from '@app/shared/components/http-error/http-error.component';
 import { TwitterWidgetComponent } from '@components/twitter-widget/twitter-widget.component';
@@ -244,7 +244,7 @@ import { OceanHashrateChartComponent } from '../components/ocean-hashrate-chart/
     GlobalFooterComponent,
     MiningPoolComponent,
     CalculatorComponent,
-    HashEvenComponent,
+    YshComponent,
     BitcoinsatoshisPipe,
     BlockViewComponent,
     EightBlocksComponent,

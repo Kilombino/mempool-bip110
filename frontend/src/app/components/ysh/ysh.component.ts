@@ -4,25 +4,32 @@ import { Subscription, of, timer } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 /**
- * Hash-even: el hashrate de la red repartido entre las monedas en circulación.
- * Metes cuántos BTC de Bitcoin-Blake2b tienes y te dice el hashrate que te
- * correspondería aportar para pagar, en proporción, la seguridad que la red te
- * está dando — como contratar la vigilancia de tu propia caja fuerte.
+ * YSH — Your Security Hashrate: el punto de equilibrio entre lo que minas y lo que
+ * tienes. Es el hashrate de la red repartido entre todas las monedas en circulación,
+ * multiplicado por las que guardas: la parte de la seguridad de la cadena que te toca
+ * pagar por tu propio dinero. Conviene rondarlo, sin quedarse corto ni pasarse mucho.
  *
- * Los mismos datos que el "Hash-even" del cabecero, sin endpoint propio:
- * `currentHashrate` de /api/v1/mining/hashrate/3d y el suministro emitido, que se
- * calcula sumando los subsidios de cada época de halving desde la altura de la punta.
+ * Los mismos datos que el "YSH" del cabecero, sin endpoint propio: `currentHashrate`
+ * de /api/v1/mining/hashrate/3d y el suministro emitido, que se calcula sumando los
+ * subsidios de cada época de halving desde la altura de la punta.
  */
 @Component({
-  selector: 'app-hash-even',
-  templateUrl: './hash-even.component.html',
-  styleUrls: ['./hash-even.component.scss'],
+  selector: 'app-ysh',
+  templateUrl: './ysh.component.html',
+  styleUrls: ['./ysh.component.scss'],
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HashEvenComponent implements OnInit, OnDestroy {
+export class YshComponent implements OnInit, OnDestroy {
   /** Lo que escribe el usuario, en BTC. Se admiten decimales (hasta 8, como un satoshi). */
   amount = 1;
+
+  /**
+   * Lo que el usuario mina de verdad, en TH/s. Es opcional: vacío o 0 significa
+   * "solo quiero saber el objetivo". En cuanto pone algo, se compara con su YSH,
+   * que es donde el concepto de punto de equilibrio cobra sentido.
+   */
+  minedThs: number | null = null;
 
   networkHashrate: number | null = null;   // H/s
   circulatingSupply: number | null = null; // BTC emitidos
@@ -82,6 +89,12 @@ export class HashEvenComponent implements OnInit, OnDestroy {
     this.cd.markForCheck();
   }
 
+  onMinedChange(value: string): void {
+    const n = parseFloat((value || '').replace(',', '.'));
+    this.minedThs = isNaN(n) || n < 0 ? null : n;
+    this.cd.markForCheck();
+  }
+
   /** BTC emitidos hasta una altura: suma de los subsidios de cada época de halving. */
   private supplyAtHeight(height: number): number {
     let supply = 0;
@@ -133,6 +146,48 @@ export class HashEvenComponent implements OnInit, OnDestroy {
     const y = this.yourHashrate;
     if (y === null || !this.mrrBtcPerThDay || !this.realBtcUsd) { return null; }
     return (y / 1e12) * this.mrrBtcPerThDay * this.realBtcUsd;
+  }
+
+  /** Lo que mina el usuario, en H/s, o null si no ha puesto nada. */
+  get minedHashrate(): number | null {
+    return this.minedThs && this.minedThs > 0 ? this.minedThs * 1e12 : null;
+  }
+
+  /** Cuánto se desvía de su punto de equilibrio: 1 = justo, 2 = el doble, 0,5 = la mitad. */
+  get balanceRatio(): number | null {
+    const target = this.yourHashrate;
+    const mined = this.minedHashrate;
+    if (target === null || mined === null || target <= 0) { return null; }
+    return mined / target;
+  }
+
+  /**
+   * El veredicto. Los umbrales son deliberadamente anchos (±25 %) porque ni el hashrate
+   * de red ni lo que uno mina son cifras estables: afinar más sería precisión falsa.
+   */
+  get balanceVerdict(): { key: string; title: string; detail: string } | null {
+    const r = this.balanceRatio;
+    if (r === null) { return null; }
+    const target = this.formatHashrate(this.yourHashrate);
+    if (r < 0.75) {
+      return {
+        key: 'under',
+        title: 'Te quedas corto',
+        detail: `Minas ${this.adaptive(r * 100, 0)} % de tu YSH. La diferencia hasta ${target} la están pagando otros mineros: tu dinero lo está vigilando gente que no eres tú.`,
+      };
+    }
+    if (r > 1.25) {
+      return {
+        key: 'over',
+        title: 'Te pasas',
+        detail: `Minas ${this.adaptive(r, 2)} veces tu YSH. Estás aportando más seguridad de la que te corresponde por lo que guardas, así que parte de lo que pagas protege monedas ajenas.`,
+      };
+    }
+    return {
+      key: 'even',
+      title: 'En equilibrio',
+      detail: `Minas ${this.adaptive(r * 100, 0)} % de tu YSH. Estás pagando aproximadamente la parte de seguridad que te toca por lo que tienes.`,
+    };
   }
 
   /**

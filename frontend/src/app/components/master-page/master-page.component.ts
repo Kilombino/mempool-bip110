@@ -57,11 +57,11 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   private realBtcUsd: number | null = null;
   // Lo que pesa la cadena Bitcoin-Blake2b en disco (GB), como learnmeabitcoin.com/technical/blockchain/.
   chainSizeGB: number | null = null;
-  // "Hash-even": hashrate de red repartido entre las monedas en circulación, o sea el hashrate
-  // que respalda cada BTC. Es lo que tendrías que aportar por cada moneda tuya para pagarle a
-  // la red la seguridad que te está dando, como contratar la vigilancia de tu propia caja fuerte.
-  hashEvenValue: number | null = null;
-  hashEvenUnit = 'GH/s';
+  // YSH (Your Security Hashrate): hashrate de red repartido entre las monedas en circulación,
+  // o sea el que respalda cada BTC. Es el punto de equilibrio entre lo que minas y lo que
+  // tienes; la página /tools/ysh lo calcula para una cantidad concreta.
+  yshValue: number | null = null;
+  yshUnit = 'GH/s';
   private networkHashrate: number | null = null;  // H/s
   private circulatingSupply: number | null = null; // BTC emitidos hasta la punta
   // Energía equivalente a 1 BTC (Bitcoin-Blake2b) minándolo con el ASIC de referencia.
@@ -114,7 +114,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
         }
         if (res && typeof res.currentHashrate === 'number' && res.currentHashrate > 0) {
           this.networkHashrate = res.currentHashrate;
-          this.recomputeHashEven();
+          this.recomputeYsh();
         }
       });
       this.http.get<any>('/api/blocks/tip/height').pipe(catchError(() => of(null))).subscribe((h) => {
@@ -123,7 +123,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
           this.blockSubsidyBtc = 50 / Math.pow(2, Math.floor(height / 210000));
           this.circulatingSupply = this.supplyAtHeight(height);
           this.recomputeYields();
-          this.recomputeHashEven();
+          this.recomputeYsh();
         }
       });
       // Coste de alquiler más barato de 1 TH/s en MiningRigRentals (BTC real) + precio BTC real para el $.
@@ -196,23 +196,23 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * "Hash-even": hashrate de red ÷ monedas en circulación = el hashrate que respalda cada BTC.
+   * YSH: hashrate de red ÷ monedas en circulación = el hashrate que respalda cada BTC.
    * La unidad se ajusta sola al orden de magnitud (hoy sale ~1,7 GH/s por BTC; en TH/s serían
    * 0,0017 y no se leería). Si algún día la red crece lo bastante, pasará a TH/s por sí solo.
    */
-  private recomputeHashEven(): void {
+  private recomputeYsh(): void {
     if (!this.networkHashrate || !this.circulatingSupply) { return; }
     const hsPerBtc = this.networkHashrate / this.circulatingSupply;
     const units: [number, string][] = [[1e18, 'EH/s'], [1e15, 'PH/s'], [1e12, 'TH/s'], [1e9, 'GH/s'], [1e6, 'MH/s'], [1e3, 'kH/s']];
     for (const [factor, label] of units) {
       if (hsPerBtc >= factor) {
-        this.hashEvenValue = hsPerBtc / factor;
-        this.hashEvenUnit = label;
+        this.yshValue = hsPerBtc / factor;
+        this.yshUnit = label;
         return;
       }
     }
-    this.hashEvenValue = hsPerBtc;
-    this.hashEvenUnit = 'H/s';
+    this.yshValue = hsPerBtc;
+    this.yshUnit = 'H/s';
   }
 
   private recomputeEnergy(): void {

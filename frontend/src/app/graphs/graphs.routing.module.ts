@@ -25,7 +25,7 @@ import { AccelerationsListComponent } from '@components/acceleration/acceleratio
 import { AddressComponent } from '@components/address/address.component';
 import { WalletComponent } from '@components/wallet/wallet.component';
 import { CalculatorComponent } from '@components/calculator/calculator.component';
-import { HashEvenComponent } from '@components/hash-even/hash-even.component';
+import { YshComponent } from '@components/ysh/ysh.component';
 
 const browserWindow = window || {};
 // @ts-ignore
@@ -41,8 +41,15 @@ const routes: Routes = [
         component: CalculatorComponent
       },
       {
+        path: 'tools/ysh',
+        component: YshComponent
+      },
+      {
+        // El concepto se llamaba Hash-even antes de pasar a YSH; se mantiene la ruta
+        // vieja redirigiendo para no romper enlaces ya compartidos.
         path: 'tools/hash-even',
-        component: HashEvenComponent
+        redirectTo: 'tools/ysh',
+        pathMatch: 'full'
       },
       {
         path: 'mining/pool/:slug',

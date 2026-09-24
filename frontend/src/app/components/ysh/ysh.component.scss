@@ -1,4 +1,4 @@
-.hash-even {
+.ysh {
   padding-top: 20px;
   padding-bottom: 40px;
 
@@ -58,6 +58,55 @@
   .muted-table td,
   .muted {
     color: var(--transparent-fg);
+  }
+
+  .sigla {
+    font-size: 0.55em;
+    vertical-align: middle;
+    color: #ff9d1c;
+    border: 1px solid rgba(255, 157, 28, 0.5);
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin-left: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .field-hint {
+    font-size: 0.8rem;
+    color: var(--transparent-fg);
+    margin: 0 0 18px 4px;
+  }
+
+  .verdict {
+    border-radius: 6px;
+    padding: 14px 16px;
+    border-left: 4px solid;
+    background: var(--box-bg);
+  }
+
+  .verdict-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .verdict-detail {
+    font-size: 0.88rem;
+    color: var(--transparent-fg);
+  }
+
+  // Corto y pasado NO se pintan igual de "malo": quedarse corto es lo que el concepto
+  // pretende corregir, pasarse es solo generosidad con los demás.
+  .verdict-under {
+    border-left-color: #ff6b5e;
+    .verdict-title { color: #ff6b5e; }
+  }
+  .verdict-even {
+    border-left-color: #46d16a;
+    .verdict-title { color: #46d16a; }
+  }
+  .verdict-over {
+    border-left-color: #ff9d1c;
+    .verdict-title { color: #ff9d1c; }
   }
 
   .footnote {

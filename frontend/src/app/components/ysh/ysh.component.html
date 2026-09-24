@@ -1,11 +1,16 @@
-<div class="container-xl hash-even">
+<div class="container-xl ysh">
 
   <div class="text-center">
-    <h2>Hash-even</h2>
+    <h2>Your Security Hashrate <span class="sigla">YSH</span></h2>
     <p class="lead">
-      El hashrate de la red repartido entre todas las monedas en circulación. Pon cuántos BTC
-      tienes y te dice el hashrate que te correspondería aportar para pagar, en proporción, la
-      seguridad que la red te está dando. Como contratar la vigilancia de tu propia caja fuerte.
+      Tu <strong>YSH</strong> es el punto de equilibrio entre lo que minas y lo que tienes en
+      Bitcoin-Blake2b: el hashrate de la red repartido entre todas las monedas en circulación,
+      multiplicado por las que guardas. Es la parte de la seguridad de la cadena que te toca
+      pagar por tu propio dinero.
+    </p>
+    <p class="lead">
+      La idea es rondarlo. Quedarte muy corto significa que tu dinero lo está vigilando gente
+      que no eres tú; pasarte mucho, que estás pagando la vigilancia del dinero de otros.
     </p>
   </div>
 
@@ -14,18 +19,31 @@
     <div class="row justify-content-center">
       <div class="col-lg-7">
 
-        <div class="input-group input-group-lg mb-4">
+        <div class="input-group input-group-lg mb-2">
           <span class="input-group-text">BTC</span>
           <input type="text" inputmode="decimal" class="form-control" [value]="amount"
                  (input)="onAmountChange($any($event.target).value)" placeholder="1.0">
         </div>
+        <p class="field-hint">Lo que tienes.</p>
 
-        <div class="result-box text-center mb-4">
-          <div class="result-label">Te correspondería aportar</div>
+        <div class="result-box text-center mb-3">
+          <div class="result-label">Tu YSH</div>
           <div class="result-value">{{ formatHashrate(yourHashrate) }}</div>
           <div class="result-sub" *ngIf="shareOfNetwork !== null">
             el {{ shareText }} de la red
           </div>
+        </div>
+
+        <div class="input-group input-group-lg mb-2">
+          <span class="input-group-text">TH/s</span>
+          <input type="text" inputmode="decimal" class="form-control"
+                 (input)="onMinedChange($any($event.target).value)" placeholder="opcional">
+        </div>
+        <p class="field-hint">Lo que minas, si quieres ver si estás en equilibrio.</p>
+
+        <div class="verdict mb-4" *ngIf="balanceVerdict as v" [ngClass]="'verdict-' + v.key">
+          <div class="verdict-title">{{ v.title }}</div>
+          <div class="verdict-detail">{{ v.detail }}</div>
         </div>
 
         <table class="table table-borderless detail-table">
@@ -58,7 +76,7 @@
               <td class="text-end">{{ circulatingSupply | number: '1.0-0' }} BTC</td>
             </tr>
             <tr>
-              <td>Hash-even</td>
+              <td>YSH por moneda</td>
               <td class="text-end">1 BTC = {{ formatHashrate(hashPerBtc) }}</td>
             </tr>
             <tr>
@@ -70,8 +88,10 @@
 
         <p class="footnote">
           Los datos se refrescan cada minuto. El hashrate de la red es una estimación a partir
-          de los bloques recientes, así que baila un poco de una lectura a otra. El suministro
-          es el emitido hasta la altura actual, sumando el subsidio de cada época de halving.
+          de los bloques recientes, así que baila un poco de una lectura a otra; por eso el
+          veredicto de equilibrio se da con un margen ancho, de más o menos un 25 %. El
+          suministro es el emitido hasta la altura actual, sumando el subsidio de cada época
+          de halving.
         </p>
 
       </div>

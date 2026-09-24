@@ -67,7 +67,7 @@
     <a *ngIf="thsBtcDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s earns (est.) <b>{{ thsBtcDay | number: '1.4-4' }} BTC/Day</b><span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></a>
     <a *ngIf="mrrBtcPerThDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s rent <b>{{ mrrBtcPerThDay | number: '1.5-5' }} Poolcoins/day</b><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></a>
     <a *ngIf="kwhPerBtc !== null" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer">1 BTC = <b>{{ kwhPerBtc | number: '1.0-0' }} kWh</b> ({{ minerName }})</a>
-    <span *ngIf="hashEvenValue !== null">Hash-even 1 BTC = <b>{{ hashEvenValue | number: '1.2-2' }} {{ hashEvenUnit }}</b></span>
+    <a *ngIf="yshValue !== null" [routerLink]="['/tools/ysh' | relativeUrl]">YSH 1 BTC = <b>{{ yshValue | number: '1.2-2' }} {{ yshUnit }}</b></a>
     <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
   </div>
 
@@ -158,10 +158,10 @@
         </a>
       </li>
       <!-- Hash-even: hashrate de red repartido entre las monedas en circulación -->
-      <li class="nav-item d-none d-lg-flex" id="btn-hasheven" *ngIf="hashEvenValue !== null">
-        <a class="nav-link yield-info" [routerLink]="['/tools/hash-even' | relativeUrl]" title="Hash-even: el hashrate de la red repartido entre todas las monedas en circulación, o sea el que respalda cada BTC. Pincha para calcular el que te correspondería por lo que tengas.">
-          <span class="yield-label">Hash-even</span>
-          <span class="yield-value">1 BTC = {{ hashEvenValue | number: '1.2-2' }} {{ hashEvenUnit }}</span>
+      <li class="nav-item d-none d-lg-flex" id="btn-ysh" *ngIf="yshValue !== null">
+        <a class="nav-link yield-info" [routerLink]="['/tools/ysh' | relativeUrl]" title="YSH (Your Security Hashrate): el punto de equilibrio entre lo que minas y lo que tienes. Es el hashrate de la red repartido entre las monedas en circulación. Pincha para calcular el tuyo.">
+          <span class="yield-label">YSH</span>
+          <span class="yield-value">1 BTC = {{ yshValue | number: '1.2-2' }} {{ yshUnit }}</span>
         </a>
       </li>
       <!-- Lo que pesa la cadena Bitcoin-Blake2b en disco -->
