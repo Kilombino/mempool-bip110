@@ -65,7 +65,7 @@
     <a href="https://neoxa.exchange/trade/BTCB2_USDC" target="_blank" rel="noopener noreferrer">1 BTC = <b>${{ btcb2Price | number: '1.2-2' }}</b></a>
     <a *ngIf="btcb2BtcSats !== null" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer">1 BTC = <b>{{ btcb2BtcSats | number: '1.0-0' }}</b> Poolsats</a>
     <a *ngIf="thsBtcDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s earns (est.) <b>{{ thsBtcDay | number: '1.4-4' }} BTC/Day</b><span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></a>
-    <a *ngIf="mrrBtcPerThDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s rent <b>{{ mrrBtcPerThDay | number: '1.5-5' }} Poolcoins/day</b><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></a>
+    <a *ngIf="mrrBtcPerThDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s rent <b>{{ mrrPoolsatsPerThDay | number: '1.0-0' }} Poolsats/day</b><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></a>
     <a *ngIf="kwhPerBtc !== null" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer">1 BTC = <b>{{ kwhPerBtc | number: '1.0-0' }} kWh</b> ({{ minerName }})</a>
     <a *ngIf="yshValue !== null" [routerLink]="['/tools/ysh' | relativeUrl]">YSH 1 BTC = <b>{{ yshValue | number: '1.2-2' }} {{ yshUnit }}</b></a>
     <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
@@ -133,9 +133,9 @@
       </li>
       <!-- Coste de alquiler más barato de 1 TH/s en MiningRigRentals (BTC real + $) -->
       <li class="nav-item d-none d-lg-flex" id="btn-rent" *ngIf="mrrBtcPerThDay !== null">
-        <a class="nav-link yield-info" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer" title="Alquiler más barato de 1 TH/s en MiningRigRentals (precio en BTC real)">
+        <a class="nav-link yield-info" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer" title="Alquiler más barato de 1 TH/s en MiningRigRentals, en Poolsats (sats de BTC real) por día">
           <span class="yield-label">1 TH/s rent</span>
-          <span class="yield-value">{{ mrrBtcPerThDay | number: '1.5-5' }} Poolcoins/day<span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></span>
+          <span class="yield-value">{{ mrrPoolsatsPerThDay | number: '1.0-0' }} Poolsats/day<span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></span>
         </a>
       </li>
       <!-- Precio de Bitcoin-Blake2b (BTCB2/USDC) en neoxa -->

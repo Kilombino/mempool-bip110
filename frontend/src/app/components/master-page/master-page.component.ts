@@ -147,6 +147,15 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * El alquiler en Poolsats (sats de BTC REAL) en vez de en Poolcoins. A los precios de
+   * hoy son ~0,00004 Poolcoins/día por TH/s, una cifra que con cinco decimales no se lee;
+   * los mismos datos en sats son ~3.700 y se entienden de un vistazo.
+   */
+  get mrrPoolsatsPerThDay(): number | null {
+    return this.mrrBtcPerThDay === null ? null : this.mrrBtcPerThDay * 100000000;
+  }
+
   private recomputeRentCost(): void {
     if (this.mrrBtcPerThDay && this.realBtcUsd) {
       this.mrrUsdPerThDay = this.mrrBtcPerThDay * this.realBtcUsd;
