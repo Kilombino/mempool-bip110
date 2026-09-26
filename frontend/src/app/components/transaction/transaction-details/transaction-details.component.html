@@ -172,14 +172,10 @@
                 } @else {
                   <app-time kind="until" [time]="eta.time" [fastRender]="false" [fixedRender]="true"></app-time>
                 }
-                @if (!tx?.acceleration && acceleratorAvailable && accelerateCtaType === 'button' && !showAccelerationSummary && notAcceleratedOnLoad) {
-                  <div class="d-flex accelerate">
-                    <a class="btn btn-sm accelerateDeepMempool btn-small-height btn-purple" [class.disabled]="!eligibleForAcceleration" i18n="transaction.accelerate|Accelerate button label" (click)="onAccelerateClicked()">Accelerate</a>
-                    <a *ngIf="!eligibleForAcceleration" href="https://mempool.space/accelerator#why-cant-accelerate" target="_blank" class="info-badges ms-1" i18n-ngbTooltip="Mempool Accelerator&reg; tooltip" ngbTooltip="This transaction cannot be accelerated">
-                        <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
-                    </a>
-                  </div>
-                }
+                <!-- Aquí iba el botón "Acelerar" y, para las transacciones no elegibles, un
+                     enlace a mempool.space/accelerator. Se quitan de raíz, no por bandera: el
+                     acelerador pertenece al minado SHA256d y en Bitcoin-Blake2b no existe ese
+                     servicio ni debe existir. -->
               </span>
             }
           </ng-container>

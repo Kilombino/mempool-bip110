@@ -67,25 +67,20 @@ const routes: Routes = [
           },
         ]
       },
+      // El acelerador es de la cadena SHA256d: en BLAKE2b no existe ese servicio y no
+      // debe existir. Las rutas se dejan redirigiendo a la portada en vez de borrarlas,
+      // para que un enlace viejo no acabe en un 404.
       {
         path: 'acceleration',
-        data: { networks: ['bitcoin'], networkSpecific: true, onlySubnet: [''] },
-        component: StartComponent,
-        children: [
-          {
-            path: '',
-            component: AcceleratorDashboardComponent,
-          }
-        ]
+        redirectTo: '',
       },
       {
         path: 'acceleration/list/:page',
-        data: { networks: ['bitcoin'], networkSpecific: true, onlySubnet: [''] },
-        component: AccelerationsListComponent,
+        redirectTo: '',
       },
       {
         path: 'acceleration/list',
-        redirectTo: 'acceleration/list/1',
+        redirectTo: '',
       },
       {
         path: 'mempool-block/:id',
@@ -167,9 +162,9 @@ const routes: Routes = [
             component: BlockSizesWeightsGraphComponent,
           },
           {
+            // Ver arriba: el acelerador no aplica a BLAKE2b.
             path: 'acceleration/fees',
-            data: { networks: ['bitcoin'], networkSpecific: true, onlySubnet: [''] },
-            component: AccelerationFeesGraphComponent,
+            redirectTo: '',
           },
           {
             path: 'lightning',
