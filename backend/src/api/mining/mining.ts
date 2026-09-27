@@ -140,6 +140,15 @@ class Mining {
     // Pools descentralizados (plantillas individuales): en vez de un solo trozo por
     // pool, trocear la tarta por FINDER — el nombre secundario del coinbase — con el
     // mismo logo del pool. Así se ven los usuarios individuales de DATUM/Lazarus.
+    const canonName = (s: string): string => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const NAME_TLDS = ['io', 'com', 'tech', 'net', 'org', 'xyz', 'info', 'dev', 'app', 'es'];
+    const isPoolItself = (finder: string, poolName: string): boolean => {
+      const f = canonName(finder);
+      const p = canonName(poolName);
+      if (!f || !p) { return false; }
+      if (f === p) { return true; }
+      return f.startsWith(p) && NAME_TLDS.includes(f.slice(p.length));
+    };
     const splitPoolNames = ['DATUM miners', 'Lazarus', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES', 'PYBLOCK CAROUSEL DATUM', 'iohzrd', 'AlphaPool', 'solo', 'B2Pool', 'OmegaPool', 'RATUM'];
     const keptStats: PoolStats[] = [];
     const finderStats: PoolStats[] = [];
@@ -154,7 +163,11 @@ class Mining {
       for (const cb of coinbases) {
         const names = reorderMinerNames(ps.name, parseDATUMTemplateCreator(cb));
         const finder = (names && names.length > 1 && names[1]) ? names[1].trim() : '';
-        const label = finder !== '' ? finder : ps.name;
+        // Un "finder" que es el propio nombre del pool escrito de otra forma NO es un minero
+        // distinto: B2Pool partía el queso en "B2Pool" y "b2pool.io", que son lo mismo. Se
+        // aceptan solo sufijos de dominio, para no tragarse a un minero que empiece igual
+        // que su pool (un "B2Pool Maximalist" sigue siendo una banda propia).
+        const label = (finder !== '' && !isPoolItself(finder, ps.name)) ? finder : ps.name;
         counts[label] = (counts[label] || 0) + 1;
       }
       if (Object.keys(counts).length === 0) {
