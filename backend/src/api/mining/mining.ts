@@ -14,6 +14,9 @@ import PricesRepository from '../../repositories/PricesRepository';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
 import { IEsploraApi } from '../bitcoin/esplora-api.interface';
 import { parseDATUMTemplateCreator, reorderMinerNames } from '../../utils/bitcoin-script';
+
+// Altura de activación del PoW BLAKE2b (bifurcación de Bitcoin-BLAKE2b / BIP110).
+const BLAKE2B_ACTIVATION_HEIGHT = 961640;
 import database from '../../database';
 
 interface DifficultyBlock {
@@ -149,19 +152,41 @@ class Mining {
       if (f === p) { return true; }
       return f.startsWith(p) && NAME_TLDS.includes(f.slice(p.length));
     };
-    const splitPoolNames = ['DATUM miners', 'Lazarus', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES', 'PYBLOCK CAROUSEL DATUM', 'iohzrd', 'AlphaPool', 'solo', 'B2Pool', 'OmegaPool', 'RATUM'];
+    // Antes había aquí una lista fija de pools a trocear, y cada pool nuevo había que
+    // añadirlo a mano (PaperclipPool se quedó fuera). En esta red DATUM es el estándar,
+    // así que ahora se trocea CUALQUIER pool en cuanto sus bloques traen plantilla DATUM:
+    // el coinbase lleva dos nombres separados por \x0f (etiqueta primaria y secundaria
+    // del gateway). Solo se miran bloques de la era BLAKE2b; los de antes de la
+    // bifurcación son de pools SHA256d clásicos y se quedan en un único trozo.
+    // Cajones que agrupan a MUCHOS mineros distintos aunque cada uno cobre en una sola
+    // salida ("DATUM miners" y "solo" son eso: un bloque, un minero). Estos se trocean
+    // siempre; la regla de las salidas es para los pools que vayan apareciendo.
+    const ALWAYS_SPLIT = ['DATUM miners', 'Lazarus', 'TIDES', 'RIPTIDE', 'CONVOY', 'Convoy', 'CONVOYMining', 'PYBLOCK WAVICLES', 'PYBLOCK CAROUSEL DATUM', 'iohzrd', 'AlphaPool', 'solo', 'B2Pool', 'OmegaPool', 'RATUM'];
+    const coinbasesByPool = await PoolsRepository.$getCoinbasesByPoolSince(BLAKE2B_ACTIVATION_HEIGHT, interval);
     const keptStats: PoolStats[] = [];
     const finderStats: PoolStats[] = [];
     let syntheticId = 900000;
     for (const ps of poolsStats) {
-      if (!splitPoolNames.includes(ps.name)) {
+      const coinbases = coinbasesByPool[ps.name] || [];
+      // Un minero SOLO con DATUM también lleva dos etiquetas, pero la segunda suele ser un
+      // mensaje que cambia en cada bloque ("CTRL says…", "RPM HIT A BLOCK…"): trocearlo
+      // pintaría un minero por mensaje. Se distingue de un pool porque cobra en UNA sola
+      // salida, mientras que un pool DATUM/TIDES reparte entre muchas (Lazarus ~76,
+      // PaperclipPool ~31). Los "Solo <dirección>" que crea el autotag son de un minero
+      // por definición, cobren en las salidas que cobren.
+      const pooledBlocks = coinbases.filter((cb) => cb.outputs >= 2).length;
+      const isSoloEntry = /^solo\b/i.test(ps.name);
+      const autoSplit = !isSoloEntry && pooledBlocks * 2 > coinbases.length;
+      if (!ALWAYS_SPLIT.includes(ps.name) && !autoSplit) {
         keptStats.push(ps);
         continue;
       }
-      const coinbases = await PoolsRepository.$getCoinbasesForPoolName(ps.name, interval);
       const counts: { [finder: string]: number } = {};
-      for (const cb of coinbases) {
-        const names = reorderMinerNames(ps.name, parseDATUMTemplateCreator(cb));
+      let datumBlocks = 0;
+      for (const cbRow of coinbases) {
+        const parsed = parseDATUMTemplateCreator(cbRow.raw);
+        if (!parsed || parsed.length < 2) { continue; } // sin firma DATUM: no se trocea
+        const names = reorderMinerNames(ps.name, parsed);
         const finder = (names && names.length > 1 && names[1]) ? names[1].trim() : '';
         // Un "finder" que es el propio nombre del pool escrito de otra forma NO es un minero
         // distinto: B2Pool partía el queso en "B2Pool" y "b2pool.io", que son lo mismo. Se
@@ -169,10 +194,19 @@ class Mining {
         // que su pool (un "B2Pool Maximalist" sigue siendo una banda propia).
         const label = (finder !== '' && !isPoolItself(finder, ps.name)) ? finder : ps.name;
         counts[label] = (counts[label] || 0) + 1;
+        datumBlocks++;
       }
-      if (Object.keys(counts).length === 0) {
-        keptStats.push(ps); // sin coinbases parseables: dejar el pool tal cual
+      // Solo se trocea si al menos un bloque DATUM tiene un minero distinto del pool.
+      const hasFinders = Object.keys(counts).some((k) => k !== ps.name);
+      if (!hasFinders) {
+        keptStats.push(ps);
         continue;
+      }
+      // Bloques del pool sin firma DATUM (o de antes de la bifurcación): siguen en el
+      // trozo del pool, para que la suma cuadre con el total.
+      const rest = ps.blockCount - datumBlocks;
+      if (rest > 0) {
+        counts[ps.name] = (counts[ps.name] || 0) + rest;
       }
       for (const [finder, count] of Object.entries(counts)) {
         finderStats.push({

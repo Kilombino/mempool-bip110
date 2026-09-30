@@ -56,6 +56,36 @@ class PoolsRepository {
     }
   }
 
+  /**
+   * Coinbases de todos los bloques desde `minHeight`, agrupados por nombre de pool.
+   * Una sola consulta para toda la tarta, en vez de una por pool: así se puede mirar
+   * CADA pool en busca de plantillas DATUM sin multiplicar las consultas.
+   */
+  public async $getCoinbasesByPoolSince(minHeight: number, interval: string | null = null): Promise<{ [poolName: string]: { raw: string, outputs: number }[] }> {
+    interval = Common.getSqlInterval(interval);
+    let query = `
+      SELECT pools.name AS poolName, blocks.coinbase_raw AS coinbaseRaw,
+        COALESCE(JSON_LENGTH(blocks.coinbase_addresses), 0) AS outputs
+      FROM blocks
+      JOIN pools ON pools.id = blocks.pool_id
+      WHERE blocks.stale = 0 AND blocks.height >= ?
+    `;
+    if (interval) {
+      query += ` AND blocks.blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`;
+    }
+    const out: { [poolName: string]: { raw: string, outputs: number }[] } = {};
+    try {
+      const [rows]: any[] = await DB.query(query, [minHeight]);
+      for (const r of rows as any[]) {
+        if (!r.coinbaseRaw) { continue; }
+        (out[r.poolName] = out[r.poolName] || []).push({ raw: r.coinbaseRaw, outputs: Number(r.outputs) || 0 });
+      }
+    } catch (e) {
+      logger.err(`Cannot fetch coinbases since height ${minHeight}. Reason: ` + (e instanceof Error ? e.message : e));
+    }
+    return out;
+  }
+
   public async $getPoolsInfo(interval: string | null = null): Promise<PoolInfo[]> {
     interval = Common.getSqlInterval(interval);
 

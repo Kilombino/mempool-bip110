@@ -276,7 +276,12 @@ export function reorderMinerNames(poolName: string, names: string[] | null): str
     if (pn.includes('lazarus') || pn.includes('tides') || pn.includes('riptide')) { return l === 'lazarus' || l === 'tides' || l === 'riptide'; }
     if (pn.includes('convoy')) { return l.includes('convoy'); }
     if (pn === 'solo') { return l === 'solo'; }
-    return false;
+    // Pool nuevo sin regla propia: es genérico el nombre que contiene el del pool
+    // ("PaperclipPool", "pool.paperclippool.xyz"). Así cualquier pool DATUM que aparezca
+    // pone al usuario en [1] sin tener que tocar este código.
+    const canon = (x: string): string => (x || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cp = canon(poolName);
+    return cp.length >= 3 && canon(l).includes(cp);
   };
   const g0 = isGeneric(names[0]);
   const g1 = isGeneric(names[1]);
