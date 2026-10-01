@@ -11,8 +11,9 @@ theme-manifest.json
 # docker
 Dockerfile
 entrypoint.sh
-nginx-mempool.conf
-nginx.conf
+# nginx.conf y nginx-mempool.conf SÍ se versionan en este fork: son la configuración
+# real de mempool.kilombino.com (rutas /neoxa-ticker, /mrr-cheapest, /btc-usd y el
+# widget). En upstream se ignoraban porque se generaban desde la raíz con docker/init.sh.
 wait-for
 
 # Only exists if Bazel was run
