@@ -182,8 +182,12 @@ class BitcoinRoutes {
     }
     const result = feeApi.getPreciseRecommendedFee();
 
+    // Sin la clave 'warning' que mete upstream: en Esplora este objeto es SOLO {objetivo: tasa}
+    // y los clientes (esplora-client, el wallet Ark) lo leen como mapa número→número; una
+    // clave de texto hacía fallar la lectura entera y caían a una comisión por defecto.
+    // El aviso de que la ruta está obsoleta va ahora en una cabecera.
+    res.setHeader('Warning', '299 - "Deprecated: use /api/v1/fees/precise"');
     res.json({
-      'warning': 'This endpoint is deprecated and will be removed in a future release. Please use /api/v1/fees/precise instead.',
       '1': result.fastestFee,
       '2': result.fastestFee,
       '3': result.halfHourFee,
@@ -1602,6 +1606,22 @@ class BitcoinRoutes {
       return;
     }
     try {
+      // Gastada por una transacción del mempool: el backend ya lleva ese índice.
+      const mempoolSpender = mempool.getSpendMap().get(`${req.params.txId}:${vout}`);
+      if (mempoolSpender) {
+        const vin = mempoolSpender.vin.findIndex((i) => i.txid === req.params.txId && i.vout === vout);
+        res.json({ spent: true, txid: mempoolSpender.txid, vin, status: { confirmed: false } });
+        return;
+      }
+      if (bitcoinApi.$getOutspendDetailed) {
+        const detailed = await bitcoinApi.$getOutspendDetailed(req.params.txId, vout);
+        if (detailed === null) {
+          handleError(req, res, 404, 'Output index out of range');
+          return;
+        }
+        res.json(detailed);
+        return;
+      }
       const outspends = await bitcoinApi.$getOutspends(req.params.txId);
       if (vout >= outspends.length) {
         handleError(req, res, 404, 'Output index out of range');
@@ -1609,6 +1629,14 @@ class BitcoinRoutes {
       }
       res.json(outspends[vout]);
     } catch (e) {
+      // Una transacción que el nodo no conoce es un 404 en Esplora, no un error del servidor:
+      // los clientes lo leen como "no existe" y siguen. Con 500 el wallet Ark abortaba la sync.
+      const msg = e instanceof Error ? e.message : (typeof e === 'object' && e ? JSON.stringify(e) : String(e));
+      if (/No such mempool or blockchain transaction|not found|"code":-5/i.test(msg) || (e as any)?.code === -5) {
+        handleError(req, res, 404, 'Transaction not found');
+        return;
+      }
+      logger.warn(`outspend ${req.params.txId}:${vout} failed: ${msg}`);
       handleError(req, res, 500, 'Failed to get transaction outspend');
     }
   }

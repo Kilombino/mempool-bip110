@@ -29,6 +29,7 @@ export interface AbstractBitcoinApi {
   $submitPackage(rawTransactions: string[], maxfeerate?: number, maxburnamount?: number): Promise<SubmitPackageResult>;
   $getOutspend(txId: string, vout: number): Promise<IEsploraApi.Outspend>;
   $getOutspends(txId: string): Promise<IEsploraApi.Outspend[]>;
+  $getOutspendDetailed?(txId: string, vout: number): Promise<IEsploraApi.Outspend | null>;
   $getBatchedOutspends(txId: string[]): Promise<IEsploraApi.Outspend[][]>;
   $getBatchedOutspendsInternal(txId: string[]): Promise<IEsploraApi.Outspend[][]>;
   $getOutSpendsByOutpoint(outpoints: { txid: string, vout: number }[]): Promise<IEsploraApi.Outspend[]>;

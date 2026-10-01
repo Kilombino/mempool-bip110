@@ -248,6 +248,41 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return this.electrumClient.blockchainTransaction_getMerkle(txId, tx.status.block_height);
   }
 
+  /**
+   * Esplora `/tx/:txid/outspend/:vout` COMPLETO para una salida sin gastar o gastada en un
+   * bloque (el caso "gastada en el mempool" lo resuelve la ruta con el spendMap).
+   * Upstream solo decía `{spent: true}`; Esplora da además quién la gastó (txid, vin) y si
+   * está confirmado. El wallet Ark (bark) hace `expect()` sobre esos campos: sin ellos se
+   * caía el motor entero en cuanto se gastaba una moneda. El gastador se busca en el
+   * historial del script de esa salida (Electrum/Shulcrum), que es como lo hace electrs.
+   */
+  async $getOutspendDetailed(txId: string, vout: number): Promise<IEsploraApi.Outspend | null> {
+    // Formato Esplora (scriptpubkey, status): con skipConversion=true vendría el crudo del
+    // nodo (scriptPubKey.hex y sin status) y el historial no se podía consultar.
+    const tx = await this.$getRawTransaction(txId, false, false);
+    if (vout < 0 || vout >= tx.vout.length) {
+      return null;
+    }
+    const txOut = await this.bitcoindClient.getTxOut(txId, vout);
+    if (txOut !== null) {
+      return { spent: false };
+    }
+    const fromHeight = tx.status?.block_height || 0;
+    const history = (await this.$getScriptHashHistory(tx.vout[vout].scriptpubkey))
+      .filter((h) => h.tx_hash !== txId && (h.height <= 0 || h.height >= fromHeight))
+      .sort((a, b) => (a.height <= 0 ? 1e9 : a.height) - (b.height <= 0 ? 1e9 : b.height))
+      .slice(0, 500);
+    for (const h of history) {
+      const cand = await this.$getRawTransaction(h.tx_hash, false, false);
+      const vin = cand.vin.findIndex((i) => i.txid === txId && i.vout === vout);
+      if (vin >= 0) {
+        return { spent: true, txid: cand.txid, vin, status: cand.status };
+      }
+    }
+    // Gastada según el nodo pero sin gastador localizable (no debería pasar).
+    return { spent: true };
+  }
+
   private $getScriptHashBalance(scriptHash: string): Promise<IElectrumApi.ScriptHashBalance> {
     return this.electrumClient.blockchainScripthash_getBalance(this.encodeScriptHash(scriptHash));
   }
