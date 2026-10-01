@@ -558,7 +558,7 @@ class ElectrsApi implements AbstractBitcoinApi {
     throw new Error('Method getScriptHash not implemented.');
   }
 
-  $getScriptHashTransactions(scripthash: string, txId?: string): Promise<IEsploraApi.Transaction[]> {
+  $getScriptHashTransactions(scripthash: string, txId?: string, pageSize?: number): Promise<IEsploraApi.Transaction[]> {
     throw new Error('Method getScriptHashTransactions not implemented.');
   }
 

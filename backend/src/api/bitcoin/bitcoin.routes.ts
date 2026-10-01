@@ -113,6 +113,14 @@ class BitcoinRoutes {
           .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/hex', this.getRawTransaction)
           .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/status', this.getTransactionStatus)
           .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/outspends', this.getTransactionOutspends)
+          // Rutas Esplora que faltaban. Las usa el wallet Ark de Paperclip (bark) cuando
+          // se conecta por Esplora en vez de por RPC a un nodo, que es lo que permite
+          // llevar Ark a un móvil (Kilombino wallet). Siguen el formato de Blockstream.
+          .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/raw', this.getRawTransactionBinary)
+          .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/outspend/:vout', this.getTransactionOutspend)
+          .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/chain/:lastSeen', this.getScriptHashTransactionsChain.bind(this))
+          .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/status', this.getBlockStatus)
+          .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txid/:index', this.getBlockTxidAt)
           .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/merkle-proof', this.getTransactionMerkleProof)
           .get(config.MEMPOOL.API_URL_PREFIX + 'txs/outspends', this.$getBatchedOutspends)
           .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/header', this.getBlockHeader)
@@ -1326,7 +1334,8 @@ class BitcoinRoutes {
       if (req.query.after_txid && typeof req.query.after_txid === 'string') {
         lastTxId = req.query.after_txid;
       }
-      const transactions = await bitcoinApi.$getScriptHashTransactions(electrumScripthash, lastTxId);
+      // 25 = tamaño de página Esplora (ver electrum-api.ts).
+      const transactions = await bitcoinApi.$getScriptHashTransactions(electrumScripthash, lastTxId, 25);
       res.json(transactions);
     } catch (e) {
       if (e instanceof Error && e.message && (e.message.indexOf('too long') > 0 || e.message.indexOf('confirmed status') > 0)) {
@@ -1563,6 +1572,91 @@ class BitcoinRoutes {
       }
     } catch (e) {
       handleError(req, res, 500, 'Failed to get cached tx');
+    }
+  }
+
+  /** Esplora `GET /tx/:txid/raw`: la transacción en binario (no en hex como `/hex`). */
+  private async getRawTransactionBinary(req: Request, res: Response) {
+    if (!TXID_REGEX.test(req.params.txId)) {
+      handleError(req, res, 400, `Invalid transaction ID`);
+      return;
+    }
+    try {
+      const transaction: IEsploraApi.Transaction = await bitcoinApi.$getRawTransaction(req.params.txId, true);
+      res.setHeader('content-type', 'application/octet-stream');
+      res.send(Buffer.from(transaction.hex || '', 'hex'));
+    } catch (e) {
+      if (e instanceof Error && e.message && e.message.indexOf('No such mempool or blockchain transaction') > -1) {
+        handleError(req, res, 404, 'No such mempool or blockchain transaction');
+        return;
+      }
+      handleError(req, res, 500, 'Failed to get raw transaction');
+    }
+  }
+
+  /** Esplora `GET /tx/:txid/outspend/:vout`: si UNA salida está gastada y por quién. */
+  private async getTransactionOutspend(req: Request, res: Response) {
+    const vout = Number(req.params.vout);
+    if (!TXID_REGEX.test(req.params.txId) || !Number.isInteger(vout) || vout < 0) {
+      handleError(req, res, 400, `Invalid transaction ID or output index`);
+      return;
+    }
+    try {
+      const outspends = await bitcoinApi.$getOutspends(req.params.txId);
+      if (vout >= outspends.length) {
+        handleError(req, res, 404, 'Output index out of range');
+        return;
+      }
+      res.json(outspends[vout]);
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get transaction outspend');
+    }
+  }
+
+  /** Esplora `GET /scripthash/:hash/txs/chain/:last_seen`: siguiente página de confirmadas. */
+  private async getScriptHashTransactionsChain(req: Request, res: Response): Promise<void> {
+    if (!TXID_REGEX.test(req.params.lastSeen)) {
+      handleError(req, res, 400, `Invalid transaction ID`);
+      return;
+    }
+    req.query.after_txid = req.params.lastSeen;
+    return this.getScriptHashTransactions(req, res);
+  }
+
+  /** Esplora `GET /block/:hash/status`: si el bloque está en la cadena buena, su altura y el siguiente. */
+  private async getBlockStatus(req: Request, res: Response) {
+    if (!/^[a-fA-F0-9]{64}$/.test(req.params.hash)) {
+      handleError(req, res, 400, `Invalid block hash`);
+      return;
+    }
+    try {
+      const h: any = await bitcoinClient.getBlockHeader(req.params.hash, true);
+      const inBest = typeof h?.confirmations === 'number' && h.confirmations > 0;
+      res.json(inBest
+        ? { in_best_chain: true, height: h.height, next_best: h.nextblockhash ?? null }
+        : { in_best_chain: false });
+    } catch (e) {
+      handleError(req, res, 404, 'Block not found');
+    }
+  }
+
+  /** Esplora `GET /block/:hash/txid/:index`: el txid en esa posición del bloque. */
+  private async getBlockTxidAt(req: Request, res: Response) {
+    const index = Number(req.params.index);
+    if (!/^[a-fA-F0-9]{64}$/.test(req.params.hash) || !Number.isInteger(index) || index < 0) {
+      handleError(req, res, 400, `Invalid block hash or index`);
+      return;
+    }
+    try {
+      const txids = await bitcoinApi.$getTxIdsForBlock(req.params.hash);
+      if (index >= txids.length) {
+        handleError(req, res, 404, 'Transaction index out of range');
+        return;
+      }
+      res.setHeader('content-type', 'text/plain');
+      res.send(txids[index]);
+    } catch (e) {
+      handleError(req, res, 404, 'Block not found');
     }
   }
 

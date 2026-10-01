@@ -22,7 +22,7 @@ export interface AbstractBitcoinApi {
   $getAddressUtxos(address: string): Promise<IEsploraApi.UTXO[]>;
   $getAddressPrefix(prefix: string): string[];
   $getScriptHash(scripthash: string): Promise<IEsploraApi.ScriptHash>;
-  $getScriptHashTransactions(address: string, lastSeenTxId: string): Promise<IEsploraApi.Transaction[]>;
+  $getScriptHashTransactions(address: string, lastSeenTxId: string, pageSize?: number): Promise<IEsploraApi.Transaction[]>;
   $getScriptHashUtxos(scripthash: string): Promise<IEsploraApi.UTXO[]>;
   $sendRawTransaction(rawTransaction: string): Promise<string>;
   $testMempoolAccept(rawTransactions: string[], maxfeerate?: number): Promise<TestMempoolAcceptResult[]>;

@@ -156,7 +156,13 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return this.$getScriptHashUtxos(scripthash);
   }
 
-  async $getScriptHashTransactions(scripthash: string, lastSeenTxId?: string): Promise<IEsploraApi.Transaction[]> {
+  /**
+   * `pageSize` 10 es lo que usa la web de mempool; las rutas Esplora por scripthash piden
+   * 25, que es el tamaño de página de Esplora: los clientes (bdk_esplora, y con él el
+   * wallet Ark) dan por acabado el historial cuando una página trae MENOS de 25, así que
+   * con 10 se perdían en silencio las transacciones a partir de la décima.
+   */
+  async $getScriptHashTransactions(scripthash: string, lastSeenTxId?: string, pageSize = 10): Promise<IEsploraApi.Transaction[]> {
     try {
       loadingIndicators.setProgress('address-' + scripthash, 0);
 
@@ -174,11 +180,15 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       let startingIndex = 0;
       if (lastSeenTxId) {
         const pos = history.findIndex((historicalTx) => historicalTx.tx_hash === lastSeenTxId);
-        if (pos) {
-          startingIndex = pos + 1;
+        // Antes era `if (pos)`: con la última vista en la posición 0 volvía a empezar por el
+        // principio, y con una que no existe (-1) también. Ahora: 0 → sigue desde la 1,
+        // inexistente → página vacía en vez de repetir la primera.
+        if (pos < 0) {
+          return [];
         }
+        startingIndex = pos + 1;
       }
-      const endIndex = Math.min(startingIndex + 10, history.length);
+      const endIndex = Math.min(startingIndex + pageSize, history.length);
 
       for (let i = startingIndex; i < endIndex; i++) {
         const tx = await this.$getRawTransaction(history[i].tx_hash, false, true);
