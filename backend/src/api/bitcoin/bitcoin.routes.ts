@@ -1760,14 +1760,42 @@ class BitcoinRoutes {
     }
   }
 
+  /**
+   * Cuerpo crudo de la petición cuando ningún parser de express lo recogió (sin cabecera
+   * Content-Type, que es como mandan POST /tx y /txs/package los clientes Esplora:
+   * esplora-client, bdk y el wallet Ark). null si ya lo consumió un parser.
+   */
+  private static readRawBody(req: Request): Promise<string | null> {
+    if (!req.readable) {
+      return Promise.resolve(null);
+    }
+    return new Promise<string>((resolve, reject) => {
+      let data = '';
+      req.setEncoding('utf8');
+      req.on('data', (chunk) => {
+        data += chunk;
+        if (data.length > 10 * 1024 * 1024) { reject(new Error('body too large')); }
+      });
+      req.on('end', () => resolve(data));
+      req.on('error', reject);
+    });
+  }
+
   private async $postTransaction(req: Request, res: Response) {
     res.setHeader('content-type', 'text/plain');
     try {
+      // Esplora acepta el hex sin Content-Type; express solo lo parseaba con text/plain y
+      // el resto llegaba vacío ("Non-string request body", código -1).
+      if (typeof req.body !== 'string') {
+        const raw = await BitcoinRoutes.readRawBody(req);
+        if (raw !== null) { req.body = raw.trim(); }
+      }
       const rawTx = Common.getTransactionFromRequest(req, false);
       const txIdResult = await bitcoinApi.$sendRawTransaction(rawTx);
       res.send(txIdResult);
     } catch (e: any) {
-      handleError(req, res, 400, (e.message && e.code) ? 'sendrawtransaction RPC error: ' + JSON.stringify({ code: e.code })
+      logger.warn(`sendrawtransaction failed: code ${e?.code} ${e?.message}`);
+      handleError(req, res, 400, (e.message && e.code) ? 'sendrawtransaction RPC error: ' + JSON.stringify({ code: e.code, message: e.message })
         : 'Failed to send raw transaction');
     }
   }
@@ -1801,18 +1829,11 @@ class BitcoinRoutes {
       // Los clientes Esplora (esplora-client, y con él el wallet Ark) mandan el array JSON SIN
       // cabecera Content-Type; ningún parser de express lo recoge y req.body llega vacío. En
       // ese caso se lee el cuerpo crudo y se interpreta como JSON, como hace Esplora.
-      if (!Array.isArray(req.body) && req.readable) {
-        const raw = await new Promise<string>((resolve, reject) => {
-          let data = '';
-          req.setEncoding('utf8');
-          req.on('data', (chunk) => {
-            data += chunk;
-            if (data.length > 10 * 1024 * 1024) { reject(new Error('body too large')); }
-          });
-          req.on('end', () => resolve(data));
-          req.on('error', reject);
-        });
-        try { req.body = JSON.parse(raw); } catch { /* lo rechaza la validación de abajo */ }
+      if (!Array.isArray(req.body)) {
+        const raw = await BitcoinRoutes.readRawBody(req);
+        if (raw !== null) {
+          try { req.body = JSON.parse(raw); } catch { /* lo rechaza la validación de abajo */ }
+        }
       }
       const rawTxs = Common.getTransactionsFromRequest(req);
       // parseFloat(undefined) es NaN, y `NaN ?? undefined` sigue siendo NaN: sin el
