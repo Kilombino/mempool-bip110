@@ -73,6 +73,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/peers-by-version', this.getBlake2bPeersByVersion.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/chain-size', this.getBlake2bChainSize.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/widget', this.getBlake2bWidget.bind(this))
+      .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/relay-policy', this.getBlake2bRelayPolicy)
       .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/blake2b-header', this.getBlake2bBlockHeader.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/rbf', this.getRbfHistory)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/cached', this.getCachedTx)
@@ -498,6 +499,25 @@ class BitcoinRoutes {
    * OJO: es el tamaño de ESTE nodo; varía un poco entre nodos según los bloques huérfanos
    * que cada uno haya guardado. Cacheado 60s porque el frontend lo pide cada minuto.
    */
+  /**
+   * Política de retransmisión del nodo que difunde las transacciones de este mempool, tal
+   * cual la da getmempoolinfo (BTC/kvB). El wallet Ark de Paperclip la exige antes de abrir
+   * posiciones nuevas: sus transacciones de anclaje pagan comisiones muy bajas y solo las
+   * acepta un nodo con minrelaytxfee/mempoolminfee ≤ 0,00001 y dustrelayfee ≤ 0,00003.
+   * Por RPC lo pregunta al nodo; por Esplora (el móvil) lo pregunta aquí.
+   */
+  private getBlake2bRelayPolicy(req: Request, res: Response) {
+    const info: any = mempool.getMempoolInfo();
+    const pick = (k: string): number | null => (typeof info?.[k] === 'number' ? info[k] : null);
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.json({
+      minrelaytxfee: pick('minrelaytxfee'),
+      mempoolminfee: pick('mempoolminfee'),
+      dustrelayfee: pick('dustrelayfee'),
+      incrementalrelayfee: pick('incrementalrelayfee'),
+    });
+  }
+
   /** Datos del cabecero para el widget de Android. Ver api/blake2b-widget.ts. */
   private async getBlake2bWidget(req: Request, res: Response) {
     try {
@@ -1765,13 +1785,36 @@ class BitcoinRoutes {
 
   private async $submitPackage(req: Request, res: Response) {
     try {
+      // Los clientes Esplora (esplora-client, y con él el wallet Ark) mandan el array JSON SIN
+      // cabecera Content-Type; ningún parser de express lo recoge y req.body llega vacío. En
+      // ese caso se lee el cuerpo crudo y se interpreta como JSON, como hace Esplora.
+      if (!Array.isArray(req.body) && req.readable) {
+        const raw = await new Promise<string>((resolve, reject) => {
+          let data = '';
+          req.setEncoding('utf8');
+          req.on('data', (chunk) => {
+            data += chunk;
+            if (data.length > 10 * 1024 * 1024) { reject(new Error('body too large')); }
+          });
+          req.on('end', () => resolve(data));
+          req.on('error', reject);
+        });
+        try { req.body = JSON.parse(raw); } catch { /* lo rechaza la validación de abajo */ }
+      }
       const rawTxs = Common.getTransactionsFromRequest(req);
-      const maxfeerate = parseFloat(req.query.maxfeerate as string);
-      const maxburnamount = parseFloat(req.query.maxburnamount as string);
-      const result = await bitcoinClient.submitPackage(rawTxs, maxfeerate ?? undefined, maxburnamount ?? undefined);
+      // parseFloat(undefined) es NaN, y `NaN ?? undefined` sigue siendo NaN: sin el
+      // parámetro hay que no mandar nada, no un NaN.
+      const num = (v: unknown): number | undefined => {
+        const n = parseFloat(v as string);
+        return isFinite(n) ? n : undefined;
+      };
+      const result = await bitcoinClient.submitPackage(rawTxs, num(req.query.maxfeerate), num(req.query.maxburnamount));
       res.send(result);
     } catch (e: any) {
-      handleError(req, res, 400, (e.message && e.code) ? 'submitpackage RPC error: ' + JSON.stringify({ code: e.code })
+      // El mensaje del nodo explica el rechazo; upstream solo devolvía el código (-1) y no
+      // había forma de saber por qué. No es información sensible: es la regla incumplida.
+      logger.warn(`submitpackage failed: code ${e?.code} ${e?.message}`);
+      handleError(req, res, 400, (e.message && e.code) ? 'submitpackage RPC error: ' + JSON.stringify({ code: e.code, message: e.message })
         : 'Failed to submit package');
     }
   }
