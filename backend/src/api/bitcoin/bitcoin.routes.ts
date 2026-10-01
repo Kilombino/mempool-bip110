@@ -23,6 +23,7 @@ import { calculateMempoolTxCpfp } from '../cpfp';
 import { handleError } from '../../utils/api';
 import poolsUpdater from '../../tasks/pools-updater';
 import chainTips from '../chain-tips';
+import blake2bWidget from '../blake2b-widget';
 
 const TXID_REGEX = /^[a-f0-9]{64}$/i;
 const BLOCK_HASH_REGEX = /^[a-f0-9]{64}$/i;
@@ -71,6 +72,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'ocean/hashrate-stats', this.getOceanHashrateStats.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/peers-by-version', this.getBlake2bPeersByVersion.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/chain-size', this.getBlake2bChainSize.bind(this))
+      .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/widget', this.getBlake2bWidget.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/blake2b-header', this.getBlake2bBlockHeader.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/rbf', this.getRbfHistory)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/cached', this.getCachedTx)
@@ -484,6 +486,19 @@ class BitcoinRoutes {
    * OJO: es el tamaño de ESTE nodo; varía un poco entre nodos según los bloques huérfanos
    * que cada uno haya guardado. Cacheado 60s porque el frontend lo pide cada minuto.
    */
+  /** Datos del cabecero para el widget de Android. Ver api/blake2b-widget.ts. */
+  private async getBlake2bWidget(req: Request, res: Response) {
+    try {
+      const data = await blake2bWidget.$get();
+      // Cache-Control para que cualquier caché intermedia (o Cloudflare) pueda servirlo.
+      res.setHeader('Cache-Control', 'public, max-age=60');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.json(data);
+    } catch (e) {
+      handleError(req, res, 503, 'widget data unavailable');
+    }
+  }
+
   private async getBlake2bChainSize(req: Request, res: Response) {
     try {
       const now = Date.now();
