@@ -48,6 +48,13 @@ interface WidgetData {
   yshValue: number | null;
   yshUnit: string | null;
   chainSizeGB: number | null;
+  // Precio (añadido para Kilombino wallet: así la app no depende de xbt.live).
+  xbtUsd: number | null;
+  xbtEur: number | null;
+  changePct: number | null;
+  high24Usd: number | null;
+  low24Usd: number | null;
+  xbtPoolsats: number | null;
 }
 
 class Blake2bWidget {
@@ -94,12 +101,14 @@ class Blake2bWidget {
       try { return await p; } catch (e) { return null; }
     };
 
-    const [bci, hashps, usdTicker, mrr, kraken] = await Promise.all([
+    const [bci, hashps, usdTicker, mrr, kraken, spamTicker, eurusd] = await Promise.all([
       settle(bitcoinClient.getBlockchainInfo() as Promise<any>),
       settle(bitcoinClient.getNetworkHashPs(1008) as Promise<number>),
       settle(this.$json('https://neoxa.exchange/api/exchange/ticker/BTCB2_USDC')),
       settle(this.$json('https://www.miningrigrentals.com/api/v2/rig?type=blake2b&orderby=price&order=asc&count=1')),
       settle(this.$json('https://api.kraken.com/0/public/Ticker?pair=XBTUSD')),
+      settle(this.$json('https://neoxa.exchange/api/exchange/ticker/BTCB2_BTC')),
+      settle(this.$json('https://api.kraken.com/0/public/Ticker?pair=EURUSD')),
     ]);
 
     let stale = false;
@@ -150,6 +159,16 @@ class Blake2bWidget {
       yshValue = pick(null, prev.yshValue); yshUnit = prev.yshUnit;
     }
 
+    // Precio de XBT. El euro sale del dólar con el cambio EUR/USD de Kraken (no hay par
+    // XBT/EUR). Las unidades de la Spamchain se dan en Poolsats.
+    const t = usdTicker?.ticker;
+    const num = (v: any): number | null => (typeof v === 'number' && isFinite(v) ? v : null);
+    const usdNow = pick(num(t?.lastPrice), prev?.xbtUsd);
+    const eurUsdRate = eurusd?.result ? parseFloat(eurusd.result[Object.keys(eurusd.result)[0]]?.c?.[0]) : NaN;
+    const xbtEur = usdNow !== null && !isNaN(eurUsdRate) && eurUsdRate > 0 ? usdNow / eurUsdRate : pick(null, prev?.xbtEur);
+    const spamPx = num(spamTicker?.ticker?.lastPrice);
+    const xbtPoolsats = pick(spamPx !== null ? Math.round(spamPx * 1e8) : null, prev?.xbtPoolsats);
+
     const chainSizeGB = pick(typeof bci?.size_on_disk === 'number' ? bci.size_on_disk / 1e9 : null, prev?.chainSizeGB);
 
     const data: WidgetData = {
@@ -166,6 +185,12 @@ class Blake2bWidget {
       yshValue,
       yshUnit,
       chainSizeGB,
+      xbtUsd: usdNow,
+      xbtEur,
+      changePct: pick(num(t?.changePercent), prev?.changePct),
+      high24Usd: pick(num(t?.high24h), prev?.high24Usd),
+      low24Usd: pick(num(t?.low24h), prev?.low24Usd),
+      xbtPoolsats,
     };
     if (stale) { logger.debug('blake2b widget: some sources failed, serving last good values'); }
     this.cache = data;
