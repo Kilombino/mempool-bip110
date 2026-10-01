@@ -181,7 +181,20 @@ class BitcoinRoutes {
       res.send('Service Unavailable');
       return;
     }
-    const result = feeApi.getPreciseRecommendedFee();
+    const precise = feeApi.getPreciseRecommendedFee();
+    // Suelo de 1 sat/vB. El nodo retransmite desde 0,1 sat/vB, así que las estimaciones
+    // "precisas" bajan de 1 cuando el mempool está vacío; pero la mayoría de mineros usan el
+    // blockmintxfee por defecto (1 sat/vB) y no incluyen nada por debajo. Un wallet que se
+    // fiaba de esta ruta (el Ark de Paperclip, 1 oct 2026) emitió a 0,51 sat/vB y su
+    // transacción se quedó atascada con bloques casi vacíos hasta hacerle CPFP.
+    const floor = (v: number): number => Math.max(1, v);
+    const result = {
+      fastestFee: floor(precise.fastestFee),
+      halfHourFee: floor(precise.halfHourFee),
+      hourFee: floor(precise.hourFee),
+      economyFee: floor(precise.economyFee),
+      minimumFee: floor(precise.minimumFee),
+    };
 
     // Sin la clave 'warning' que mete upstream: en Esplora este objeto es SOLO {objetivo: tasa}
     // y los clientes (esplora-client, el wallet Ark) lo leen como mapa número→número; una
