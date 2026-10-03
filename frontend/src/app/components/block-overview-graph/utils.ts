@@ -119,6 +119,30 @@ for (const key in defaultColors) {
   };
 }
 
+
+/**
+ * XBT tint ("Rate"): a vivid scale tuned to XBT fees, which mostly sit between 0.1 and 10 sat/vB,
+ * where the classic palette shows almost the same olive for everything. Colours by EFFECTIVE
+ * fee rate (CPFP packages included), from blue (cheapest) through green, yellow and red to
+ * magenta (highest).
+ */
+export const rateLevels = [0, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 7, 10, 15, 20, 30, 50, 75, 100, 150, 250, 500, 1000];
+export const rateHex = ['1d3fed', '1d6bed', '1d97ed', '1dc2ed', '1dedeb', '1dedbf', '1ded94', '1ded68', '1ded3c', '29ed1d', '54ed1d', '80ed1d', 'aced1d', 'd8ed1d', 'edd61d', 'edaa1d', 'ed7f1d', 'ed531d', 'ed271d', 'ed1d3e', 'ed1d69', 'ed1d95', 'ed1dc1', 'ed1ded'];
+export const rateColors = rateHex.map(hexToColor);
+
+export function rateLevelIndex(rate: number): number {
+  const i = rateLevels.findIndex((lvl) => Math.max(0, rate) < lvl) - 1;
+  return i < 0 ? rateLevels.length - 1 : i;
+}
+
+export function rateColorFunction(tx: TxView): Color {
+  if (hasBIP110Violation(tx)) {
+    return getPulsingBIP110Color();
+  }
+  const rate = tx.feerate || (tx.fee / tx.vsize);
+  return rateColors[rateLevelIndex(rate)];
+}
+
 export { defaultColors as defaultColors };
 
 export const defaultAuditColors = {

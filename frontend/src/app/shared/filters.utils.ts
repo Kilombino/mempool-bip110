@@ -11,7 +11,7 @@ export interface Filter {
 
 export type FilterMode = 'and' | 'or' | 'nor';
 
-export type GradientMode = 'fee' | 'age';
+export type GradientMode = 'fee' | 'age' | 'rate';
 
 export interface ActiveFilter {
   mode: FilterMode,

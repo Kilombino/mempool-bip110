@@ -9,11 +9,11 @@ import { Price } from '@app/services/price.service';
 import { StateService } from '@app/services/state.service';
 import { ThemeService } from '@app/services/theme.service';
 import { Subscription } from 'rxjs';
-import { defaultColorFunction, setOpacity, defaultAuditColors, defaultColors, ageColorFunction, contrastColorFunction, contrastAuditColors, contrastColors, hasBIP110Violation, setBIP110PulsePhase } from '@components/block-overview-graph/utils';
+import { defaultColorFunction, setOpacity, defaultAuditColors, defaultColors, ageColorFunction, contrastColorFunction, contrastAuditColors, contrastColors, hasBIP110Violation, setBIP110PulsePhase, rateColorFunction } from '@components/block-overview-graph/utils';
 import { ActiveFilter, FilterMode, toFlags } from '@app/shared/filters.utils';
 import { detectWebGL } from '@app/shared/graphs.utils';
 
-const unmatchedOpacity = 0.2;
+const unmatchedOpacity = 0.1;
 const unmatchedAuditColors = {
   censored: setOpacity(defaultAuditColors.censored, unmatchedOpacity),
   missing: setOpacity(defaultAuditColors.missing, unmatchedOpacity),
@@ -54,7 +54,7 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
   @Input() excludeFilters: string[] = [];
   @Input() filterFlags: bigint | null = null;
   @Input() filterMode: FilterMode = 'and';
-  @Input() gradientMode: 'fee' | 'age' = 'fee';
+  @Input() gradientMode: 'fee' | 'age' | 'rate' = 'fee';
   @Input() relativeTime: number | null;
   @Input() blockConversion: Price;
   @Input() overrideColors: ((tx: TxView) => Color) | null = null;
@@ -672,7 +672,7 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     }
   }
 
-  getFilterColorFunction(flags: bigint, gradient: 'fee' | 'age'): ((tx: TxView) => Color) {
+  getFilterColorFunction(flags: bigint, gradient: 'fee' | 'age' | 'rate'): ((tx: TxView) => Color) {
     return (tx: TxView) => {
       let matches = false;
       switch (this.filterMode) {
@@ -685,6 +685,10 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
         case 'nor':
           matches = (tx.bigintFlags & flags) === 0n;
           break;
+      }
+      if (gradient === 'rate') {
+        // XBT tint: every match in its fee-rate colour, everything else almost invisible.
+        return matches ? rateColorFunction(tx) : { r: 1, g: 1, b: 1, a: 0.04 };
       }
       if (matches) {
         if (this.loadedTheme !== 'contrast' && this.loadedTheme !== 'bukele') {

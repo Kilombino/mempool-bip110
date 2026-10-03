@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, HostListener, Input, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
 import { ActiveFilter, FilterGroups, FilterMode, GradientMode, TransactionFilters } from '@app/shared/filters.utils';
 import { StateService } from '@app/services/state.service';
+import { rateLevels, rateHex } from '@components/block-overview-graph/utils';
 import { Subscription } from 'rxjs';
 
 
@@ -24,6 +25,11 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
   filterFlags: { [key: string]: boolean } = {};
   filterMode: FilterMode = 'and';
   gradientMode: GradientMode = 'fee';
+  // Legend for the XBT "Rate" tint: a swatch per level, labelled at a few key rates.
+  rateLegend = rateLevels.map((lvl, i) => ({
+    color: '#' + rateHex[i],
+    label: [0.1, 1, 2, 5, 10, 20, 50, 100, 1000].includes(lvl) ? (lvl >= 1000 ? '1000+' : String(lvl)) : '',
+  })).slice(1);
   menuOpen: boolean = false;
 
   constructor(

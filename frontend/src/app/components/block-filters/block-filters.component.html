@@ -32,6 +32,16 @@
           <label class="btn btn-xs yellow mode-toggle" [class.active]="gradientMode === 'fee'"  for="tint-classic"><ng-container i18n="mempool-goggles.classic">Classic</ng-container></label>
           <input type="radio" class="btn-check" id="tint-age" [value]="'age'" fragment="age" (click)="setGradientMode('age')">
           <label class="btn btn-xs blue mode-toggle" [class.active]="gradientMode === 'age'" for="tint-age"><ng-container i18n="mempool-goggles.age">Age</ng-container></label>
+          <input type="radio" class="btn-check" id="tint-rate" [value]="'rate'" fragment="rate" (click)="setGradientMode('rate')">
+          <label class="btn btn-xs green mode-toggle" [class.active]="gradientMode === 'rate'" for="tint-rate"><ng-container i18n="@@mempool-goggles.rate">Rate</ng-container></label>
+        </div>
+      </div>
+      <div class="filter-element rate-legend" *ngIf="gradientMode === 'rate'">
+        <h5 i18n="@@mempool-goggles.rate-legend">Effective fee rate (sat/vB)</h5>
+        <div class="rate-scale">
+          <div class="rate-step" *ngFor="let s of rateLegend" [style.background]="s.color">
+            <span *ngIf="s.label">{{ s.label }}</span>
+          </div>
         </div>
       </div>
     </div>

@@ -218,3 +218,26 @@
     }
   }
 }
+.rate-legend {
+  .rate-scale {
+    display: flex;
+    height: 22px;
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 260px;
+  }
+  .rate-step {
+    flex: 1;
+    position: relative;
+    span {
+      position: absolute;
+      top: 3px;
+      left: 1px;
+      font-size: 10px;
+      font-weight: bold;
+      color: #000;
+      text-shadow: 0 0 2px rgba(255, 255, 255, 0.7);
+      white-space: nowrap;
+    }
+  }
+}

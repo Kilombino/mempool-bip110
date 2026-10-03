@@ -11688,6 +11688,14 @@
           <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="mempool-goggles.rate" datatype="html">
+        <source>Rate</source>
+        <target>Tasa</target>
+      </trans-unit>
+      <trans-unit id="mempool-goggles.rate-legend" datatype="html">
+        <source>Effective fee rate (sat/vB)</source>
+        <target>Tasa efectiva (sat/vB)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
