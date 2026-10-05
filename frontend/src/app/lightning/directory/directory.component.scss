@@ -1,0 +1,11 @@
+.directory-card, .directory-row { padding: 16px 20px; }
+.dir-tag { background: var(--secondary); color: var(--fg); font-weight: 500; font-size: 12px; border: 1px solid var(--primary); }
+.dir-desc { white-space: pre-wrap; margin-bottom: 8px; }
+.dir-notes { white-space: pre-wrap; color: var(--transparent-fg); font-size: 14px; }
+.dir-contact { display: flex; gap: 8px; align-items: center; padding: 6px 10px; background: var(--stat-box-bg); border-radius: 6px; overflow: hidden; }
+.dir-contact a, .dir-contact span:not(.dir-label) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dir-label { color: var(--transparent-fg); min-width: 120px; font-size: 13px; }
+.dir-meta { color: var(--transparent-fg); font-size: 13px; margin-top: 8px; }
+.dir-name { font-size: 20px; font-weight: 600; }
+.dir-stat { color: var(--transparent-fg); font-size: 14px; }
+.dir-intro { color: var(--transparent-fg); max-width: 760px; }

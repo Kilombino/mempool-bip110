@@ -177,6 +177,8 @@
     <app-clipboard [button]="true" [text]="node.socketsObject[selectedSocketIndex].socket" [leftPadding]="false"></app-clipboard>
   </div>
 
+  <app-node-directory-card *ngIf="!error" [publicKey]="publicKey"></app-node-directory-card>
+
   <div *ngIf="hasDetails" [hidden]="!showDetails" id="details" class="details mt-3">
     <div class="box">
       <ng-template [ngIf]="liquidityAd">

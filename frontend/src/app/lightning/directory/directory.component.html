@@ -1,0 +1,26 @@
+<div class="container-xl full-height" style="min-height: 335px">
+  <h1 class="float-start" i18n="lightning.directory-title">Lightning node directory</h1>
+  <div class="clearfix"></div>
+  <p class="dir-intro" i18n="lightning.directory-intro">Nodes of the XBT (Bitcoin BLAKE2b) Lightning network whose operators asked to be listed, with how to reach them to open channels. Want your node here? Contact us.</p>
+  <p class="dir-meta" *ngIf="updated$ | async as u"><span i18n="lightning.directory-updated-on">Updated</span> {{ u }}</p>
+
+  <ng-container *ngIf="rows$ | async as rows; else loading">
+    <div class="box" *ngIf="!rows.length" i18n="lightning.directory-empty">No nodes listed yet.</div>
+    <div class="box directory-row mb-3" *ngFor="let r of rows">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <a class="dir-name" [routerLink]="['/lightning/node' | relativeUrl, r.publicKey]">{{ r.node?.alias || r.entry.name || (r.publicKey | slice:0:16) }}</a>
+        <span class="badge rounded-pill dir-tag" *ngFor="let t of r.entry.tags">{{ t }}</span>
+        <span class="flex-grow-1"></span>
+        <span class="dir-stat" *ngIf="r.node"><app-amount [satoshis]="r.node.capacity" digitsInfo="1.2-2" [noFiat]="true"></app-amount> · {{ r.node.active_channel_count }} <span i18n="lightning.directory-channels">channels</span></span>
+      </div>
+      <p class="dir-desc mt-2 mb-2" *ngIf="r.entry.description">{{ r.entry.description }}</p>
+      <div class="d-flex flex-wrap gap-3 dir-links">
+        <ng-container *ngFor="let k of contactKinds">
+          <a *ngIf="r.entry.contacts?.[k] && contactLink(k, r.entry.contacts[k]) as href" [href]="href" target="_blank" rel="noopener nofollow">{{ k === 'x' ? 'X' : (k | titlecase) }}</a>
+        </ng-container>
+        <span *ngIf="r.entry.contacts?.lightning_address">⚡ {{ r.entry.contacts.lightning_address }}</span>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #loading><div class="spinner-border text-light"></div></ng-template>
+</div>

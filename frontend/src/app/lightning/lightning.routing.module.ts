@@ -10,6 +10,7 @@ import { NodesRanking } from '@app/lightning/nodes-ranking/nodes-ranking.compone
 import { NodesRankingsDashboard } from '@app/lightning/nodes-rankings-dashboard/nodes-rankings-dashboard.component';
 import { GroupComponent } from '@app/lightning/group/group.component';
 import { JusticeList } from '@app/lightning/justice-list/justice-list.component';
+import { LightningDirectoryComponent } from '@app/lightning/directory/directory.component';
 
 const routes: Routes = [
     {
@@ -19,6 +20,10 @@ const routes: Routes = [
         {
           path: '',
           component: LightningDashboardComponent,
+        },
+        {
+          path: 'directory',
+          component: LightningDirectoryComponent,
         },
         {
           path: 'node/:public_key',

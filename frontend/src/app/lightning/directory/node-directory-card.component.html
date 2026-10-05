@@ -1,0 +1,31 @@
+<ng-container *ngIf="entry$ | async as e">
+  <div class="box directory-card mt-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+      <h5 class="m-0" i18n="lightning.directory-card-title">Directory</h5>
+      <span class="badge rounded-pill dir-tag" *ngFor="let t of e.tags">{{ t }}</span>
+    </div>
+    <p class="dir-desc" *ngIf="e.description">{{ e.description }}</p>
+    <div class="row g-2">
+      <ng-container *ngFor="let k of contactKinds">
+        <div class="col-12 col-md-6" *ngIf="e.contacts?.[k]">
+          <div class="dir-contact">
+            <span class="dir-label">{{ contactLabels[k] }}</span>
+            <a *ngIf="contactLink(k, e.contacts[k]) as href; else plain" [href]="href" target="_blank" rel="noopener nofollow">{{ e.contacts[k] }}</a>
+            <ng-template #plain><span>{{ e.contacts[k] }}</span></ng-template>
+            <app-clipboard [text]="e.contacts[k]"></app-clipboard>
+          </div>
+        </div>
+      </ng-container>
+      <div class="col-12 col-md-6" *ngIf="e.min_channel_size">
+        <div class="dir-contact"><span class="dir-label" i18n="lightning.directory-min-channel">Min. channel size</span>
+          <app-sats [satoshis]="e.min_channel_size"></app-sats></div>
+      </div>
+    </div>
+    <p class="dir-notes mt-2" *ngIf="e.notes">{{ e.notes }}</p>
+    <div class="dir-meta">
+      <span *ngIf="e.since"><span i18n="lightning.directory-listed-since">Listed since</span> {{ e.since }}</span>
+      <span *ngIf="e.updated"> · <span i18n="lightning.directory-updated">updated</span> {{ e.updated }}</span>
+      · <a [routerLink]="['/lightning/directory' | relativeUrl]" i18n="lightning.directory-all">Node directory</a>
+    </div>
+  </div>
+</ng-container>

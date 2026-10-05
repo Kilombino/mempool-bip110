@@ -11696,6 +11696,50 @@
         <source>Effective fee rate (sat/vB)</source>
         <target>Tasa efectiva (sat/vB)</target>
       </trans-unit>
+      <trans-unit id="lightning.directory-card-title" datatype="html">
+        <source>Directory</source>
+        <target>Directorio</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-min-channel" datatype="html">
+        <source>Min. channel size</source>
+        <target>Canal mínimo</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-listed-since" datatype="html">
+        <source>Listed since</source>
+        <target>En el directorio desde</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-updated" datatype="html">
+        <source>updated</source>
+        <target>actualizado</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-all" datatype="html">
+        <source>Node directory</source>
+        <target>Directorio de nodos</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-title" datatype="html">
+        <source>Lightning node directory</source>
+        <target>Directorio de nodos Lightning</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-intro" datatype="html">
+        <source>Nodes of the XBT (Bitcoin BLAKE2b) Lightning network whose operators asked to be listed, with how to reach them to open channels. Want your node here? Contact us.</source>
+        <target>Nodos de la red Lightning de XBT (Bitcoin BLAKE2b) cuyos operadores pidieron aparecer aquí, con cómo contactarles para abrir canales. ¿Quieres que salga tu nodo? Escríbenos.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-updated-on" datatype="html">
+        <source>Updated</source>
+        <target>Actualizado</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-empty" datatype="html">
+        <source>No nodes listed yet.</source>
+        <target>Aún no hay nodos en el directorio.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-banner" datatype="html">
+        <source>Node directory: contact node operators to open channels</source>
+        <target>Directorio de nodos: contacta con los operadores para abrir canales</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-channels" datatype="html">
+        <source>channels</source>
+        <target>canales</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
