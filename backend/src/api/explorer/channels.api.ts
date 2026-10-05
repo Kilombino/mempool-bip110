@@ -49,7 +49,8 @@ class ChannelsApi {
         params.push(publicKey);
         params.push(publicKey);
       } else {
-        query += ` AND channels.capacity > 1000000
+        // BLAKE2b fork: the XBT network is small and most channels are 1M or less; show them all.
+        query += ` AND channels.capacity > 0
           GROUP BY nodes_1.public_key, nodes_2.public_key
           ORDER BY channels.capacity DESC
           LIMIT 10000
