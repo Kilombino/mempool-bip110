@@ -1,2 +1,18 @@
+# Search engines may index the explorer's main pages, but not every block, transaction or
+# address: each of those pages makes the node look up many transactions, and crawling them
+# all keeps the server busy for no benefit.
 User-agent: *
-Allow: /
+Allow: /$
+Allow: /about
+Allow: /docs
+Disallow: /tx/
+Disallow: /address/
+Disallow: /block/
+Disallow: /api/
+Disallow: /testnet4/
+Disallow: /*/tx/
+Disallow: /*/address/
+Disallow: /*/block/
+
+User-agent: ShapBot
+Disallow: /
