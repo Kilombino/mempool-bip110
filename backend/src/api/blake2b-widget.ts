@@ -55,6 +55,9 @@ interface WidgetData {
   high24Usd: number | null;
   low24Usd: number | null;
   xbtPoolsats: number | null;
+  poolsatsChangePct: number | null;
+  // Hashrate total de la red (H/s), media de los últimos 144 bloques (~1 día).
+  networkHashps: number | null;
 }
 
 class Blake2bWidget {
@@ -101,9 +104,10 @@ class Blake2bWidget {
       try { return await p; } catch (e) { return null; }
     };
 
-    const [bci, hashps, usdTicker, mrr, kraken, spamTicker, eurusd] = await Promise.all([
+    const [bci, hashps, hashps144, usdTicker, mrr, kraken, spamTicker, eurusd] = await Promise.all([
       settle(bitcoinClient.getBlockchainInfo() as Promise<any>),
       settle(bitcoinClient.getNetworkHashPs(1008) as Promise<number>),
+      settle(bitcoinClient.getNetworkHashPs(144) as Promise<number>),
       settle(this.$json('https://neoxa.exchange/api/exchange/ticker/BTCB2_USDC')),
       settle(this.$json('https://www.miningrigrentals.com/api/v2/rig?type=blake2b&orderby=price&order=asc&count=1')),
       settle(this.$json('https://api.kraken.com/0/public/Ticker?pair=XBTUSD')),
@@ -191,6 +195,8 @@ class Blake2bWidget {
       high24Usd: pick(num(t?.high24h), prev?.high24Usd),
       low24Usd: pick(num(t?.low24h), prev?.low24Usd),
       xbtPoolsats,
+      poolsatsChangePct: pick(num(spamTicker?.ticker?.changePercent), prev?.poolsatsChangePct),
+      networkHashps: pick(num(hashps144), prev?.networkHashps),
     };
     if (stale) { logger.debug('blake2b widget: some sources failed, serving last good values'); }
     this.cache = data;
