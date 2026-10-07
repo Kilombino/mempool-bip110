@@ -56,6 +56,8 @@ interface WidgetData {
   low24Usd: number | null;
   xbtPoolsats: number | null;
   poolsatsChangePct: number | null;
+  // The spamcoin (SHA-256 chain) in USD, from Kraken.
+  spamUsd: number | null;
   // Hashrate total de la red (H/s), media de los últimos 144 bloques (~1 día).
   networkHashps: number | null;
 }
@@ -170,8 +172,17 @@ class Blake2bWidget {
     const usdNow = pick(num(t?.lastPrice), prev?.xbtUsd);
     const eurUsdRate = eurusd?.result ? parseFloat(eurusd.result[Object.keys(eurusd.result)[0]]?.c?.[0]) : NaN;
     const xbtEur = usdNow !== null && !isNaN(eurUsdRate) && eurUsdRate > 0 ? usdNow / eurUsdRate : pick(null, prev?.xbtEur);
+    // Poolsats per XBT from the two USD prices (Neoxa XBT/USD over Kraken's spamcoin/USD), as
+    // xbt.live does. Neoxa's own BTCB2_BTC pair trades rarely and lags: taking its last price
+    // made the spamcoin come out at $85 600 when it was at $83 960.
     const spamPx = num(spamTicker?.ticker?.lastPrice);
-    const xbtPoolsats = pick(spamPx !== null ? Math.round(spamPx * 1e8) : null, prev?.xbtPoolsats);
+    const crossPoolsats = usdNow !== null && !isNaN(spamUsd) && spamUsd > 0 ? Math.round(usdNow / spamUsd * 1e8) : null;
+    const xbtPoolsats = pick(crossPoolsats ?? (spamPx !== null ? Math.round(spamPx * 1e8) : null), prev?.xbtPoolsats);
+    // Its 24h change, consistent with that: XBT's change against the spamcoin's (Kraken open → last).
+    const spamOpen = kr?.o ? parseFloat(kr.o) : NaN;
+    const xbtChg = num(t?.changePercent);
+    const poolsatsChange = xbtChg !== null && !isNaN(spamOpen) && spamOpen > 0 && !isNaN(spamUsd)
+      ? ((1 + xbtChg / 100) / (spamUsd / spamOpen) - 1) * 100 : num(spamTicker?.ticker?.changePercent);
 
     const chainSizeGB = pick(typeof bci?.size_on_disk === 'number' ? bci.size_on_disk / 1e9 : null, prev?.chainSizeGB);
 
@@ -195,7 +206,8 @@ class Blake2bWidget {
       high24Usd: pick(num(t?.high24h), prev?.high24Usd),
       low24Usd: pick(num(t?.low24h), prev?.low24Usd),
       xbtPoolsats,
-      poolsatsChangePct: pick(num(spamTicker?.ticker?.changePercent), prev?.poolsatsChangePct),
+      poolsatsChangePct: pick(poolsatsChange, prev?.poolsatsChangePct),
+      spamUsd: pick(!isNaN(spamUsd) ? spamUsd : null, prev?.spamUsd),
       networkHashps: pick(num(hashps144), prev?.networkHashps),
     };
     if (stale) { logger.debug('blake2b widget: some sources failed, serving last good values'); }
