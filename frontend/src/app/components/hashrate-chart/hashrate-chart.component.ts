@@ -15,6 +15,10 @@ import { StateService } from '@app/services/state.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
 
+/** Block 961640: the first BLAKE2b block, and its time. */
+const BLAKE2B_FORK_HEIGHT = 961640;
+const BLAKE2B_FORK_TIME = 1788070477;
+
 @Component({
   selector: 'app-hashrate-chart',
   templateUrl: './hashrate-chart.component.html',
@@ -119,6 +123,11 @@ export class HashrateChartComponent implements OnInit {
         tap((response: any) => {
           const data = response.body;
 
+          // BLAKE2b: before the proof-of-work fork the chain was SHA-256d, with a difficulty and
+          // hashrate millions of times larger. Show only what came after it.
+          data.hashrates = data.hashrates.filter(h => h.timestamp >= BLAKE2B_FORK_TIME);
+          data.difficulty = data.difficulty.filter(d => d.height === undefined || d.height >= BLAKE2B_FORK_HEIGHT);
+
           // always include the latest difficulty
           if (data.difficulty.length && data.difficulty[data.difficulty.length - 1].difficulty !== data.currentDifficulty) {
             data.difficulty.push({
@@ -192,6 +201,21 @@ export class HashrateChartComponent implements OnInit {
         }),
         share()
       );
+  }
+
+  /**
+   * When the chosen span reaches back before the fork, the axis starts at the fork and runs
+   * forward for that span: the part still to come stays empty and fills in as blocks arrive.
+   */
+  forkAxisRange(): { min: number | string, max: number | string } {
+    // Always both bounds: the chart merges options, so a bound left out would keep the last span's.
+    const days = { '1m': 30, '3m': 91, '6m': 182, '1y': 365, '2y': 730, '3y': 1095 }[this.timespan];
+    const now = Date.now();
+    const fork = BLAKE2B_FORK_TIME * 1000;
+    if (days === undefined) return { min: fork, max: 'dataMax' }; // 'all'
+    const span = days * 86400 * 1000;
+    if (now - span >= fork) return { min: 'dataMin', max: 'dataMax' };
+    return { min: fork, max: Math.max(now, fork + span) };
   }
 
   prepareChartOptions(data) {
@@ -281,6 +305,7 @@ export class HashrateChartComponent implements OnInit {
       },
       xAxis: data.hashrates.length === 0 ? undefined : {
         type: 'time',
+        ...this.forkAxisRange(),
         splitNumber: (this.isMobile() || this.widget) ? 5 : 10,
         axisLabel: {
           hideOverlap: true,
