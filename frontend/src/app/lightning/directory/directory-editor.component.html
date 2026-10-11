@@ -1,0 +1,87 @@
+<div class="box directory-editor mt-4" id="publish">
+  <h4 class="mb-2" i18n="@@lightning.directory-edit-title">Publish or edit your node's card</h4>
+  <p class="dir-intro mb-3" i18n="@@lightning.directory-edit-intro">Any node of the XBT Lightning network can be listed. You prove the node is yours by signing a one-time text with your node key: no account, no email, nothing to install.</p>
+
+  <form [formGroup]="form" (submit)="$event.preventDefault()" autocomplete="off">
+    <label class="form-label" for="dir-pubkey" i18n="@@lightning.directory-edit-pubkey">1. Your node</label>
+    <input id="dir-pubkey" class="form-control" formControlName="pubkeyInput" spellcheck="false"
+      i18n-placeholder="@@lightning.directory-edit-pubkey-ph" placeholder="Node public key, or search by alias">
+    <div class="dir-suggest mt-1" *ngIf="!pubkey && suggestions.length">
+      <button type="button" class="btn btn-sm btn-outline-light me-1 mb-1" *ngFor="let n of suggestions" (click)="pick(n)">
+        {{ n.alias || (n.public_key | slice:0:16) }} <span class="dir-hint">{{ n.public_key | slice:0:10 }}…</span>
+      </button>
+    </div>
+    <div class="dir-meta" *ngIf="pubkey">
+      <span *ngIf="alias">{{ alias }} · </span>
+      <span *ngIf="existing" i18n="@@lightning.directory-edit-has-card">This node already has a card: the form shows it, change what you want.</span>
+      <span *ngIf="!existing" i18n="@@lightning.directory-edit-no-card">This node has no card yet.</span>
+    </div>
+
+    <ng-container *ngIf="pubkey">
+      <div class="mt-3" i18n="@@lightning.directory-edit-step-card">2. Your card</div>
+      <div class="row g-2 mt-1">
+        <div class="col-12 col-md-6">
+          <label class="form-label dir-hint" for="dir-name" i18n="@@lightning.directory-edit-field-name">Name</label>
+          <input id="dir-name" class="form-control" formControlName="name" maxlength="40">
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label dir-hint" for="dir-tags" i18n="@@lightning.directory-edit-field-tags-hint">Tags, separated by commas (up to 5)</label>
+          <input id="dir-tags" class="form-control" formControlName="tags" maxlength="140">
+        </div>
+        <div class="col-12">
+          <label class="form-label dir-hint" for="dir-desc" i18n="@@lightning.directory-edit-field-description">Description</label>
+          <textarea id="dir-desc" class="form-control" formControlName="description" rows="3" maxlength="500"></textarea>
+        </div>
+        <ng-container formGroupName="contacts">
+          <div class="col-12 col-md-6" *ngFor="let k of contactKinds">
+            <label class="form-label dir-hint" [for]="'dir-c-' + k">{{ contactLabels[k] }}</label>
+            <input class="form-control" [id]="'dir-c-' + k" [formControlName]="k" [placeholder]="contactHints[k]" spellcheck="false">
+          </div>
+        </ng-container>
+        <div class="col-12 col-md-6">
+          <label class="form-label dir-hint" for="dir-mcs" i18n="@@lightning.directory-edit-field-min-channel">Min. channel size (sats)</label>
+          <input id="dir-mcs" class="form-control" formControlName="min_channel_size" inputmode="numeric">
+        </div>
+      </div>
+      <p class="dir-hint mt-2" i18n="@@lightning.directory-edit-rules">Plain text only. Links must be https. Leave empty whatever you don't want to publish.</p>
+
+      <div class="d-flex flex-wrap gap-2 mt-2">
+        <button type="button" class="btn btn-primary" (click)="getText('publish')" [disabled]="busy" i18n="@@lightning.directory-edit-get-text">Get the text to sign</button>
+        <button type="button" class="btn btn-outline-danger" *ngIf="existing" (click)="getText('delete')" [disabled]="busy" i18n="@@lightning.directory-edit-delete">Delete my card</button>
+      </div>
+    </ng-container>
+  </form>
+
+  <div class="dir-challenge mt-3" *ngIf="challenge">
+    <div>
+      <span *ngIf="challenge.action === 'publish'" i18n="@@lightning.directory-edit-step-sign">3. Sign this text with your node</span>
+      <span *ngIf="challenge.action === 'delete'" class="text-danger" i18n="@@lightning.directory-edit-step-sign-delete">3. To delete your card, sign this text with your node</span>
+      <span class="dir-hint"> · <span i18n="@@lightning.directory-edit-valid-until">valid until</span> {{ challenge.expires | date:'HH:mm' }}</span>
+    </div>
+    <div class="dir-text mt-2">
+      <code>{{ challenge.text }}</code>
+      <app-clipboard [text]="challenge.text"></app-clipboard>
+    </div>
+    <ul class="dir-howto mt-2">
+      <li><b>LND</b>: <code>{{ lndCommand() }}</code> <app-clipboard [text]="lndCommand()" size="small"></app-clipboard>
+        <span class="dir-hint" i18n="@@lightning.directory-edit-howto-lnd">copy the "signature" value</span></li>
+      <li><b>Core Lightning</b>: <code>{{ clnCommand() }}</code> <app-clipboard [text]="clnCommand()" size="small"></app-clipboard>
+        <span class="dir-hint" i18n="@@lightning.directory-edit-howto-cln">copy the "zbase" value</span></li>
+      <li><b>ThunderHub</b>: <span i18n="@@lightning.directory-edit-howto-thub">Tools → Sign message, paste the text, sign and copy the result.</span></li>
+      <li><b>Zeus</b>: <span i18n="@@lightning.directory-edit-howto-zeus">Settings → Tools → Sign or verify message, paste the text, sign and copy the signature.</span></li>
+    </ul>
+    <p class="dir-hint" i18n="@@lightning.directory-edit-howto-exact">Sign the text exactly as shown, in one piece. It is valid once and for 10 minutes; your node must be in the XBT Lightning graph.</p>
+    <label class="form-label" for="dir-sig" i18n="@@lightning.directory-edit-step-paste">4. Paste the signature</label>
+    <div class="d-flex flex-wrap gap-2">
+      <input id="dir-sig" class="form-control flex-grow-1 dir-sig" [value]="signature" (input)="onSignature($any($event.target).value)" spellcheck="false" placeholder="d9…">
+      <button type="button" class="btn" [class.btn-primary]="challenge.action === 'publish'" [class.btn-danger]="challenge.action === 'delete'"
+        (click)="send()" [disabled]="busy || !signature">
+        <span *ngIf="challenge.action === 'publish'" i18n="@@lightning.directory-edit-submit">Publish card</span>
+        <span *ngIf="challenge.action === 'delete'" i18n="@@lightning.directory-edit-submit-delete">Delete card</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="alert alert-danger mt-3 mb-0" *ngIf="error">{{ error }}</div>
+  <div class="alert alert-success mt-3 mb-0" *ngIf="success">{{ success }}</div>
+</div>

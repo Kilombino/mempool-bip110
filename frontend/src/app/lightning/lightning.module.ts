@@ -36,11 +36,13 @@ import { NodeChannels } from '@app/lightning/nodes-channels/node-channels.compon
 import { GroupComponent } from '@app/lightning/group/group.component';
 import { LightningDirectoryComponent } from '@app/lightning/directory/directory.component';
 import { NodeDirectoryCardComponent } from '@app/lightning/directory/node-directory-card.component';
+import { DirectoryEditorComponent } from '@app/lightning/directory/directory-editor.component';
 
 @NgModule({
   declarations: [
     LightningDirectoryComponent,
     NodeDirectoryCardComponent,
+    DirectoryEditorComponent,
     LightningDashboardComponent,
     NodesListComponent,
     NodeStatisticsComponent,

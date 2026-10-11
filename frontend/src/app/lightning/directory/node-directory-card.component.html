@@ -26,6 +26,7 @@
       <span *ngIf="e.since"><span i18n="@@lightning.directory-listed-since">Listed since</span> {{ e.since }}</span>
       <span *ngIf="e.updated"> · <span i18n="@@lightning.directory-updated">updated</span> {{ e.updated }}</span>
       · <a [routerLink]="['/lightning/directory' | relativeUrl]" i18n="@@lightning.directory-all">Node directory</a>
+      · <a [routerLink]="['/lightning/directory' | relativeUrl]" [queryParams]="{ node: publicKey }" i18n="@@lightning.directory-edit-own">Is this your node? Edit the card</a>
     </div>
   </div>
 </ng-container>

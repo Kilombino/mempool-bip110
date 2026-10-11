@@ -9,3 +9,13 @@
 .dir-name { font-size: 20px; font-weight: 600; }
 .dir-stat { color: var(--transparent-fg); font-size: 14px; }
 .dir-intro { color: var(--transparent-fg); max-width: 760px; }
+.directory-editor { padding: 20px; }
+.directory-editor .form-label { margin-bottom: 2px; }
+.dir-hint { color: var(--transparent-fg); font-size: 13px; }
+.dir-challenge { padding: 14px 16px; border: 1px solid var(--primary); border-radius: 6px; background: var(--stat-box-bg); }
+.dir-text { display: flex; gap: 8px; align-items: flex-start; }
+.dir-text code, .dir-howto code { color: var(--fg); background: rgba(0, 0, 0, 0.25); padding: 4px 6px; border-radius: 4px; word-break: break-all; white-space: pre-wrap; }
+.dir-text code { flex: 1; font-size: 14px; user-select: all; }
+.dir-howto { padding-left: 18px; margin-bottom: 6px; }
+.dir-howto li { margin-bottom: 6px; font-size: 14px; }
+.dir-sig { font-family: monospace; min-width: 0; }

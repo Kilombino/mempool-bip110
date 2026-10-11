@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { SeoService } from '@app/services/seo.service';
 import { LightningApiService } from '@app/lightning/lightning-api.service';
 import { LightningDirectoryService, contactLink } from '@app/lightning/directory/directory.service';
@@ -17,14 +18,19 @@ export class LightningDirectoryComponent implements OnInit {
   updated$: Observable<string | undefined>;
   contactLink = contactLink;
   contactKinds = ['telegram', 'nostr', 'email', 'website', 'x', 'discord', 'simplex'];
+  initialPubkey = '';
 
   constructor(
+    private route: ActivatedRoute,
     private directory: LightningDirectoryService,
     private lightningApi: LightningApiService,
     private seoService: SeoService,
   ) { }
 
   ngOnInit(): void {
+    // /lightning/directory?node=<pubkey> opens the editor on that node (link from each node's card).
+    const q = (this.route.snapshot.queryParamMap.get('node') || '').trim().toLowerCase();
+    if (/^0[23][0-9a-f]{64}$/.test(q)) { this.initialPubkey = q; }
     this.seoService.setTitle($localize`:@@lightning.directory-title:Lightning node directory`);
     const dir$ = this.directory.getDirectory$();
     this.updated$ = dir$.pipe(map((d) => d.updated));
@@ -39,5 +45,11 @@ export class LightningDirectoryComponent implements OnInit {
       }),
       map((rows) => rows.sort((a, b) => (b.node?.capacity || 0) - (a.node?.capacity || 0))),
     );
+    if (this.initialPubkey) { setTimeout(() => this.scrollToEditor(), 300); }
+  }
+
+  scrollToEditor(event?: Event): void {
+    event?.preventDefault();
+    document.getElementById('publish')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }

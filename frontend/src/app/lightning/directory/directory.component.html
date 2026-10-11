@@ -1,7 +1,8 @@
 <div class="container-xl full-height" style="min-height: 335px">
   <h1 class="float-start" i18n="@@lightning.directory-title">Lightning node directory</h1>
   <div class="clearfix"></div>
-  <p class="dir-intro" i18n="@@lightning.directory-intro">Nodes of the XBT (Bitcoin BLAKE2b) Lightning network whose operators asked to be listed, with how to reach them to open channels. Want your node here? Contact us.</p>
+  <p class="dir-intro" i18n="@@lightning.directory-intro-self">Nodes of the XBT (Bitcoin BLAKE2b) Lightning network listed by their own operators, with how to reach them to open channels.</p>
+  <p class="dir-intro"><a href="#publish" (click)="scrollToEditor($event)" i18n="@@lightning.directory-intro-cta">Is your node missing? Publish its card by signing with your node.</a></p>
   <p class="dir-meta" *ngIf="updated$ | async as u"><span i18n="@@lightning.directory-updated-on">Updated</span> {{ u }}</p>
 
   <ng-container *ngIf="rows$ | async as rows; else loading">
@@ -23,4 +24,6 @@
     </div>
   </ng-container>
   <ng-template #loading><div class="spinner-border text-light"></div></ng-template>
+
+  <app-node-directory-editor [initialPubkey]="initialPubkey"></app-node-directory-editor>
 </div>
