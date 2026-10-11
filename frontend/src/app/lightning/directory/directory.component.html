@@ -2,7 +2,7 @@
   <h1 class="float-start" i18n="@@lightning.directory-title">Lightning node directory</h1>
   <div class="clearfix"></div>
   <p class="dir-intro" i18n="@@lightning.directory-intro-self">Nodes of the XBT (Bitcoin BLAKE2b) Lightning network listed by their own operators, with how to reach them to open channels.</p>
-  <p class="dir-intro"><a href="#publish" (click)="scrollToEditor($event)" i18n="@@lightning.directory-intro-cta">Is your node missing? Publish its card by signing with your node.</a></p>
+  <p class="dir-intro"><a href="#publish" (click)="scrollToEditor($event)" i18n="@@lightning.directory-intro-cta-login">Is your node missing? Log in with your node and publish its card.</a></p>
   <p class="dir-meta" *ngIf="updated$ | async as u"><span i18n="@@lightning.directory-updated-on">Updated</span> {{ u }}</p>
 
   <ng-container *ngIf="rows$ | async as rows; else loading">

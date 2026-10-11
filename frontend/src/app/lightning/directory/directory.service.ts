@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 
 // The node directory is a JSON file (resources/lightning-directory.json) mounted into the web
-// container, so entries change without rebuilding the site. Node operators write their own card
-// through the ln-directory service (/api/ln-directory/*) by signing a one-time text with their
-// node key; `notes` is ours alone.
+// container, so entries change without rebuilding the site. Node operators log in through the
+// ln-directory service (/api/ln-directory/*) by signing a one-time text with their node key, and
+// then write their own card; `notes` is ours alone.
 export interface DirectoryContacts {
   telegram?: string;
   nostr?: string;
@@ -34,13 +34,22 @@ export interface Directory {
   nodes: { [publicKey: string]: DirectoryEntry };
 }
 
-export interface DirectoryChallenge {
+export interface DirectoryLoginText {
   ok: boolean;
-  action: 'publish' | 'delete';
   text: string;
   expires: string;
-  entry?: DirectoryEntry;
 }
+
+export interface DirectorySession {
+  ok: boolean;
+  pubkey: string;
+  alias: string;
+  csrf: string;
+  expires: string;
+  entry: DirectoryEntry | null;
+}
+
+const API = '/api/ln-directory';
 
 @Injectable({ providedIn: 'root' })
 export class LightningDirectoryService {
@@ -71,16 +80,35 @@ export class LightningDirectoryService {
     return this.getDirectory$().pipe(map((d) => d.nodes[publicKey] || null));
   }
 
-  getChallenge$(pubkey: string, action: 'publish' | 'delete', entry?: DirectoryEntry): Observable<DirectoryChallenge> {
-    return this.http.post<DirectoryChallenge>('/api/ln-directory/challenge', { pubkey, action, entry });
+  // Session calls. The session cookie is HttpOnly and SameSite=Strict; state-changing calls
+  // also send the session's CSRF token in a header ("login" before there is a session).
+  private headers(csrf: string): { headers: HttpHeaders } {
+    return { headers: new HttpHeaders({ 'X-LnDir-CSRF': csrf }) };
   }
 
-  submit$(pubkey: string, challenge: string, signature: string, entry: DirectoryEntry): Observable<{ ok: boolean, result: string, entry: DirectoryEntry }> {
-    return this.http.post<any>('/api/ln-directory/submit', { pubkey, challenge, signature, entry });
+  // 200 in both cases; without a session the answer has no pubkey (logged_in: false).
+  me$(): Observable<DirectorySession> {
+    return this.http.get<DirectorySession>(`${API}/me`);
   }
 
-  delete$(pubkey: string, challenge: string, signature: string): Observable<{ ok: boolean, result: string }> {
-    return this.http.post<any>('/api/ln-directory/delete', { pubkey, challenge, signature });
+  loginText$(): Observable<DirectoryLoginText> {
+    return this.http.post<DirectoryLoginText>(`${API}/login/challenge`, {}, this.headers('login'));
+  }
+
+  login$(challenge: string, signature: string): Observable<DirectorySession> {
+    return this.http.post<DirectorySession>(`${API}/login`, { challenge, signature }, this.headers('login'));
+  }
+
+  saveCard$(csrf: string, entry: DirectoryEntry): Observable<{ ok: boolean, result: string, entry: DirectoryEntry }> {
+    return this.http.put<any>(`${API}/card`, { entry }, this.headers(csrf));
+  }
+
+  deleteCard$(csrf: string): Observable<{ ok: boolean, result: string }> {
+    return this.http.delete<any>(`${API}/card`, this.headers(csrf));
+  }
+
+  logout$(csrf: string, everywhere = false): Observable<{ ok: boolean, revoked?: number }> {
+    return this.http.post<any>(`${API}/${everywhere ? 'logout-all' : 'logout'}`, {}, this.headers(csrf));
   }
 }
 

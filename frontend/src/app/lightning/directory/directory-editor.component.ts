@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subject, Subscription, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, map, switchMap, take } from 'rxjs/operators';
-import { ApiService } from '@app/services/api.service';
-import { DirectoryChallenge, DirectoryEntry, LightningDirectoryService } from '@app/lightning/directory/directory.service';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { DirectoryEntry, DirectoryLoginText, DirectorySession, LightningDirectoryService } from '@app/lightning/directory/directory.service';
 
-const PUBKEY_RE = /^0[23][0-9a-f]{64}$/;
-
-// Lets a node operator publish, edit or delete their own card: they fill the form, we give them
-// a one-time text that names their node and the card's digest, they sign it with the node key and
-// paste the signature back. The ln-directory service checks it with our LND.
+// "Log in with your node": the operator signs a one-time login text with their node key, the
+// ln-directory service checks it with our LND (which tells us which node signed), and opens a
+// session. While logged in they edit, save or delete their own card, and can log out (here or
+// everywhere).
 @Component({
   selector: 'app-node-directory-editor',
   templateUrl: './directory-editor.component.html',
@@ -18,16 +16,16 @@ const PUBKEY_RE = /^0[23][0-9a-f]{64}$/;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectoryEditorComponent implements OnInit, OnDestroy {
+  // Set when coming from a node's "Is this your node?" link.
   @Input() initialPubkey: string;
 
   form: FormGroup;
-  pubkey = '';
-  alias = '';
-  existing: DirectoryEntry | null = null;
-  suggestions: { public_key: string, alias: string }[] = [];
-  challenge: DirectoryChallenge | null = null;
+  session: DirectorySession | null = null;
+  checking = true;
+  loginText: DirectoryLoginText | null = null;
   signature = '';
   busy = false;
+  confirmDelete = false;
   error = '';
   success = '';
   contactKinds = ['telegram', 'nostr', 'email', 'website', 'lightning_address', 'x', 'discord', 'simplex'];
@@ -47,13 +45,11 @@ export class DirectoryEditorComponent implements OnInit, OnDestroy {
     entry: $localize`:@@lightning.directory-edit-field-card:Card`,
   };
 
-  private search$ = new Subject<string>();
   private subs: Subscription[] = [];
 
   constructor(
     private fb: FormBuilder,
     private directory: LightningDirectoryService,
-    private api: ApiService,
     private cd: ChangeDetectorRef,
   ) { }
 
@@ -61,79 +57,41 @@ export class DirectoryEditorComponent implements OnInit, OnDestroy {
     const contacts = {};
     for (const k of this.contactKinds) { contacts[k] = ['']; }
     this.form = this.fb.group({
-      pubkeyInput: [''],
       name: [''],
       description: [''],
       tags: [''],
       min_channel_size: [''],
       contacts: this.fb.group(contacts),
     });
-    // Editing the card after asking for the text makes that text useless: it names the card's digest.
     this.subs.push(this.form.valueChanges.subscribe(() => {
-      if (this.challenge?.action === 'publish') { this.challenge = null; this.signature = ''; }
-      this.success = '';
-      this.cd.markForCheck();
+      if (this.success) { this.success = ''; this.cd.markForCheck(); }
     }));
-    this.subs.push(this.form.get('pubkeyInput').valueChanges.pipe(
-      map((v: string) => (v || '').trim()),
-      debounceTime(300),
-      distinctUntilChanged(),
-    ).subscribe((v) => this.onPubkeyInput(v)));
-    this.subs.push(this.search$.pipe(
-      switchMap((q) => q.length < 3 ? of({ nodes: [] }) : this.api.lightningSearch$(q).pipe(catchError(() => of({ nodes: [] })))),
-    ).subscribe((r: any) => {
-      this.suggestions = (r?.nodes || []).slice(0, 6);
-      this.cd.markForCheck();
-    }));
-    if (this.initialPubkey) {
-      this.form.get('pubkeyInput').setValue(this.initialPubkey);
-    }
+    // Already logged in? (the session cookie is HttpOnly, so ask the server)
+    this.directory.me$().subscribe({
+      next: (s) => { if (s?.pubkey) { this.setSession(s); } this.checking = false; this.cd.markForCheck(); },
+      error: () => { this.checking = false; this.cd.markForCheck(); },
+    });
   }
 
   ngOnDestroy(): void {
     this.subs.forEach((s) => s.unsubscribe());
   }
 
-  onPubkeyInput(v: string): void {
-    const key = v.toLowerCase();
-    if (PUBKEY_RE.test(key)) {
-      this.suggestions = [];
-      this.selectNode(key);
-    } else {
-      if (this.pubkey) { this.clearNode(); }
-      this.search$.next(v);
-    }
+  get shortPubkey(): string {
+    const p = this.session?.pubkey || '';
+    return p ? `${p.slice(0, 8)}…${p.slice(-8)}` : '';
   }
 
-  pick(node: { public_key: string, alias: string }): void {
-    this.form.get('pubkeyInput').setValue(node.public_key);
+  get otherNode(): boolean {
+    return !!(this.session && this.initialPubkey && this.initialPubkey !== this.session.pubkey);
   }
 
-  clearNode(): void {
-    this.pubkey = '';
-    this.alias = '';
-    this.existing = null;
-    this.challenge = null;
+  private setSession(s: DirectorySession | null): void {
+    this.session = s;
+    this.loginText = null;
     this.signature = '';
-    this.error = '';
-    this.cd.markForCheck();
-  }
-
-  selectNode(key: string): void {
-    this.pubkey = key;
-    this.error = '';
-    this.success = '';
-    this.challenge = null;
-    this.signature = '';
-    this.api.lightningSearch$(key).pipe(take(1), catchError(() => of({ nodes: [] }))).subscribe((r: any) => {
-      this.alias = (r?.nodes || []).find((n) => n.public_key === key)?.alias || '';
-      this.cd.markForCheck();
-    });
-    this.directory.getEntry$(key).pipe(take(1)).subscribe((e) => {
-      this.existing = e;
-      this.fill(e);
-      this.cd.markForCheck();
-    });
+    this.confirmDelete = false;
+    this.fill(s?.entry || null);
   }
 
   private fill(e: DirectoryEntry | null): void {
@@ -166,18 +124,19 @@ export class DirectoryEditorComponent implements OnInit, OnDestroy {
     return entry;
   }
 
-  getText(action: 'publish' | 'delete'): void {
-    if (!this.pubkey || this.busy) { return; }
+  private start(): boolean {
+    if (this.busy) { return false; }
     this.busy = true;
     this.error = '';
     this.success = '';
+    return true;
+  }
+
+  startLogin(): void {
+    if (!this.start()) { return; }
     this.signature = '';
-    this.directory.getChallenge$(this.pubkey, action, action === 'publish' ? this.entryFromForm() : undefined).subscribe({
-      next: (c) => {
-        this.challenge = c;
-        this.busy = false;
-        this.cd.markForCheck();
-      },
+    this.directory.loginText$().subscribe({
+      next: (t) => { this.loginText = t; this.busy = false; this.cd.markForCheck(); },
       error: (e) => this.fail(e),
     });
   }
@@ -186,32 +145,62 @@ export class DirectoryEditorComponent implements OnInit, OnDestroy {
     this.signature = (v || '').trim();
   }
 
-  send(): void {
-    if (!this.challenge || !this.signature || this.busy) { return; }
-    this.busy = true;
-    this.error = '';
-    const done = (msg: string) => {
-      this.busy = false;
-      this.challenge = null;
-      this.signature = '';
-      this.success = msg;
-      this.directory.refresh();
-      this.directory.getEntry$(this.pubkey).pipe(take(2)).subscribe((e) => { this.existing = e; this.cd.markForCheck(); });
-      this.cd.markForCheck();
-    };
-    if (this.challenge.action === 'delete') {
-      this.directory.delete$(this.pubkey, this.challenge.text, this.signature).subscribe({
-        next: () => { this.fill(null); done($localize`:@@lightning.directory-edit-deleted:Your card was deleted.`); },
-        error: (e) => this.fail(e),
-      });
-    } else {
-      this.directory.submit$(this.pubkey, this.challenge.text, this.signature, this.entryFromForm()).subscribe({
-        next: (r) => done(r.result === 'unchanged'
-          ? $localize`:@@lightning.directory-edit-unchanged:Signature verified. Nothing changed in your card.`
-          : $localize`:@@lightning.directory-edit-published:Done! Your card is published.`),
-        error: (e) => this.fail(e),
-      });
-    }
+  login(): void {
+    if (!this.loginText || !this.signature || !this.start()) { return; }
+    this.directory.login$(this.loginText.text, this.signature).subscribe({
+      next: (s) => { this.setSession(s); this.busy = false; this.cd.markForCheck(); },
+      error: (e) => this.fail(e),
+    });
+  }
+
+  save(): void {
+    if (!this.session || !this.start()) { return; }
+    this.directory.saveCard$(this.session.csrf, this.entryFromForm()).subscribe({
+      next: (r) => {
+        this.busy = false;
+        this.session = { ...this.session, entry: r.entry };
+        this.fill(r.entry);
+        this.success = r.result === 'unchanged'
+          ? $localize`:@@lightning.directory-edit-unchanged-login:Nothing to change: your card is already like this.`
+          : $localize`:@@lightning.directory-edit-published:Done! Your card is published.`;
+        this.directory.refresh();
+        this.cd.markForCheck();
+      },
+      error: (e) => this.fail(e),
+    });
+  }
+
+  deleteCard(): void {
+    if (!this.session) { return; }
+    if (!this.confirmDelete) { this.confirmDelete = true; return; }
+    if (!this.start()) { return; }
+    this.directory.deleteCard$(this.session.csrf).subscribe({
+      next: () => {
+        this.busy = false;
+        this.confirmDelete = false;
+        this.session = { ...this.session, entry: null };
+        this.fill(null);
+        this.success = $localize`:@@lightning.directory-edit-deleted:Your card was deleted.`;
+        this.directory.refresh();
+        this.cd.markForCheck();
+      },
+      error: (e) => this.fail(e),
+    });
+  }
+
+  logout(everywhere = false): void {
+    if (!this.session || !this.start()) { return; }
+    this.directory.logout$(this.session.csrf, everywhere).pipe(take(1)).subscribe({
+      next: () => {
+        this.busy = false;
+        this.setSession(null);
+        this.success = everywhere
+          ? $localize`:@@lightning.directory-login-out-all-done:Logged out on every device.`
+          : $localize`:@@lightning.directory-login-out-done:Logged out.`;
+        this.cd.markForCheck();
+      },
+      error: (e) => this.fail(e),
+    });
   }
 
   private fail(e: any): void {
@@ -219,17 +208,18 @@ export class DirectoryEditorComponent implements OnInit, OnDestroy {
     const b = e?.error || {};
     const known: { [code: string]: string } = {
       rate_limited: $localize`:@@lightning.directory-err-rate:Too many attempts. Wait a few minutes and try again.`,
-      challenge_unknown: $localize`:@@lightning.directory-err-unknown:That text was not issued for this node. Get a new text to sign.`,
-      challenge_used: $localize`:@@lightning.directory-err-used:That text was already used. Get a new text to sign.`,
-      challenge_expired: $localize`:@@lightning.directory-err-expired:That text expired (they last 10 minutes). Get a new text to sign.`,
-      challenge_mismatch: $localize`:@@lightning.directory-err-mismatch:The card changed after you got the text. Get a new text to sign.`,
+      challenge_unknown: $localize`:@@lightning.directory-err-login-unknown:That login text was not issued here. Ask for a new one.`,
+      challenge_used: $localize`:@@lightning.directory-err-login-used:That login text was already used. Ask for a new one.`,
+      challenge_expired: $localize`:@@lightning.directory-err-login-expired:That login text expired (they last 10 minutes). Ask for a new one.`,
       bad_signature_format: $localize`:@@lightning.directory-err-format:That does not look like a node signature. Paste the "signature" value (zbase32) your node gave you.`,
-      signature_invalid: $localize`:@@lightning.directory-err-invalid:The signature does not match this node and text. Sign exactly the text shown, with this node.`,
-      node_not_in_graph: $localize`:@@lightning.directory-err-graph:The signature is from this node, but the node is not in the XBT Lightning graph yet. Open a public channel and wait until it is announced.`,
+      node_not_in_graph: $localize`:@@lightning.directory-err-login-graph:That signature does not belong to any node of the XBT Lightning graph. Sign exactly the text shown. If you did, your node is not announced yet: open a public channel and wait.`,
       not_listed: $localize`:@@lightning.directory-err-not-listed:This node has no card to delete.`,
       lnd_unavailable: $localize`:@@lightning.directory-err-lnd:The signature check is unavailable right now. Try again later.`,
-      bad_pubkey: $localize`:@@lightning.directory-err-pubkey:The node public key must be 66 hex characters starting with 02 or 03.`,
+      not_logged_in: $localize`:@@lightning.directory-err-session:Your session expired. Log in again.`,
+      bad_csrf: $localize`:@@lightning.directory-err-csrf:The page is out of date. Reload it and try again.`,
+      bad_origin: $localize`:@@lightning.directory-err-csrf:The page is out of date. Reload it and try again.`,
     };
+    if (b.error === 'not_logged_in') { this.setSession(null); }
     if (b.error === 'bad_entry') {
       const label = this.fieldLabels[b.field] || this.contactLabels[b.field] || b.field;
       this.error = $localize`:@@lightning.directory-err-field:Check this field:` + ` ${label} (${b.reason})`;
@@ -239,6 +229,6 @@ export class DirectoryEditorComponent implements OnInit, OnDestroy {
     this.cd.markForCheck();
   }
 
-  lndCommand(): string { return `lncli signmessage "${this.challenge?.text}"`; }
-  clnCommand(): string { return `lightning-cli signmessage "${this.challenge?.text}"`; }
+  lndCommand(): string { return `lncli signmessage "${this.loginText?.text}"`; }
+  clnCommand(): string { return `lightning-cli signmessage "${this.loginText?.text}"`; }
 }

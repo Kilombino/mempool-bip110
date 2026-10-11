@@ -11736,29 +11736,113 @@
         <source>channels</source>
         <target>canales</target>
       </trans-unit>
+      <trans-unit id="lightning.directory-intro-cta-login" datatype="html">
+        <source>Is your node missing? Log in with your node and publish its card.</source>
+        <target>¿No está tu nodo? Entra con tu nodo y publica su ficha.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-edit-own-login" datatype="html">
+        <source>Is this your node? Log in to edit the card</source>
+        <target>¿Es tu nodo? Entra para editar la ficha</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-intro" datatype="html">
+        <source>Any node of the XBT Lightning network can be listed. Log in by signing a one-time text with your node key: no account, no email, nothing to install. Then edit your card.</source>
+        <target>Puede aparecer cualquier nodo de la red Lightning de XBT. Entra firmando un texto de un solo uso con la clave de tu nodo: sin cuenta, sin correo y sin instalar nada. Después edita tu ficha.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-button" datatype="html">
+        <source>Log in with your node</source>
+        <target>Entrar con tu nodo</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-step-sign" datatype="html">
+        <source>1. Sign this text with your node</source>
+        <target>1. Firma este texto con tu nodo</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-howto-exact" datatype="html">
+        <source>Sign the text exactly as shown, in one piece. It works once and for 10 minutes; your node must be in the XBT Lightning graph.</source>
+        <target>Firma el texto tal cual, entero. Sirve una sola vez y durante 10 minutos; tu nodo tiene que estar en el grafo Lightning de XBT.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-step-paste" datatype="html">
+        <source>2. Paste the signature</source>
+        <target>2. Pega la firma</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-submit" datatype="html">
+        <source>Log in</source>
+        <target>Entrar</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-new-text" datatype="html">
+        <source>Get a new text</source>
+        <target>Pedir otro texto</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-as" datatype="html">
+        <source>Logged in as</source>
+        <target>Has entrado como</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-out" datatype="html">
+        <source>Log out</source>
+        <target>Salir</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-out-all" datatype="html">
+        <source>Log out everywhere</source>
+        <target>Salir en todos los dispositivos</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-other-node" datatype="html">
+        <source>You are logged in with another node. To edit that node's card, log out and log in with that node.</source>
+        <target>Has entrado con otro nodo. Para editar la ficha de ese nodo, sal y entra con él.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-edit-save" datatype="html">
+        <source>Save card</source>
+        <target>Guardar ficha</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-edit-delete-confirm" datatype="html">
+        <source>Yes, delete it</source>
+        <target>Sí, bórrala</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-edit-delete-cancel" datatype="html">
+        <source>Cancel</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-edit-unchanged-login" datatype="html">
+        <source>Nothing to change: your card is already like this.</source>
+        <target>Nada que cambiar: tu ficha ya está así.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-out-all-done" datatype="html">
+        <source>Logged out on every device.</source>
+        <target>Has salido en todos los dispositivos.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-login-out-done" datatype="html">
+        <source>Logged out.</source>
+        <target>Has salido.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-err-login-unknown" datatype="html">
+        <source>That login text was not issued here. Ask for a new one.</source>
+        <target>Ese texto de entrada no se emitió aquí. Pide otro.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-err-login-used" datatype="html">
+        <source>That login text was already used. Ask for a new one.</source>
+        <target>Ese texto de entrada ya se usó. Pide otro.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-err-login-expired" datatype="html">
+        <source>That login text expired (they last 10 minutes). Ask for a new one.</source>
+        <target>Ese texto de entrada ha caducado (duran 10 minutos). Pide otro.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-err-login-graph" datatype="html">
+        <source>That signature does not belong to any node of the XBT Lightning graph. Sign exactly the text shown. If you did, your node is not announced yet: open a public channel and wait.</source>
+        <target>Esa firma no es de ningún nodo del grafo Lightning de XBT. Firma exactamente el texto que se muestra. Si ya lo hiciste, tu nodo aún no está anunciado: abre un canal público y espera.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-err-session" datatype="html">
+        <source>Your session expired. Log in again.</source>
+        <target>Tu sesión ha caducado. Vuelve a entrar.</target>
+      </trans-unit>
+      <trans-unit id="lightning.directory-err-csrf" datatype="html">
+        <source>The page is out of date. Reload it and try again.</source>
+        <target>La página está desfasada. Recárgala y vuelve a probar.</target>
+      </trans-unit>
       <trans-unit id="lightning.directory-intro-self" datatype="html">
         <source>Nodes of the XBT (Bitcoin BLAKE2b) Lightning network listed by their own operators, with how to reach them to open channels.</source>
         <target>Nodos de la red Lightning de XBT (Bitcoin BLAKE2b) que sus propios operadores han dado de alta, con cómo contactarles para abrir canales.</target>
       </trans-unit>
-      <trans-unit id="lightning.directory-intro-cta" datatype="html">
-        <source>Is your node missing? Publish its card by signing with your node.</source>
-        <target>¿No está tu nodo? Publica su ficha firmando con tu nodo.</target>
-      </trans-unit>
       <trans-unit id="lightning.directory-edit-title" datatype="html">
         <source>Publish or edit your node's card</source>
         <target>Publica o edita la ficha de tu nodo</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-intro" datatype="html">
-        <source>Any node of the XBT Lightning network can be listed. You prove the node is yours by signing a one-time text with your node key: no account, no email, nothing to install.</source>
-        <target>Puede aparecer cualquier nodo de la red Lightning de XBT. Demuestras que el nodo es tuyo firmando un texto de un solo uso con la clave del nodo: sin cuenta, sin correo y sin instalar nada.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-pubkey" datatype="html">
-        <source>1. Your node</source>
-        <target>1. Tu nodo</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-pubkey-ph" datatype="html">
-        <source>Node public key, or search by alias</source>
-        <target>Clave pública del nodo, o busca por alias</target>
       </trans-unit>
       <trans-unit id="lightning.directory-edit-has-card" datatype="html">
         <source>This node already has a card: the form shows it, change what you want.</source>
@@ -11767,10 +11851,6 @@
       <trans-unit id="lightning.directory-edit-no-card" datatype="html">
         <source>This node has no card yet.</source>
         <target>Este nodo aún no tiene ficha.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-step-card" datatype="html">
-        <source>2. Your card</source>
-        <target>2. Tu ficha</target>
       </trans-unit>
       <trans-unit id="lightning.directory-edit-field-name" datatype="html">
         <source>Name</source>
@@ -11800,21 +11880,9 @@
         <source>Plain text only. Links must be https. Leave empty whatever you don't want to publish.</source>
         <target>Solo texto. Los enlaces, con https. Deja vacío lo que no quieras publicar.</target>
       </trans-unit>
-      <trans-unit id="lightning.directory-edit-get-text" datatype="html">
-        <source>Get the text to sign</source>
-        <target>Obtener el texto a firmar</target>
-      </trans-unit>
       <trans-unit id="lightning.directory-edit-delete" datatype="html">
         <source>Delete my card</source>
         <target>Borrar mi ficha</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-step-sign" datatype="html">
-        <source>3. Sign this text with your node</source>
-        <target>3. Firma este texto con tu nodo</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-step-sign-delete" datatype="html">
-        <source>3. To delete your card, sign this text with your node</source>
-        <target>3. Para borrar tu ficha, firma este texto con tu nodo</target>
       </trans-unit>
       <trans-unit id="lightning.directory-edit-valid-until" datatype="html">
         <source>valid until</source>
@@ -11836,33 +11904,9 @@
         <source>Settings → Tools → Sign or verify message, paste the text, sign and copy the signature.</source>
         <target>Ajustes → Herramientas → Firmar o verificar mensaje, pega el texto, firma y copia la firma.</target>
       </trans-unit>
-      <trans-unit id="lightning.directory-edit-howto-exact" datatype="html">
-        <source>Sign the text exactly as shown, in one piece. It is valid once and for 10 minutes; your node must be in the XBT Lightning graph.</source>
-        <target>Firma el texto tal cual, entero. Vale una sola vez y durante 10 minutos; tu nodo tiene que estar en el grafo Lightning de XBT.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-step-paste" datatype="html">
-        <source>4. Paste the signature</source>
-        <target>4. Pega la firma</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-submit" datatype="html">
-        <source>Publish card</source>
-        <target>Publicar ficha</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-submit-delete" datatype="html">
-        <source>Delete card</source>
-        <target>Borrar ficha</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-own" datatype="html">
-        <source>Is this your node? Edit the card</source>
-        <target>¿Es tu nodo? Edita la ficha</target>
-      </trans-unit>
       <trans-unit id="lightning.directory-edit-deleted" datatype="html">
         <source>Your card was deleted.</source>
         <target>Tu ficha se ha borrado.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-edit-unchanged" datatype="html">
-        <source>Signature verified. Nothing changed in your card.</source>
-        <target>Firma verificada. Tu ficha no ha cambiado.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-edit-published" datatype="html">
         <source>Done! Your card is published.</source>
@@ -11872,33 +11916,9 @@
         <source>Too many attempts. Wait a few minutes and try again.</source>
         <target>Demasiados intentos. Espera unos minutos y vuelve a probar.</target>
       </trans-unit>
-      <trans-unit id="lightning.directory-err-unknown" datatype="html">
-        <source>That text was not issued for this node. Get a new text to sign.</source>
-        <target>Ese texto no se emitió para este nodo. Pide un texto nuevo.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-err-used" datatype="html">
-        <source>That text was already used. Get a new text to sign.</source>
-        <target>Ese texto ya se usó. Pide un texto nuevo.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-err-expired" datatype="html">
-        <source>That text expired (they last 10 minutes). Get a new text to sign.</source>
-        <target>Ese texto ha caducado (duran 10 minutos). Pide un texto nuevo.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-err-mismatch" datatype="html">
-        <source>The card changed after you got the text. Get a new text to sign.</source>
-        <target>La ficha cambió después de pedir el texto. Pide un texto nuevo.</target>
-      </trans-unit>
       <trans-unit id="lightning.directory-err-format" datatype="html">
         <source>That does not look like a node signature. Paste the "signature" value (zbase32) your node gave you.</source>
         <target>Eso no parece una firma de nodo. Pega el valor "signature" (zbase32) que te dio tu nodo.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-err-invalid" datatype="html">
-        <source>The signature does not match this node and text. Sign exactly the text shown, with this node.</source>
-        <target>La firma no corresponde a este nodo y este texto. Firma exactamente el texto que se muestra, con este nodo.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-err-graph" datatype="html">
-        <source>The signature is from this node, but the node is not in the XBT Lightning graph yet. Open a public channel and wait until it is announced.</source>
-        <target>La firma es de este nodo, pero el nodo aún no está en el grafo Lightning de XBT. Abre un canal público y espera a que se anuncie.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-err-not-listed" datatype="html">
         <source>This node has no card to delete.</source>
@@ -11907,10 +11927,6 @@
       <trans-unit id="lightning.directory-err-lnd" datatype="html">
         <source>The signature check is unavailable right now. Try again later.</source>
         <target>La comprobación de firmas no está disponible ahora mismo. Prueba más tarde.</target>
-      </trans-unit>
-      <trans-unit id="lightning.directory-err-pubkey" datatype="html">
-        <source>The node public key must be 66 hex characters starting with 02 or 03.</source>
-        <target>La clave pública del nodo tiene que tener 66 caracteres hexadecimales y empezar por 02 o 03.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-err-field" datatype="html">
         <source>Check this field:</source>
