@@ -11732,6 +11732,10 @@
         <source>Node directory: contact node operators to open channels</source>
         <target>Directorio de nodos: contacta con los operadores para abrir canales</target>
       </trans-unit>
+      <trans-unit id="lightning.nodex-banner" datatype="html">
+        <source>Nodex: node pages, fees both ways and rankings</source>
+        <target>Nodex: fichas de nodos, comisiones en los dos sentidos y rankings</target>
+      </trans-unit>
       <trans-unit id="lightning.directory-channels" datatype="html">
         <source>channels</source>
         <target>canales</target>

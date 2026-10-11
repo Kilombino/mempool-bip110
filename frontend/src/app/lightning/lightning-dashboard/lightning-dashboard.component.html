@@ -3,9 +3,13 @@
 <div class="container-xl dashboard-container">
 
   <!-- Node directory (Kilombino fork): cards that node operators publish themselves, signing with their node -->
-  <div class="mb-3">
+  <div class="mb-3 d-flex flex-column flex-md-row gap-2">
     <a class="btn btn-outline-primary w-100" [routerLink]="['/lightning/directory' | relativeUrl]">
       📒 <span i18n="@@lightning.directory-banner">Node directory: contact node operators to open channels</span>
+    </a>
+    <!-- Nodex: the XBT Lightning explorer (node pages, fees both ways, rankings) -->
+    <a class="btn btn-outline-primary w-100" href="https://nodex.kilombino.com" target="_blank" rel="noopener">
+      🧭 <span i18n="@@lightning.nodex-banner">Nodex: node pages, fees both ways and rankings</span>
     </a>
   </div>
 
