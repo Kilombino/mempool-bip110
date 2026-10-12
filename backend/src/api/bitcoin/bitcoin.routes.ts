@@ -1728,6 +1728,28 @@ class BitcoinRoutes {
     }
     try {
       const result = await bitcoinApi.$getOutspends(req.params.txId);
+      // Upstream (bitcoind/electrum backend) answers only {spent}. Esplora gives, for each
+      // spent output, who spent it and whether that is confirmed, and Ark (bark) reads those
+      // fields: without a status it takes every spend for unconfirmed, and an emergency exit
+      // whose input was spent long ago kept saying "too recent to end the exit on" forever.
+      // Fill them in as the single-output route does: the mempool spend map, then the history.
+      if (bitcoinApi.$getOutspendDetailed) {
+        for (let vout = 0; vout < result.length; vout++) {
+          if (!result[vout].spent) {
+            continue;
+          }
+          const mempoolSpender = mempool.getSpendMap().get(`${req.params.txId}:${vout}`);
+          if (mempoolSpender) {
+            const vin = mempoolSpender.vin.findIndex((i) => i.txid === req.params.txId && i.vout === vout);
+            result[vout] = { spent: true, txid: mempoolSpender.txid, vin, status: { confirmed: false } };
+            continue;
+          }
+          const detailed = await bitcoinApi.$getOutspendDetailed(req.params.txId, vout);
+          if (detailed) {
+            result[vout] = detailed;
+          }
+        }
+      }
       res.json(result);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get transaction outspends');
