@@ -200,7 +200,7 @@ export class Common {
     // heuristic to detect probable DER signatures
     return (w.length >= 18
       && w.startsWith('30') // minimum DER signature length is 8 bytes + sighash flag (see https://mempool.space/testnet/tx/c6c232a36395fa338da458b86ff1327395a9afc28c5d2daa4273e410089fd433)
-      && ['01', '02', '03', '81', '82', '83'].includes(w.slice(-2)) // signature must end with a valid sighash flag
+      && ['01', '02', '03', '81', '82', '83', '21', '22', '23', 'a1', 'a2', 'a3'].includes(w.slice(-2)) // signature must end with a valid sighash flag (0x20: unified, on the BLAKE2b chain)
       && (w.length === (2 * parseInt(w.slice(2, 4), 16)) + 6) // second byte encodes the combined length of the R and S components
     );
   }
@@ -544,6 +544,12 @@ export class Common {
       case '81': return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp;
       case '82': return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp;
       case '83': return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp;
+      case '21': return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_unified;
+      case '22': return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_unified;
+      case '23': return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_unified;
+      case 'a1': return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_unified | TransactionFlags.sighash_acp;
+      case 'a2': return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_unified | TransactionFlags.sighash_acp;
+      case 'a3': return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_unified | TransactionFlags.sighash_acp;
       default: return flags | TransactionFlags.sighash_default; // taproot only
     }
   }
@@ -1283,6 +1289,13 @@ export class Common {
     if (!addressReuse && tx.vin.length >= 5 && tx.vout.length >= 5 && (Object.keys(inValues).length + Object.keys(outValues).length) <= (tx.vin.length + tx.vout.length) / 2 ) {
       flags |= TransactionFlags.coinjoin;
     }
+    // Kilojoin rounds (Kilowallet and Kilojoin pools, 2 to 20 people) are smaller than the heuristic
+    // above allows: N outputs of exactly the pool's amount, one per person, at most one change each,
+    // at least one coin per person, and every coin and output of one address type (a pool is bc1q
+    // or bc1p, never both).
+    if (!addressReuse && !(flags & TransactionFlags.coinjoin) && isEqualAmountCoinjoin(tx)) {
+      flags |= TransactionFlags.coinjoin;
+    }
     // more than 5:1 input:output ratio
     if (tx.vin.length / tx.vout.length >= 5) {
       flags |= TransactionFlags.consolidation;
@@ -1896,4 +1909,29 @@ export class OnlineFeeStatsCalculator {
     stats.feeRange[stats.feeRange.length - 1] = stats.maxFee;
     return stats;
   }
+}
+
+/** Equal-amount coinjoin of any size from two people up (Kilojoin): see the call site. */
+function isEqualAmountCoinjoin(tx: any): boolean {
+  const vout = (tx.vout || []).filter((o: any) => o.scriptpubkey_type !== 'op_return');
+  const vin = tx.vin || [];
+  if (vin.length < 2 || vout.length < 2 || vin.some((i: any) => i.is_coinbase)) {
+    return false;
+  }
+  const counts: Record<string, number> = {};
+  for (const o of vout) {
+    if (o.value >= 10000) {
+      counts[o.value] = (counts[o.value] || 0) + 1;
+    }
+  }
+  const equal = Math.max(0, ...Object.values(counts));
+  if (equal < 2 || vin.length < equal || vout.length - equal > equal) {
+    return false;
+  }
+  const type = vout[0].scriptpubkey_type;
+  if (!['v0_p2wpkh', 'v1_p2tr'].includes(type) || vout.some((o: any) => o.scriptpubkey_type !== type)) {
+    return false;
+  }
+  // Prevouts may be missing for a transaction still in the mempool: only a known one can say no.
+  return !vin.some((i: any) => i.prevout && i.prevout.scriptpubkey_type !== type);
 }

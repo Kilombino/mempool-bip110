@@ -304,6 +304,8 @@ export const TransactionFlags = {
   bip110_large_control_block: 0b00000010_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 49 - Rule 5: control block > 257 bytes
   bip110_op_success:          0b00000100_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 50 - Rule 6: OP_SUCCESS* in tapscript
   bip110_op_if_notif:         0b00001000_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 51 - Rule 7: OP_IF/OP_NOTIF executing in tapscript
+  // BLAKE2b chain: unified sighash (0x20 bit), the replay protection Kilowallet signs with
+  sighash_unified:            0b00010000_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 52
 };
 
 export interface BlockExtension {

@@ -66,6 +66,8 @@ export const TransactionFlags = {
   bip110_large_control_block: 0b00000010_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 49
   bip110_op_success:          0b00000100_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 50
   bip110_op_if_notif:         0b00001000_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 51
+  // BLAKE2b chain: unified sighash (0x20 bit), the replay protection Kilowallet signs with
+  sighash_unified:            0b00010000_00000000_00000000_00000000_00000000_00000000_00000000n, // bit 52
 };
 
 export function toFlags(filters: string[]): bigint {
@@ -124,6 +126,7 @@ export const TransactionFilters: { [key: string]: Filter } = {
     sighash_single: { key: 'sighash_single', label: 'sighash_single', flag: TransactionFlags.sighash_single, tooltip: true },
     sighash_default: { key: 'sighash_default', label: 'sighash_default', flag: TransactionFlags.sighash_default },
     sighash_acp: { key: 'sighash_acp', label: 'sighash_anyonecanpay', flag: TransactionFlags.sighash_acp, tooltip: true },
+    sighash_unified: { key: 'sighash_unified', label: 'sighash_unified', flag: TransactionFlags.sighash_unified, tooltip: true },
     /* BIP110 'Reduced Data' violations */
     bip110_large_scriptpubkey: { key: 'bip110_large_scriptpubkey', label: '☢️ BIP110: large scriptPubKey (>34B)', flag: TransactionFlags.bip110_large_scriptpubkey, important: true, tooltip: true, txPage: true, },
     bip110_large_pushdata: { key: 'bip110_large_pushdata', label: '☢️ BIP110: large data push (>256B)', flag: TransactionFlags.bip110_large_pushdata, important: true, tooltip: true, txPage: true, },
@@ -140,5 +143,5 @@ export const FilterGroups: { label: string, filters: Filter[]}[] = [
   { label: $localize`Behavior`, filters: ['cpfp_parent', 'cpfp_child', 'replacement', 'acceleration'] },
   { label: $localize`Spam`, filters: ['op_return', 'fake_pubkey', 'fake_scripthash', 'inscription', 'annex', 'opnet'] },
   { label: $localize`Heuristics`, filters: ['coinjoin', 'consolidation', 'batch_payout'] },
-  { label: $localize`Sighash Flags`, filters: ['sighash_all', 'sighash_none', 'sighash_single', 'sighash_default', 'sighash_acp'] },
+  { label: $localize`Sighash Flags`, filters: ['sighash_all', 'sighash_none', 'sighash_single', 'sighash_default', 'sighash_acp', 'sighash_unified'] },
 ].map(group => ({ label: group.label, filters: group.filters.map(filter => TransactionFilters[filter] || null).filter(f => f != null) }));
