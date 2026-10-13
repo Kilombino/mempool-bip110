@@ -1911,7 +1911,7 @@ export class OnlineFeeStatsCalculator {
   }
 }
 
-/** Equal-amount coinjoin of any size from two people up (Kilojoin): see the call site. */
+/** Kilojoin round of any size from two people up: see the call site. */
 function isEqualAmountCoinjoin(tx: any): boolean {
   const vout = (tx.vout || []).filter((o: any) => o.scriptpubkey_type !== 'op_return');
   const vin = tx.vin || [];
@@ -1924,8 +1924,14 @@ function isEqualAmountCoinjoin(tx: any): boolean {
       counts[o.value] = (counts[o.value] || 0) + 1;
     }
   }
-  const equal = Math.max(0, ...Object.values(counts));
+  const amount = Number(Object.keys(counts).find(k => counts[k] === Math.max(0, ...Object.values(counts))));
+  const equal = counts[amount] || 0;
   if (equal < 2 || vin.length < equal || vout.length - equal > equal) {
+    return false;
+  }
+  // A pool's amount is round (10 000, 100 000, 1 500 000 sats…): two equal payments of an odd
+  // amount, each with its own change, are as often two payments as a coinjoin.
+  if (amount % 1000 !== 0) {
     return false;
   }
   const type = vout[0].scriptpubkey_type;
@@ -1933,5 +1939,11 @@ function isEqualAmountCoinjoin(tx: any): boolean {
     return false;
   }
   // Prevouts may be missing for a transaction still in the mempool: only a known one can say no.
-  return !vin.some((i: any) => i.prevout && i.prevout.scriptpubkey_type !== type);
+  if (vin.some((i: any) => i.prevout && i.prevout.scriptpubkey_type !== type)) {
+    return false;
+  }
+  // Kilojoin signs every input with the unified sighash (0x21, this chain's replay protection);
+  // equal payments made by other wallets, each with its own change, sign with plain 0x01. Checked
+  // against the pools announced on relay.kilombino.com: every round matched, nothing else did.
+  return vin.every((i: any) => i.witness?.length && i.witness[0].length >= 130 && i.witness[0].slice(-2) === '21');
 }
