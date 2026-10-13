@@ -67,8 +67,8 @@ class Blake2bWidget {
   private inflight: Promise<WidgetData> | null = null;
 
   private pollMinutes(): number {
-    const v = parseInt(process.env.WIDGET_POLL_MINUTES || '15', 10);
-    return isNaN(v) ? 15 : Math.min(Math.max(v, 15), 24 * 60);
+    const v = parseInt(process.env.WIDGET_POLL_MINUTES || '5', 10);
+    return isNaN(v) ? 5 : Math.min(Math.max(v, 5), 24 * 60);
   }
 
   public async $get(): Promise<WidgetData> {
