@@ -1,6 +1,7 @@
 import axios from 'axios';
 import bitcoinClient from './bitcoin/bitcoin-client';
 import logger from '../logger';
+import difficultyAdjustment from './difficulty-adjustment';
 
 /**
  * Datos del cabecero de mempool.kilombino.com ya calculados, para el widget de Android
@@ -60,11 +61,41 @@ interface WidgetData {
   spamUsd: number | null;
   // Hashrate total de la red (H/s), media de los últimos 144 bloques (~1 día).
   networkHashps: number | null;
+  // Dificultad (escala histórica, la misma que /mining/hashrate: difficulty_blake2b / 2^32).
+  // difficultyPrev = la del periodo anterior (bloque justo antes del último reajuste);
+  // difficultyNext = estimación del siguiente reajuste = actual × (1 + difficultyChangePct/100).
+  difficulty: number | null;
+  difficultyPrev: number | null;
+  difficultyPrevChangePct: number | null;
+  difficultyNext: number | null;
+  difficultyChangePct: number | null;
+  difficultyRemainingBlocks: number | null;
+  difficultyRetargetDate: number | null;
+  difficultyRetargetHeight: number | null;
 }
+
+const EPOCH = 2016;
+const normDifficulty = (h: any): number | null => {
+  if (!h) { return null; }
+  const d = h.difficulty ?? (h.difficulty_blake2b != null ? h.difficulty_blake2b / 4294967296 : null);
+  return typeof d === 'number' && isFinite(d) && d > 0 ? d : null;
+};
 
 class Blake2bWidget {
   private cache: WidgetData | null = null;
   private inflight: Promise<WidgetData> | null = null;
+  // Dificultad del periodo anterior: solo cambia una vez por periodo, se guarda por altura.
+  private prevDiff: { epochStart: number, difficulty: number } | null = null;
+
+  private async $previousEpochDifficulty(height: number): Promise<number | null> {
+    const epochStart = height - (height % EPOCH);
+    if (epochStart < 1) { return null; }
+    if (this.prevDiff?.epochStart === epochStart) { return this.prevDiff.difficulty; }
+    const hash = await bitcoinClient.getBlockHash(epochStart - 1);
+    const d = normDifficulty(await bitcoinClient.getBlockHeader(hash, true));
+    if (d !== null) { this.prevDiff = { epochStart, difficulty: d }; }
+    return d;
+  }
 
   private pollMinutes(): number {
     const v = parseInt(process.env.WIDGET_POLL_MINUTES || '5', 10);
@@ -133,6 +164,9 @@ class Blake2bWidget {
     const difficulty: number | null = bci
       ? (bci.difficulty ?? (bci.difficulty_blake2b != null ? bci.difficulty_blake2b / 4294967296 : null))
       : null;
+    const diffPrev = height !== null ? await settle(this.$previousEpochDifficulty(height)) : null;
+    let da: any = null;
+    try { da = difficultyAdjustment.getDifficultyAdjustment(); } catch (e) { da = null; }
     const xbtUsd = typeof usdTicker?.ticker?.lastPrice === 'number' ? usdTicker.ticker.lastPrice : null;
     const rec = mrr?.data?.records?.[0];
     const mrrBtc = rec?.price?.BTC?.price ? parseFloat(rec.price.BTC.price) : NaN;
@@ -209,10 +243,59 @@ class Blake2bWidget {
       poolsatsChangePct: pick(poolsatsChange, prev?.poolsatsChangePct),
       spamUsd: pick(!isNaN(spamUsd) ? spamUsd : null, prev?.spamUsd),
       networkHashps: pick(num(hashps144), prev?.networkHashps),
+      ...this.difficultyFields(difficulty, diffPrev, da, height, prev),
     };
     if (stale) { logger.debug('blake2b widget: some sources failed, serving last good values'); }
     this.cache = data;
     return data;
+  }
+
+  private difficultyFields(cur: number | null, prevD: number | null, da: any, height: number | null,
+    prev: WidgetData | null): Pick<WidgetData, 'difficulty' | 'difficultyPrev' | 'difficultyPrevChangePct' |
+    'difficultyNext' | 'difficultyChangePct' | 'difficultyRemainingBlocks' | 'difficultyRetargetDate' |
+    'difficultyRetargetHeight'> {
+    const num = (v: any): number | null => (typeof v === 'number' && isFinite(v) ? v : null);
+    // Si el nodo no responde, se repite lo último bueno tal cual (los datos de reajuste
+    // van juntos: mezclar uno nuevo con otro viejo daría cifras incoherentes).
+    if (cur === null) {
+      const fresh = prev && Date.now() - prev.updated < STALE_MAX_MS;
+      return {
+        difficulty: fresh ? prev.difficulty ?? null : null,
+        difficultyPrev: fresh ? prev.difficultyPrev ?? null : null,
+        difficultyPrevChangePct: fresh ? prev.difficultyPrevChangePct ?? null : null,
+        difficultyNext: fresh ? prev.difficultyNext ?? null : null,
+        difficultyChangePct: fresh ? prev.difficultyChangePct ?? null : null,
+        difficultyRemainingBlocks: fresh ? prev.difficultyRemainingBlocks ?? null : null,
+        difficultyRetargetDate: fresh ? prev.difficultyRetargetDate ?? null : null,
+        difficultyRetargetHeight: fresh ? prev.difficultyRetargetHeight ?? null : null,
+      };
+    }
+    // La variación anterior sale de las dos dificultades del nodo (no de los `bits` que
+    // guarda mempool), así es coherente con difficultyPrev pase lo que pase en la cadena.
+    const prevPct = prevD ? (cur / prevD - 1) * 100 : null;
+    let changePct = num(da?.difficultyChange);
+    let remaining = num(da?.remainingBlocks);
+    let retargetHeight = num(da?.nextRetargetHeight);
+    // El reajuste de mempool va por su propio índice de bloques: si va por detrás o por
+    // delante del nodo (otro periodo), no vale para esta dificultad.
+    if (height !== null && retargetHeight !== null && retargetHeight !== height - (height % EPOCH) + EPOCH) {
+      changePct = null;
+    }
+    if (height !== null) {
+      retargetHeight = height - (height % EPOCH) + EPOCH;
+      remaining = retargetHeight - height;
+    }
+    const next = changePct !== null ? cur * (1 + changePct / 100) : null;
+    return {
+      difficulty: cur,
+      difficultyPrev: prevD,
+      difficultyPrevChangePct: prevPct,
+      difficultyNext: next,
+      difficultyChangePct: changePct,
+      difficultyRemainingBlocks: remaining,
+      difficultyRetargetDate: changePct !== null ? num(da?.estimatedRetargetDate) : null,
+      difficultyRetargetHeight: retargetHeight,
+    };
   }
 }
 
