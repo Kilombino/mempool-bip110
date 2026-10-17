@@ -13,7 +13,7 @@ import BlocksAuditsRepository from '../../repositories/BlocksAuditsRepository';
 import PricesRepository from '../../repositories/PricesRepository';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
 import { IEsploraApi } from '../bitcoin/esplora-api.interface';
-import { parseDATUMTemplateCreator, reorderMinerNames } from '../../utils/bitcoin-script';
+import { parseDATUMTemplateCreator, parseDATUMUniqueId, reorderMinerNames } from '../../utils/bitcoin-script';
 
 // Altura de activación del PoW BLAKE2b (bifurcación de Bitcoin-BLAKE2b / BIP110).
 const BLAKE2B_ACTIVATION_HEIGHT = 961640;
@@ -183,9 +183,20 @@ class Mining {
       }
       const counts: { [finder: string]: number } = {};
       let datumBlocks = 0;
+      // Bloques con formato DATUM pero sin nombre de minero (solo la etiqueta del pool):
+      // van a una banda "Unnamed DATUM" en vez de al trozo del pool. OmegaPool es solo
+      // DATUM y casi todos sus bloques eran así; antes salían como "OmegaPool" sin más.
+      // No se separan por el ID único del gateway: muchos traen el mismo por defecto
+      // (30 o 4242), así que no distingue mineros.
+      const UNNAMED = 'Unnamed DATUM';
       for (const cbRow of coinbases) {
         const parsed = parseDATUMTemplateCreator(cbRow.raw);
-        if (!parsed || parsed.length < 2) { continue; } // sin firma DATUM: no se trocea
+        if (!parsed || parsed.length < 2) {
+          if (parseDATUMUniqueId(cbRow.raw) === null) { continue; } // sin firma DATUM: no se trocea
+          counts[UNNAMED] = (counts[UNNAMED] || 0) + 1;
+          datumBlocks++;
+          continue;
+        }
         const names = reorderMinerNames(ps.name, parsed);
         const finder = (names && names.length > 1 && names[1]) ? names[1].trim() : '';
         // Un "finder" que es el propio nombre del pool escrito de otra forma NO es un minero
@@ -196,8 +207,9 @@ class Mining {
         counts[label] = (counts[label] || 0) + 1;
         datumBlocks++;
       }
-      // Solo se trocea si al menos un bloque DATUM tiene un minero distinto del pool.
-      const hasFinders = Object.keys(counts).some((k) => k !== ps.name);
+      // Solo hay reparto si sale algún minero con nombre; si todo es "sin nombre", el pool
+      // sigue en un trozo sólido.
+      const hasFinders = Object.keys(counts).some((k) => k !== ps.name && k !== UNNAMED);
       if (!hasFinders) {
         keptStats.push(ps);
         continue;

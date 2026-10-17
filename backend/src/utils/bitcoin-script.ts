@@ -256,6 +256,28 @@ export function parseDATUMTemplateCreator(coinbaseRaw: string): string[] | null 
 }
 
 /**
+ * ID único del gateway DATUM que hizo la plantilla, o null si el coinbase no tiene el
+ * formato DATUM. Tras la altura y las etiquetas, DATUM empuja 3 bytes (sin pool: objetivo
+ * PoT + ID) u 11 (con pool: objetivo PoT + ID + prime_id). El ID (2 bytes, little endian)
+ * es fijo por instancia de gateway: sirve para separar gateways que no ponen nombre.
+ */
+export function parseDATUMUniqueId(coinbaseRaw: string): number | null {
+  const b: number[] = [];
+  for (let c = 0; c + 1 < coinbaseRaw.length; c += 2) {
+    b.push(parseInt(coinbaseRaw.slice(c, c + 2), 16));
+  }
+  let i = 1 + (b[0] || 0);           // tras la altura
+  if (i >= b.length) { return null; }
+  let n = b[i];
+  if (n === 0x4c) { i++; n = b[i]; i++; } else { i++; }
+  if (n < 1 || n > 94) { return null; }
+  i += n;                            // tras las etiquetas
+  if (b[i] !== 0x03 && b[i] !== 0x0b) { return null; }
+  if (i + 1 + b[i] > b.length) { return null; }
+  return b[i + 2] | (b[i + 3] << 8);
+}
+
+/**
  * En pools descentralizados (DATUM/Lazarus/TIDES) el coinbase trae dos cadenas: una
  * genérica del pool/software y otra con el nombre del usuario. El ORDEN varía según
  * cómo lo configure cada minero (unos ponen el nombre primero, otros el genérico).
