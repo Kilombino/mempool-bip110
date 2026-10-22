@@ -27,6 +27,13 @@ import difficultyAdjustment from './difficulty-adjustment';
  */
 
 const CACHE_MS = 60_000;
+// Tipos de cambio: cambian una vez al día (BCE ~16:00 CET), se piden cada 6 h.
+const FIAT_CACHE_MS = 6 * 3600_000;
+// Monedas que la app sabe mostrar. Las del BCE salen de su referencia diaria; el resto
+// (pesos latinoamericanos, bolívar…) de open.er-api.com, que también es diaria.
+const FIATS = ['EUR', 'GBP', 'JPY', 'CHF', 'CNY', 'RON', 'PLN', 'CZK', 'HUF', 'SEK', 'NOK', 'DKK', 'ISK',
+  'TRY', 'CAD', 'AUD', 'NZD', 'BRL', 'MXN', 'ARS', 'CLP', 'COP', 'PEN', 'UYU', 'VES', 'INR', 'KRW',
+  'HKD', 'SGD', 'ZAR', 'ILS', 'THB', 'IDR', 'PHP', 'MYR'];
 const STALE_MAX_MS = 6 * 3600_000;
 const HTTP_TIMEOUT_MS = 8_000;
 
@@ -61,6 +68,9 @@ interface WidgetData {
   spamUsd: number | null;
   // Hashrate total de la red (H/s), media de los últimos 144 bloques (~1 día).
   networkHashps: number | null;
+  // Unidades de cada moneda por 1 USD (precio de XBT en X = xbtUsd × fiatPerUsd[X]); fiatDate = día del tipo.
+  fiatPerUsd: { [code: string]: number } | null;
+  fiatDate: string | null;
   // Dificultad (escala histórica, la misma que /mining/hashrate: difficulty_blake2b / 2^32).
   // difficultyPrev = la del periodo anterior (bloque justo antes del último reajuste);
   // difficultyNext = estimación del siguiente reajuste = actual × (1 + difficultyChangePct/100).
@@ -86,6 +96,41 @@ class Blake2bWidget {
   private inflight: Promise<WidgetData> | null = null;
   // Dificultad del periodo anterior: solo cambia una vez por periodo, se guarda por altura.
   private prevDiff: { epochStart: number, difficulty: number } | null = null;
+  private fiat: { rates: { [code: string]: number }, date: string | null, at: number } | null = null;
+
+  /** Tipos por USD: BCE primero (oficial), open.er-api.com para lo que el BCE no publica. */
+  private async $fiatRates(): Promise<{ rates: { [code: string]: number }, date: string | null } | null> {
+    if (this.fiat && Date.now() - this.fiat.at < FIAT_CACHE_MS) { return this.fiat; }
+    const settle = async <T>(p: Promise<T>): Promise<T | null> => { try { return await p; } catch (e) { return null; } };
+    const [ecbXml, er] = await Promise.all([
+      settle(this.$json('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml')),
+      settle(this.$json('https://open.er-api.com/v6/latest/USD')),
+    ]);
+    const rates: { [code: string]: number } = {};
+    let date: string | null = null;
+    if (typeof ecbXml === 'string') {
+      const perEur: { [code: string]: number } = {};
+      const re = /currency='([A-Z]{3})' rate='([0-9.]+)'/g;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(ecbXml)) !== null) { perEur[m[1]] = parseFloat(m[2]); }
+      const usd = perEur['USD'];
+      if (usd > 0) {
+        perEur['EUR'] = 1;
+        for (const c of FIATS) { if (perEur[c] > 0) { rates[c] = perEur[c] / usd; } }
+        date = ecbXml.match(/time='(\d{4}-\d{2}-\d{2})'/)?.[1] ?? null;
+      }
+    }
+    if (er?.result === 'success' && er.rates) {
+      for (const c of FIATS) {
+        const v = er.rates[c];
+        if (rates[c] === undefined && typeof v === 'number' && isFinite(v) && v > 0) { rates[c] = v; }
+      }
+      if (!date && typeof er.time_last_update_unix === 'number') { date = new Date(er.time_last_update_unix * 1000).toISOString().slice(0, 10); }
+    }
+    if (Object.keys(rates).length === 0) { return this.fiat; }
+    this.fiat = { rates, date, at: Date.now() };
+    return this.fiat;
+  }
 
   private async $previousEpochDifficulty(height: number): Promise<number | null> {
     const epochStart = height - (height % EPOCH);
@@ -164,6 +209,7 @@ class Blake2bWidget {
     const difficulty: number | null = bci
       ? (bci.difficulty ?? (bci.difficulty_blake2b != null ? bci.difficulty_blake2b / 4294967296 : null))
       : null;
+    const fiat = await settle(this.$fiatRates());
     const diffPrev = height !== null ? await settle(this.$previousEpochDifficulty(height)) : null;
     let da: any = null;
     try { da = difficultyAdjustment.getDifficultyAdjustment(); } catch (e) { da = null; }
@@ -243,6 +289,8 @@ class Blake2bWidget {
       poolsatsChangePct: pick(poolsatsChange, prev?.poolsatsChangePct),
       spamUsd: pick(!isNaN(spamUsd) ? spamUsd : null, prev?.spamUsd),
       networkHashps: pick(num(hashps144), prev?.networkHashps),
+      fiatPerUsd: fiat?.rates ?? prev?.fiatPerUsd ?? null,
+      fiatDate: fiat?.date ?? prev?.fiatDate ?? null,
       ...this.difficultyFields(difficulty, diffPrev, da, height, prev),
     };
     if (stale) { logger.debug('blake2b widget: some sources failed, serving last good values'); }
