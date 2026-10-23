@@ -17,7 +17,10 @@ import logger from '../logger';
  * For each spent output it also tries to name the Spamchain transaction that spent it
  * (`spenders`). Bitcoin Core can't answer that, so it asks our own Spamchain Electrum
  * server (SPAMCHAIN_ELECTRUM_HOST/PORT, TLS) for the history of the output's script and
- * checks which of those transactions spends it. Without it, `spenders` is left out.
+ * checks which of those transactions spends it. Outputs it doesn't find there (the server
+ * doesn't index every script type) are looked for in the Spamchain mempool and in the
+ * SPENDER_SCAN_BLOCKS blocks after the transaction's own. Without the Electrum server,
+ * `spenders` is left out.
  *
  * It only asks our own Spamchain servers (SPAMCHAIN_RPC_URL/USER/PASS), never a public
  * explorer, so nobody else learns which transactions people look up here. The node
@@ -33,6 +36,7 @@ const CACHE_MAX = 5_000;
 const HTTP_TIMEOUT_MS = 8_000;
 const ELECTRUM_TIMEOUT_MS = 10_000;
 const MAX_SPENDER_CANDIDATES = 50; // history entries checked per output, from the oldest that can spend it
+const SPENDER_SCAN_BLOCKS = 6; // blocks after the tx's own scanned for spenders the Electrum server can't index (e.g. P2SH)
 
 export interface SpamchainStatus {
   txid: string;
@@ -125,6 +129,33 @@ class Spamchain {
           break;
         }
       }
+    }
+    let missing = wanted.filter(n => !spenders[n]);
+    if (missing.length) {
+      // The node may not allow this call (rpcwhitelist): then only the block scan is left.
+      const inMempool = await this.rpc('gettxspendingprevout', [missing.map(n => ({ txid, vout: n }))]).catch(() => []);
+      for (const r of inMempool) {
+        if (r.spendingtxid) {
+          spenders[r.vout] = r.spendingtxid;
+        }
+      }
+      missing = wanted.filter(n => !spenders[n]);
+    }
+    for (let h = height ?? 0; missing.length && height !== undefined && h <= height + SPENDER_SCAN_BLOCKS; h++) {
+      let block: any;
+      try {
+        block = await this.rpc('getblock', [await this.rpc('getblockhash', [h]), 2]);
+      } catch (e) {
+        break; // past the tip
+      }
+      for (const btx of block.tx) {
+        for (const i of btx.vin) {
+          if (i.txid === txid && missing.includes(i.vout)) {
+            spenders[i.vout] = btx.txid;
+          }
+        }
+      }
+      missing = wanted.filter(n => !spenders[n]);
     }
     return spenders;
   }
