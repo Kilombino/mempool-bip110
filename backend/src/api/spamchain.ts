@@ -1,4 +1,6 @@
 import axios from 'axios';
+import * as crypto from 'crypto';
+import * as tls from 'tls';
 import logger from '../logger';
 
 /**
@@ -12,9 +14,15 @@ import logger from '../logger';
  *    (`unspent`), or it can't be spent at all (`none`, OP_RETURN). An output spent on the
  *    Spamchain but not here is where the coins split.
  *
- * It only asks our own Spamchain node (SPAMCHAIN_RPC_URL/USER/PASS), never a public
+ * For each spent output it also tries to name the Spamchain transaction that spent it
+ * (`spenders`). Bitcoin Core can't answer that, so it asks our own Spamchain Electrum
+ * server (SPAMCHAIN_ELECTRUM_HOST/PORT, TLS) for the history of the output's script and
+ * checks which of those transactions spends it. Without it, `spenders` is left out.
+ *
+ * It only asks our own Spamchain servers (SPAMCHAIN_RPC_URL/USER/PASS), never a public
  * explorer, so nobody else learns which transactions people look up here. The node
- * needs txindex=1.
+ * needs txindex=1. SPAMCHAIN_EXPLORER_URL, if set, is passed on as `explorer` so the
+ * page can link to the same transaction on a Spamchain explorer.
  *
  * Results are cached for 60 s per txid (at most CACHE_MAX entries), and requests for
  * the same txid while one is in flight share it.
@@ -23,6 +31,8 @@ import logger from '../logger';
 const CACHE_MS = 60_000;
 const CACHE_MAX = 5_000;
 const HTTP_TIMEOUT_MS = 8_000;
+const ELECTRUM_TIMEOUT_MS = 10_000;
+const MAX_SPENDER_CANDIDATES = 50; // history entries checked per output, from the oldest that can spend it
 
 export interface SpamchainStatus {
   txid: string;
@@ -30,6 +40,55 @@ export interface SpamchainStatus {
   height?: number;
   time?: number;
   outputs?: ('spent' | 'unspent' | 'none')[];
+  spenders?: (string | null)[]; // Spamchain txid that spent each output, null if not spent or not found
+  explorer?: string;
+}
+
+/** One-shot Electrum session: sends the requests in order and returns their results. */
+function electrumCall(requests: [string, any[]][]): Promise<any[]> {
+  return new Promise((resolve, reject) => {
+    const results: any[] = [];
+    let buf = '';
+    const sock = tls.connect({
+      host: process.env.SPAMCHAIN_ELECTRUM_HOST,
+      port: parseInt(process.env.SPAMCHAIN_ELECTRUM_PORT || '50002', 10),
+      rejectUnauthorized: false, // our own server on the LAN, self-signed
+    });
+    const done = (err?: Error) => {
+      clearTimeout(timer);
+      sock.destroy();
+      err ? reject(err) : resolve(results);
+    };
+    const timer = setTimeout(() => done(new Error('Electrum timeout')), ELECTRUM_TIMEOUT_MS);
+    const all: [string, any[]][] = [['server.version', ['mempool', '1.4']], ...requests];
+    sock.on('secureConnect', () => {
+      sock.write(all.map(([method, params], id) => JSON.stringify({ jsonrpc: '2.0', id, method, params })).join('\n') + '\n');
+    });
+    sock.on('data', (d) => {
+      buf += d.toString();
+      let i: number;
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i);
+        buf = buf.slice(i + 1);
+        if (!line.trim()) {
+          continue;
+        }
+        const msg = JSON.parse(line);
+        if (typeof msg.id !== 'number') {
+          continue;
+        }
+        if (msg.error) {
+          return done(new Error(msg.error.message));
+        }
+        results[msg.id] = msg.result;
+        if (Object.keys(results).length === all.length) {
+          results.shift();
+          return done();
+        }
+      }
+    });
+    sock.on('error', (e) => done(e));
+  });
 }
 
 class Spamchain {
@@ -38,6 +97,36 @@ class Spamchain {
 
   get enabled(): boolean {
     return !!process.env.SPAMCHAIN_RPC_URL;
+  }
+
+  /**
+   * Which Spamchain transactions spent these outputs of `txid`. The history of each
+   * output's script lists every transaction that paid to or spent from it; the spender
+   * is the one, at or after `height` (or in the mempool), with an input on that output.
+   */
+  private async $spenders(txid: string, height: number | undefined, vouts: any[]): Promise<(string | null)[]> {
+    const spenders: (string | null)[] = vouts.map(() => null);
+    const wanted = vouts.map((v, n) => v ? n : -1).filter(n => n >= 0);
+    if (!wanted.length) {
+      return spenders;
+    }
+    const histories = await electrumCall(wanted.map(n => ['blockchain.scripthash.get_history', [
+      crypto.createHash('sha256').update(Buffer.from(vouts[n].scriptPubKey.hex, 'hex')).digest().reverse().toString('hex')
+    ]]));
+    for (const [k, n] of wanted.entries()) {
+      const candidates = (histories[k] || [])
+        .filter((h: any) => h.tx_hash !== txid && (h.height <= 0 || height === undefined || h.height >= height))
+        .sort((a: any, b: any) => (a.height <= 0 ? Infinity : a.height) - (b.height <= 0 ? Infinity : b.height))
+        .slice(0, MAX_SPENDER_CANDIDATES);
+      for (const c of candidates) {
+        const ctx = await this.rpc('getrawtransaction', [c.tx_hash, true]);
+        if (ctx.vin.some((i: any) => i.txid === txid && i.vout === n)) {
+          spenders[n] = c.tx_hash;
+          break;
+        }
+      }
+    }
+    return spenders;
   }
 
   private async rpc(method: string, params: any[]): Promise<any> {
@@ -86,7 +175,7 @@ class Spamchain {
       tx = await this.rpc('getrawtransaction', [txid, true]);
     } catch (e: any) {
       if (e.code === -5) {
-        return { txid, status: 'absent' };
+        return { txid, status: 'absent', explorer: process.env.SPAMCHAIN_EXPLORER_URL || undefined };
       }
       logger.warn(`Spamchain lookup of ${txid} failed: ${e.message}`);
       return { txid, status: 'unavailable' };
@@ -101,11 +190,20 @@ class Spamchain {
         const utxo = await this.rpc('gettxout', [txid, vout.n, true]);
         outputs.push(utxo ? 'unspent' : 'spent');
       }
-      if (!tx.blockhash) {
-        return { txid, status: 'mempool', outputs };
+      const explorer = process.env.SPAMCHAIN_EXPLORER_URL || undefined;
+      const header = tx.blockhash ? await this.rpc('getblockheader', [tx.blockhash, true]) : undefined;
+      let spenders: (string | null)[] | undefined;
+      if (process.env.SPAMCHAIN_ELECTRUM_HOST && outputs.includes('spent')) {
+        try {
+          spenders = await this.$spenders(txid, header?.height, tx.vout.map((v: any, n: number) => outputs[n] === 'spent' ? v : null));
+        } catch (e: any) {
+          logger.warn(`Spamchain spenders of ${txid} failed: ${e.message}`);
+        }
       }
-      const header = await this.rpc('getblockheader', [tx.blockhash, true]);
-      return { txid, status: 'confirmed', height: header.height, time: header.time, outputs };
+      if (!header) {
+        return { txid, status: 'mempool', outputs, spenders, explorer };
+      }
+      return { txid, status: 'confirmed', height: header.height, time: header.time, outputs, spenders, explorer };
     } catch (e: any) {
       logger.warn(`Spamchain lookup of ${txid} failed: ${e.message}`);
       return { txid, status: 'unavailable' };

@@ -57,8 +57,10 @@ export class TransactionDetailsComponent implements OnChanges {
   // no ordena estrictamente por fee. Así que solo lo mostramos si ACCELERATOR está activo.
   oobPriorityEnabled: boolean;
   // Is this transaction also on the Spamchain (replayed between the chains)? null until known.
-  spamchain: { status: string; height?: number; time?: number; outputs?: string[] } | null = null;
+  spamchain: { status: string; height?: number; time?: number; outputs?: string[]; spenders?: (string | null)[]; explorer?: string } | null = null;
   spamchainSpent = 0;
+  // Spent outputs and, when known, the Spamchain transaction that spent each one.
+  spamchainSpentList: { vout: number; spender: string | null }[] = [];
   private spamchainTxid: string;
 
   constructor(
@@ -142,13 +144,17 @@ export class TransactionDetailsComponent implements OnChanges {
     this.spamchainTxid = txid;
     this.spamchain = null;
     this.spamchainSpent = 0;
+    this.spamchainSpentList = [];
     this.apiService.getBlake2bSpamchainTx$(txid).subscribe({
       next: (data) => {
         if (this.tx?.txid !== txid || data?.status === 'unavailable') {
           return;
         }
         this.spamchain = data;
-        this.spamchainSpent = (data.outputs || []).filter((o: string) => o === 'spent').length;
+        this.spamchainSpentList = (data.outputs || [])
+          .map((o: string, vout: number) => o === 'spent' ? { vout, spender: data.spenders?.[vout] || null } : null)
+          .filter((o) => o);
+        this.spamchainSpent = this.spamchainSpentList.length;
         this.cd.markForCheck();
       },
       error: () => {},

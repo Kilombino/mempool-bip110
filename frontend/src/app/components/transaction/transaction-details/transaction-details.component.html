@@ -140,6 +140,23 @@
         @if (spamchainSpent > 0) {
           <span class="badge bg-danger me-1" ngbTooltip="These outputs were already spent on the Spamchain. From here on, the coins on each chain can go different ways." placement="bottom">{{ spamchainSpent }} output{{ spamchainSpent > 1 ? 's' : '' }} already spent on Spamchain</span>
         }
+        @if (spamchain.explorer && (spamchain.status === 'confirmed' || spamchain.status === 'mempool')) {
+          <a class="btn btn-sm btn-outline-warning py-0 me-1" [href]="spamchain.explorer + '/tx/' + tx.txid" target="_blank" rel="noopener noreferrer" ngbTooltip="Open this same transaction on the Spamchain explorer" placement="bottom">View on Spamchain ↗</a>
+        }
+        @if (spamchain.explorer && spamchainSpentList.length) {
+          <div class="mt-1 small">
+            @for (s of spamchainSpentList; track s.vout) {
+              <span class="me-2 text-nowrap">
+                <span class="text-muted">Output #{{ s.vout }} spent there by</span>
+                @if (s.spender) {
+                  <a [href]="spamchain.explorer + '/tx/' + s.spender" target="_blank" rel="noopener noreferrer">{{ s.spender | shortenString : 12 }} ↗</a>
+                } @else {
+                  <a [href]="spamchain.explorer + '/tx/' + tx.txid + '#vout=' + s.vout" target="_blank" rel="noopener noreferrer">see output ↗</a>
+                }
+              </span>
+            }
+          </div>
+        }
       </td>
     </tr>
   }
