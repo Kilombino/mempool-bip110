@@ -24,6 +24,7 @@ import { handleError } from '../../utils/api';
 import poolsUpdater from '../../tasks/pools-updater';
 import chainTips from '../chain-tips';
 import blake2bWidget from '../blake2b-widget';
+import spamchain from '../spamchain';
 
 const TXID_REGEX = /^[a-f0-9]{64}$/i;
 const BLOCK_HASH_REGEX = /^[a-f0-9]{64}$/i;
@@ -73,6 +74,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/peers-by-version', this.getBlake2bPeersByVersion.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/chain-size', this.getBlake2bChainSize.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/widget', this.getBlake2bWidget.bind(this))
+      .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/spamchain/tx/:txId', this.getBlake2bSpamchainTx.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/relay-policy', this.getBlake2bRelayPolicy)
       .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/blake2b-header', this.getBlake2bBlockHeader.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/rbf', this.getRbfHistory)
@@ -529,6 +531,25 @@ class BitcoinRoutes {
       dustrelayfee: pick('dustrelayfee'),
       incrementalrelayfee: pick('incrementalrelayfee'),
     });
+  }
+
+  /** Whether this transaction is also on the Spamchain, and which outputs it spent there. Ver api/spamchain.ts. */
+  private async getBlake2bSpamchainTx(req: Request, res: Response) {
+    if (!/^[a-fA-F0-9]{64}$/.test(req.params.txId)) {
+      handleError(req, res, 400, 'Invalid transaction ID');
+      return;
+    }
+    if (!spamchain.enabled) {
+      handleError(req, res, 404, 'Spamchain lookups are not configured');
+      return;
+    }
+    try {
+      const data = await spamchain.$get(req.params.txId.toLowerCase());
+      res.setHeader('Cache-Control', 'public, max-age=60');
+      res.json(data);
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to look up the transaction on the Spamchain');
+    }
   }
 
   /** Datos del cabecero para el widget de Android. Ver api/blake2b-widget.ts. */

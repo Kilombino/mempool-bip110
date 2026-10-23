@@ -328,6 +328,11 @@ export class ApiService {
     return this.httpClient.get<any>(this.apiBaseUrl + this.apiBasePath + '/api/v1/block/' + hash + '/blake2b-header');
   }
 
+  // Whether a transaction also exists on the Spamchain (asked to our own node). See backend api/spamchain.ts.
+  getBlake2bSpamchainTx$(txid: string): Observable<any> {
+    return this.httpClient.get<any>(this.apiBaseUrl + this.apiBasePath + '/api/v1/blake2b/spamchain/tx/' + txid);
+  }
+
   getBlockDataFromTimestamp$(timestamp: number): Observable<any> {
     return this.httpClient.get<number>(this.apiBaseUrl + this.apiBasePath + '/api/v1/mining/blocks/timestamp/' + timestamp);
   }

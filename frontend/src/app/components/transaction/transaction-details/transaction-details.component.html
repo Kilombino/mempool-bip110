@@ -37,6 +37,7 @@
     <ng-container *ngTemplateOutlet="etaRow"></ng-container>
   }
   <ng-container *ngTemplateOutlet="featuresRow"></ng-container>
+  <ng-container *ngTemplateOutlet="spamchainRow"></ng-container>
   @if (tx?.status?.confirmed) {
     <ng-container *ngTemplateOutlet="auditRow"></ng-container>
   }
@@ -117,6 +118,30 @@
     } @else {
       <ng-container *ngTemplateOutlet="skeletonDetailsRow"></ng-container>
     }
+  }
+</ng-template>
+
+<ng-template #spamchainRow>
+  @if (!isLoadingTx && spamchain) {
+    <tr>
+      <td class="td-width">Spamchain</td>
+      <td class="wrap-cell">
+        @if (spamchain.status === 'confirmed') {
+          <span class="badge bg-warning me-1" ngbTooltip="The same transaction (same txid) is confirmed on the Spamchain too: it was replayed between the chains." placement="bottom">Replayed · also on Spamchain</span>
+          <span class="me-1">block {{ spamchain.height }}</span>
+          @if (tx?.status?.confirmed && spamchain.time && tx.status.block_time) {
+            <span class="text-muted">({{ spamchain.time <= tx.status.block_time ? 'confirmed there first' : 'confirmed here first' }})</span>
+          }
+        } @else if (spamchain.status === 'mempool') {
+          <span class="badge bg-warning me-1" ngbTooltip="The same transaction is waiting in the Spamchain's mempool." placement="bottom">In the Spamchain mempool</span>
+        } @else if (spamchain.status === 'absent') {
+          <span class="badge bg-success me-1" ngbTooltip="This transaction does not exist on the Spamchain: it was not replayed." placement="bottom">Not replayed · only on XBT</span>
+        }
+        @if (spamchainSpent > 0) {
+          <span class="badge bg-danger me-1" ngbTooltip="These outputs were already spent on the Spamchain. From here on, the coins on each chain can go different ways." placement="bottom">{{ spamchainSpent }} output{{ spamchainSpent > 1 ? 's' : '' }} already spent on Spamchain</span>
+        }
+      </td>
+    </tr>
   }
 </ng-template>
 
