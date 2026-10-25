@@ -5,7 +5,7 @@
 
   <!-- Logged out: log in by signing a one-time text with the node -->
   <ng-container *ngIf="!checking && !session">
-    <p class="dir-intro mb-3" i18n="@@lightning.directory-login-intro">Any node of the XBT Lightning network can be listed. Log in by signing a one-time text with your node key: no account, no email, nothing to install. Then edit your card.</p>
+    <p class="dir-intro mb-3" i18n="@@lightning.directory-login-intro">Any node of the Bitcoin (BLAKE2b) Lightning network can be listed. Log in by signing a one-time text with your node key: no account, no email, nothing to install. Then edit your card.</p>
     <button type="button" class="btn btn-primary" *ngIf="!loginText" (click)="startLogin()" [disabled]="busy" i18n="@@lightning.directory-login-button">Log in with your node</button>
 
     <div class="dir-challenge mt-1" *ngIf="loginText">
@@ -25,7 +25,7 @@
         <li><b>ThunderHub</b>: <span i18n="@@lightning.directory-edit-howto-thub">Tools → Sign message, paste the text, sign and copy the result.</span></li>
         <li><b>Zeus</b>: <span i18n="@@lightning.directory-edit-howto-zeus">Settings → Tools → Sign or verify message, paste the text, sign and copy the signature.</span></li>
       </ul>
-      <p class="dir-hint" i18n="@@lightning.directory-login-howto-exact">Sign the text exactly as shown, in one piece. It works once and for 10 minutes; your node must be in the XBT Lightning graph.</p>
+      <p class="dir-hint" i18n="@@lightning.directory-login-howto-exact">Sign the text exactly as shown, in one piece. It works once and for 10 minutes; your node must be in the BLAKE2b Lightning graph.</p>
       <label class="form-label" for="dir-sig" i18n="@@lightning.directory-login-step-paste">2. Paste the signature</label>
       <div class="d-flex flex-wrap gap-2">
         <input id="dir-sig" class="form-control flex-grow-1 dir-sig" [value]="signature" (input)="onSignature($any($event.target).value)" (keyup.enter)="login()" spellcheck="false" autocomplete="off" placeholder="d9…">

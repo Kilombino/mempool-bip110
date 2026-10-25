@@ -212,7 +212,7 @@ export class DirectoryEditorComponent implements OnInit, OnDestroy {
       challenge_used: $localize`:@@lightning.directory-err-login-used:That login text was already used. Ask for a new one.`,
       challenge_expired: $localize`:@@lightning.directory-err-login-expired:That login text expired (they last 10 minutes). Ask for a new one.`,
       bad_signature_format: $localize`:@@lightning.directory-err-format:That does not look like a node signature. Paste the "signature" value (zbase32) your node gave you.`,
-      node_not_in_graph: $localize`:@@lightning.directory-err-login-graph:That signature does not belong to any node of the XBT Lightning graph. Sign exactly the text shown. If you did, your node is not announced yet: open a public channel and wait.`,
+      node_not_in_graph: $localize`:@@lightning.directory-err-login-graph:That signature does not belong to any node of the BLAKE2b Lightning graph. Sign exactly the text shown. If you did, your node is not announced yet: open a public channel and wait.`,
       not_listed: $localize`:@@lightning.directory-err-not-listed:This node has no card to delete.`,
       lnd_unavailable: $localize`:@@lightning.directory-err-lnd:The signature check is unavailable right now. Try again later.`,
       not_logged_in: $localize`:@@lightning.directory-err-session:Your session expired. Log in again.`,

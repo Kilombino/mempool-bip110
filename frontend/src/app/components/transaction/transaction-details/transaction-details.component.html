@@ -135,7 +135,7 @@
         } @else if (spamchain.status === 'mempool') {
           <span class="badge bg-warning me-1" ngbTooltip="The same transaction is waiting in the Spamchain's mempool." placement="bottom">In the Spamchain mempool</span>
         } @else if (spamchain.status === 'absent') {
-          <span class="badge bg-success me-1" ngbTooltip="This transaction does not exist on the Spamchain: it was not replayed." placement="bottom">Not replayed · only on XBT</span>
+          <span class="badge bg-success me-1" ngbTooltip="This transaction does not exist on the Spamchain: it was not replayed." placement="bottom">Not replayed · only on BTC</span>
         }
         @if (spamchainSpent > 0) {
           <span class="badge bg-danger me-1" ngbTooltip="These outputs were already spent on the Spamchain. From here on, the coins on each chain can go different ways." placement="bottom">{{ spamchainSpent }} output{{ spamchainSpent > 1 ? 's' : '' }} already spent on Spamchain</span>

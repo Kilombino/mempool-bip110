@@ -11749,8 +11749,8 @@
         <target>¿Es tu nodo? Entra para editar la ficha</target>
       </trans-unit>
       <trans-unit id="lightning.directory-login-intro" datatype="html">
-        <source>Any node of the XBT Lightning network can be listed. Log in by signing a one-time text with your node key: no account, no email, nothing to install. Then edit your card.</source>
-        <target>Puede aparecer cualquier nodo de la red Lightning de XBT. Entra firmando un texto de un solo uso con la clave de tu nodo: sin cuenta, sin correo y sin instalar nada. Después edita tu ficha.</target>
+        <source>Any node of the Bitcoin (BLAKE2b) Lightning network can be listed. Log in by signing a one-time text with your node key: no account, no email, nothing to install. Then edit your card.</source>
+        <target>Puede aparecer cualquier nodo de la red Lightning de Bitcoin (BLAKE2b). Entra firmando un texto de un solo uso con la clave de tu nodo: sin cuenta, sin correo y sin instalar nada. Después edita tu ficha.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-login-button" datatype="html">
         <source>Log in with your node</source>
@@ -11761,8 +11761,8 @@
         <target>1. Firma este texto con tu nodo</target>
       </trans-unit>
       <trans-unit id="lightning.directory-login-howto-exact" datatype="html">
-        <source>Sign the text exactly as shown, in one piece. It works once and for 10 minutes; your node must be in the XBT Lightning graph.</source>
-        <target>Firma el texto tal cual, entero. Sirve una sola vez y durante 10 minutos; tu nodo tiene que estar en el grafo Lightning de XBT.</target>
+        <source>Sign the text exactly as shown, in one piece. It works once and for 10 minutes; your node must be in the BLAKE2b Lightning graph.</source>
+        <target>Firma el texto tal cual, entero. Sirve una sola vez y durante 10 minutos; tu nodo tiene que estar en el grafo Lightning de BLAKE2b.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-login-step-paste" datatype="html">
         <source>2. Paste the signature</source>
@@ -11829,8 +11829,8 @@
         <target>Ese texto de entrada ha caducado (duran 10 minutos). Pide otro.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-err-login-graph" datatype="html">
-        <source>That signature does not belong to any node of the XBT Lightning graph. Sign exactly the text shown. If you did, your node is not announced yet: open a public channel and wait.</source>
-        <target>Esa firma no es de ningún nodo del grafo Lightning de XBT. Firma exactamente el texto que se muestra. Si ya lo hiciste, tu nodo aún no está anunciado: abre un canal público y espera.</target>
+        <source>That signature does not belong to any node of the BLAKE2b Lightning graph. Sign exactly the text shown. If you did, your node is not announced yet: open a public channel and wait.</source>
+        <target>Esa firma no es de ningún nodo del grafo Lightning de BLAKE2b. Firma exactamente el texto que se muestra. Si ya lo hiciste, tu nodo aún no está anunciado: abre un canal público y espera.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-err-session" datatype="html">
         <source>Your session expired. Log in again.</source>
@@ -11841,8 +11841,8 @@
         <target>La página está desfasada. Recárgala y vuelve a probar.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-intro-self" datatype="html">
-        <source>Nodes of the XBT (Bitcoin BLAKE2b) Lightning network listed by their own operators, with how to reach them to open channels.</source>
-        <target>Nodos de la red Lightning de XBT (Bitcoin BLAKE2b) que sus propios operadores han dado de alta, con cómo contactarles para abrir canales.</target>
+        <source>Nodes of the Bitcoin (BLAKE2b) Lightning network listed by their own operators, with how to reach them to open channels.</source>
+        <target>Nodos de la red Lightning de Bitcoin (BLAKE2b) que sus propios operadores han dado de alta, con cómo contactarles para abrir canales.</target>
       </trans-unit>
       <trans-unit id="lightning.directory-edit-title" datatype="html">
         <source>Publish or edit your node's card</source>
