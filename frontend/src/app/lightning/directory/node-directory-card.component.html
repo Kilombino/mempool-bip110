@@ -31,7 +31,7 @@
       <span *ngIf="e.updated"> · <span i18n="@@lightning.directory-updated">updated</span> {{ e.updated }}</span>
       · <a [routerLink]="['/lightning/directory' | relativeUrl]" i18n="@@lightning.directory-all">Node directory</a>
       · <a [href]="l2lSite + '/node/' + publicKey" target="_blank" rel="noopener">Lightning2Lightning</a>
-      · <a [routerLink]="['/lightning/directory' | relativeUrl]" [queryParams]="{ node: publicKey }" i18n="@@lightning.directory-edit-own-login">Is this your node? Log in to edit the card</a>
+      · <a [href]="l2lSite + '/card'" rel="noopener" i18n="@@lightning.directory-edit-own-login">Is this your node? Log in to edit the card</a>
     </div>
   </div>
 </ng-container>
