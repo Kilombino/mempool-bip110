@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DirectoryEntry, LightningDirectoryService, contactLink } from '@app/lightning/directory/directory.service';
+import { DirectoryEntry, L2LScores, L2L_SITE, LightningDirectoryService, contactLink } from '@app/lightning/directory/directory.service';
 
 @Component({
   selector: 'app-node-directory-card',
@@ -12,6 +12,8 @@ import { DirectoryEntry, LightningDirectoryService, contactLink } from '@app/lig
 export class NodeDirectoryCardComponent implements OnChanges {
   @Input() publicKey: string;
   entry$: Observable<DirectoryEntry | null>;
+  scores$: Observable<L2LScores>;
+  l2lSite = L2L_SITE;
   contactLink = contactLink;
   contactKinds = ['telegram', 'nostr', 'email', 'website', 'lightning_address', 'x', 'discord', 'simplex'];
   contactLabels: { [k: string]: string } = {
@@ -23,5 +25,6 @@ export class NodeDirectoryCardComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.entry$ = this.directory.getEntry$(this.publicKey);
+    this.scores$ = this.directory.getScores$();
   }
 }

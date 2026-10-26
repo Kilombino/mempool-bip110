@@ -5,6 +5,7 @@
   <p class="dir-intro"><a href="#publish" (click)="scrollToEditor($event)" i18n="@@lightning.directory-intro-cta-login">Is your node missing? Log in with your node and publish its card.</a></p>
   <p class="dir-meta" *ngIf="updated$ | async as u"><span i18n="@@lightning.directory-updated-on">Updated</span> {{ u }}</p>
 
+  <ng-container *ngIf="scores$ | async as scores">
   <ng-container *ngIf="rows$ | async as rows; else loading">
     <div class="box" *ngIf="!rows.length" i18n="@@lightning.directory-empty">No nodes listed yet.</div>
     <div class="box directory-row mb-3" *ngFor="let r of rows">
@@ -12,6 +13,8 @@
         <a class="dir-name" [routerLink]="['/lightning/node' | relativeUrl, r.publicKey]">{{ r.node?.alias || r.entry.name || (r.publicKey | slice:0:16) }}</a>
         <span class="badge rounded-pill dir-tag" *ngFor="let t of r.entry.tags">{{ t }}</span>
         <span class="flex-grow-1"></span>
+        <a class="badge rounded-pill dir-l2l" *ngIf="scores.nodes[r.publicKey] as s" [href]="l2lSite + '/node/' + r.publicKey" target="_blank" rel="noopener"
+          i18n-title="@@lightning.directory-l2l-title" title="Lightning2Lightning reputation (0-100), read from the chain">L2L {{ s.score }}</a>
         <span class="dir-stat" *ngIf="r.node"><app-amount [satoshis]="r.node.capacity" digitsInfo="1.2-2" [noFiat]="true"></app-amount> · {{ r.node.active_channel_count }} <span i18n="@@lightning.directory-channels">channels</span></span>
       </div>
       <p class="dir-desc mt-2 mb-2" *ngIf="r.entry.description">{{ r.entry.description }}</p>
@@ -20,8 +23,10 @@
           <a *ngIf="r.entry.contacts?.[k] && contactLink(k, r.entry.contacts[k]) as href" [href]="href" target="_blank" rel="noopener nofollow">{{ k === 'x' ? 'X' : (k | titlecase) }}</a>
         </ng-container>
         <span *ngIf="r.entry.contacts?.lightning_address">⚡ {{ r.entry.contacts.lightning_address }}</span>
+        <a [href]="l2lSite + '/node/' + r.publicKey" target="_blank" rel="noopener">Lightning2Lightning</a>
       </div>
     </div>
+  </ng-container>
   </ng-container>
   <ng-template #loading><div class="spinner-border text-light"></div></ng-template>
 

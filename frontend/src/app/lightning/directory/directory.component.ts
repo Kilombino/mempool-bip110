@@ -4,7 +4,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { SeoService } from '@app/services/seo.service';
 import { LightningApiService } from '@app/lightning/lightning-api.service';
-import { LightningDirectoryService, contactLink } from '@app/lightning/directory/directory.service';
+import { LightningDirectoryService, L2LScores, L2L_SITE, contactLink } from '@app/lightning/directory/directory.service';
 
 @Component({
   selector: 'app-lightning-directory',
@@ -16,6 +16,8 @@ import { LightningDirectoryService, contactLink } from '@app/lightning/directory
 export class LightningDirectoryComponent implements OnInit {
   rows$: Observable<any[]>;
   updated$: Observable<string | undefined>;
+  scores$: Observable<L2LScores>;
+  l2lSite = L2L_SITE;
   contactLink = contactLink;
   contactKinds = ['telegram', 'nostr', 'email', 'website', 'x', 'discord', 'simplex'];
   initialPubkey = '';
@@ -33,6 +35,7 @@ export class LightningDirectoryComponent implements OnInit {
     if (/^0[23][0-9a-f]{64}$/.test(q)) { this.initialPubkey = q; }
     this.seoService.setTitle($localize`:@@lightning.directory-title:Lightning node directory`);
     const dir$ = this.directory.getDirectory$();
+    this.scores$ = this.directory.getScores$();
     this.updated$ = dir$.pipe(map((d) => d.updated));
     // Each listed node, joined with what the network graph says about it now.
     this.rows$ = dir$.pipe(

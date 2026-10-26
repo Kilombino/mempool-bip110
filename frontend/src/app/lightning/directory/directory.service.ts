@@ -34,6 +34,12 @@ export interface Directory {
   nodes: { [publicKey: string]: DirectoryEntry };
 }
 
+// Lightning2Lightning reputation (0-100, read from the chain by ln-directory) of every node.
+export interface L2LScores {
+  nodes: { [publicKey: string]: { score: number, rings: number, opened: number, missed: number } };
+}
+export const L2L_SITE = 'https://nodex.kilombino.com';
+
 export interface DirectoryLoginText {
   ok: boolean;
   text: string;
@@ -54,6 +60,7 @@ const API = '/api/ln-directory';
 @Injectable({ providedIn: 'root' })
 export class LightningDirectoryService {
   private directory$: Observable<Directory>;
+  private scores$: Observable<L2LScores>;
   // Cache buster: changes every 5 minutes, and right after our own edits.
   private version$ = new BehaviorSubject<number>(Math.floor(Date.now() / 300000));
 
@@ -70,6 +77,18 @@ export class LightningDirectoryService {
       );
     }
     return this.directory$;
+  }
+
+  // Without the L2L API (older ln-directory) every node simply has no score.
+  getScores$(): Observable<L2LScores> {
+    if (!this.scores$) {
+      this.scores$ = this.http.get<L2LScores>(`${API}/l2l/scores`).pipe(
+        map((d) => ({ nodes: d?.nodes || {} })),
+        catchError(() => of({ nodes: {} })),
+        shareReplay(1),
+      );
+    }
+    return this.scores$;
   }
 
   refresh(): void {
