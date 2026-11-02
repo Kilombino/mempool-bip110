@@ -1,0 +1,7 @@
+[Unit]
+Description=Bitcoin Nodes World Map: hourly probe
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1h
+[Install]
+WantedBy=timers.target

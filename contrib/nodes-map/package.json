@@ -1,0 +1,10 @@
+{
+  "name": "nodes-map",
+  "version": "1.0.0",
+  "description": "Bitcoin Nodes World Map: hourly registry of BLAKE2b nodes with local GeoIP, served under /nodes-map/",
+  "license": "AGPL-3.0",
+  "private": true,
+  "dependencies": {
+    "mmdb-lib": "^2.2.1"
+  }
+}

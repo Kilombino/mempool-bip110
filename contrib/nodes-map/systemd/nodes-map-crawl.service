@@ -1,0 +1,10 @@
+[Unit]
+Description=Bitcoin Nodes World Map: probe BLAKE2b nodes
+[Service]
+Type=oneshot
+Nice=10
+# The node to read from (getnodeaddresses, getpeerinfo, getblockcount).
+Environment=BITCOIN_CLI=bitcoin-cli
+#Environment=BITCOIN_DATADIR=/path/to/datadir
+ExecStart=/usr/bin/node %h/nodes-map/crawl.js
+TimeoutStartSec=45min

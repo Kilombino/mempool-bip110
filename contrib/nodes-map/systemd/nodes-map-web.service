@@ -1,0 +1,8 @@
+[Unit]
+Description=Bitcoin Nodes World Map (web, 127.0.0.1:3110)
+[Service]
+ExecStart=/usr/bin/node %h/nodes-map/server.js
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=default.target
