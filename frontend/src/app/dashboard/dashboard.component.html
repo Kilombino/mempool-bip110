@@ -65,6 +65,25 @@
     </div>
   </div>
 
+  <!-- Bitcoin Nodes World Map (served by the nodes-map service under /nodes-map/) -->
+  <div class="row row-cols-1" *ngIf="stateService.network === ''">
+    <div class="col">
+      <div class="card nodes-map-card">
+        <div class="card-body">
+          <div class="nodes-map-head">
+            <a class="title-link" href="/nodes-map/">
+              <h5 class="card-title d-inline">Bitcoin Nodes World Map</h5>
+              <span>&nbsp;</span>
+              <fa-icon [icon]="['fas', 'external-link-alt']" [fixedWidth]="true" style="vertical-align: text-top; font-size: 13px; color: var(--title-fg)"></fa-icon>
+            </a>
+            <a class="btn btn-primary btn-sm" href="/nodes-map/">Node details</a>
+          </div>
+          <iframe class="nodes-map-frame" src="/nodes-map/embed" title="Bitcoin Nodes World Map" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Knots Nodes + BLAKE2b Peers Section -->
   <div *ngIf="stateService.network === ''">
     <!-- BLAKE2b peers of this node: two charts side by side -->
