@@ -3,9 +3,10 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const PORT = 3110;
+const PORT = Number(process.env.NODES_MAP_PORT || 3110);
+const HOST = process.env.NODES_MAP_BIND || '127.0.0.1';
 const PAGE = path.join(__dirname, 'public/index.html');
-const DATA = path.join(__dirname, 'data/public.json');
+const DATA = path.join(process.env.NODES_MAP_DATA_DIR || path.join(__dirname, 'data'), 'public.json');
 http.createServer((req, res) => {
   const u = req.url.split('?')[0];
   if (u === '/nodes-map') { res.writeHead(301, { Location: '/nodes-map/' }); return res.end(); }
@@ -22,4 +23,4 @@ http.createServer((req, res) => {
     return;
   }
   res.writeHead(404); res.end('not found');
-}).listen(PORT, '127.0.0.1');
+}).listen(PORT, HOST);

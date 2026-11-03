@@ -17,3 +17,19 @@ under `/nodes-map/` and embedded in the dashboard (`/nodes-map/embed`).
 
 Install: copy this directory to `~/nodes-map`, `npm install`, add the GeoIP file, then install the
 units in `systemd/` as user units and enable `nodes-map-web.service` and `nodes-map-crawl.timer`.
+
+## In the StartOS and Umbrel packages
+
+`service.js` runs everything in one process: it serves the page, downloads the DB-IP database into
+the data directory on first start (and again when it is a month old; the current month's file,
+falling back to the previous month's), and runs `crawl.js` every hour. `Dockerfile` builds that
+image. There `crawl.js` talks JSON-RPC to the user's node instead of running `bitcoin-cli`:
+
+- `BITCOIN_RPC_URL=http://host:port/` and either `BITCOIN_RPC_COOKIE=/path/to/.cookie` or
+  `BITCOIN_RPC_USER` + `BITCOIN_RPC_PASSWORD` (without `BITCOIN_RPC_URL` it uses `bitcoin-cli`
+  as before);
+- `TOR_PROXY=host:port` for onion addresses, or `none` to probe clearnet only (the image default);
+- `NODES_MAP_DATA_DIR`, `NODES_MAP_PORT`, `NODES_MAP_BIND`, `CRAWL_INTERVAL` (seconds).
+
+The frontend image routes `/nodes-map/` to it when `NODES_MAP_UPSTREAM` is set
+(e.g. `http://127.0.0.1:3110`, see `docker/frontend/entrypoint.sh`).

@@ -1,4 +1,5 @@
-FROM node:24.13-bookworm-slim AS builder
+# The build output is static files, so build it natively and only copy it into the target arch.
+FROM --platform=$BUILDPLATFORM node:24.13-bookworm-slim AS builder
 
 ARG commitHash
 ENV DOCKER_COMMIT_HASH=${commitHash}

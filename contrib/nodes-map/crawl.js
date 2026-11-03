@@ -5,6 +5,7 @@
 // Writes data/registry.json (full registry) and data/public.json (what the map shows).
 'use strict';
 const net = require('net');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -12,18 +13,63 @@ const { execFileSync } = require('child_process');
 const { Reader } = require('mmdb-lib');
 
 const DIR = __dirname;
-const DATA = path.join(DIR, 'data');
+const DATA = process.env.NODES_MAP_DATA_DIR || path.join(DIR, 'data');
 const REG = path.join(DATA, 'registry.json');
 const PUB = path.join(DATA, 'public.json');
-// bitcoin-cli of the node to read from: BITCOIN_CLI (binary) and BITCOIN_DATADIR.
-const CLI = [process.env.BITCOIN_CLI || 'bitcoin-cli', ...(process.env.BITCOIN_DATADIR ? [`-datadir=${process.env.BITCOIN_DATADIR}`] : [])];
+const GEOIP = process.env.NODES_MAP_GEOIP || path.join(DATA, 'dbip.mmdb');
 const MAGIC = Buffer.from('f9beb4d9', 'hex');
 const BIT_BLAKE2B = 1n << 28n;
 const FORK_HEIGHT = 961640;
-const TOR = { host: '127.0.0.1', port: 9050 };
+// Tor SOCKS proxy for onion addresses: TOR_PROXY=host:port, or "none" to skip onions.
+const TOR = (() => {
+  const v = process.env.TOR_PROXY ?? '127.0.0.1:9050';
+  if (!v || v === 'none') return null;
+  const i = v.lastIndexOf(':');
+  return { host: v.slice(0, i), port: Number(v.slice(i + 1)) };
+})();
 const FORGET_DAYS = 30;
 
-const cli = (...a) => JSON.parse(execFileSync(CLI[0], [...CLI.slice(1), ...a], { maxBuffer: 1 << 28 }).toString());
+// How to ask the node. Two ways:
+// - JSON-RPC (packages): BITCOIN_RPC_URL=http://host:port/ plus either BITCOIN_RPC_USER and
+//   BITCOIN_RPC_PASSWORD, or BITCOIN_RPC_COOKIE=/path/to/.cookie.
+// - bitcoin-cli (our own deploy, the default): BITCOIN_CLI (binary) and BITCOIN_DATADIR.
+const RPC_URL = process.env.BITCOIN_RPC_URL;
+const CLI = [process.env.BITCOIN_CLI || 'bitcoin-cli', ...(process.env.BITCOIN_DATADIR ? [`-datadir=${process.env.BITCOIN_DATADIR}`] : [])];
+
+function rpcAuth() {
+  if (process.env.BITCOIN_RPC_COOKIE) return fs.readFileSync(process.env.BITCOIN_RPC_COOKIE, 'utf8').trim();
+  return `${process.env.BITCOIN_RPC_USER || ''}:${process.env.BITCOIN_RPC_PASSWORD || ''}`;
+}
+
+function rpc(method, params) {
+  const u = new URL(RPC_URL);
+  const body = JSON.stringify({ jsonrpc: '1.0', id: 'nodes-map', method, params });
+  return new Promise((resolve, reject) => {
+    const req = http.request({
+      host: u.hostname, port: u.port || 8332, path: u.pathname || '/', method: 'POST',
+      auth: rpcAuth(), headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
+      timeout: 120000,
+    }, (res) => {
+      const chunks = [];
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => {
+        const text = Buffer.concat(chunks).toString();
+        let r;
+        try { r = JSON.parse(text); } catch { return reject(new Error(`RPC ${method}: HTTP ${res.statusCode} ${text.slice(0, 200)}`)); }
+        if (r.error) return reject(new Error(`RPC ${method}: ${r.error.message}`));
+        resolve(r.result);
+      });
+    });
+    req.on('timeout', () => req.destroy(new Error(`RPC ${method}: timeout`)));
+    req.on('error', reject);
+    req.end(body);
+  });
+}
+
+// Same calls either way; numeric arguments are passed as numbers over RPC.
+const cli = async (method, ...a) => RPC_URL
+  ? rpc(method, a.map((x) => (/^\d+$/.test(x) ? Number(x) : x)))
+  : JSON.parse(execFileSync(CLI[0], [...CLI.slice(1), method, ...a], { maxBuffer: 1 << 28 }).toString());
 const sha256d = (b) => crypto.createHash('sha256').update(crypto.createHash('sha256').update(b).digest()).digest();
 
 function msg(cmd, payload) {
@@ -97,6 +143,7 @@ function socksConnect(sock, host, port) {
 
 function probe(addr, height) {
   const tor = addr.network === 'onion';
+  if (tor && !TOR) return Promise.resolve({ ok: false, err: 'no tor' });
   const timeout = tor ? 45000 : 10000;
   return new Promise((resolve) => {
     let done = false;
@@ -152,23 +199,25 @@ function geo(reader, ip) {
 (async () => {
   const now = Math.floor(Date.now() / 1000);
   const reg = fs.existsSync(REG) ? JSON.parse(fs.readFileSync(REG)) : { nodes: {} };
-  const tip = cli('getblockcount');
-  const reader = new Reader(fs.readFileSync(path.join(DATA, 'dbip.mmdb')));
+  fs.mkdirSync(DATA, { recursive: true });
+  const tip = await cli('getblockcount');
+  const reader = new Reader(fs.readFileSync(GEOIP));
 
   // Candidates: known addresses with the BLAKE2B bit, plus our outbound peers.
   const cands = new Map();
-  for (const a of cli('getnodeaddresses', '0')) {
+  for (const a of await cli('getnodeaddresses', '0')) {
+    if (a.network === 'onion' && !TOR) continue;
     if (!['ipv4', 'ipv6', 'onion'].includes(a.network)) continue;
     if (!(BigInt(a.services) & BIT_BLAKE2B)) continue;
     cands.set(`${a.address}|${a.port}`, { address: a.address, port: a.port, network: a.network });
   }
   for (const k of Object.keys(reg.nodes)) {
     const n = reg.nodes[k];
-    if (n.port && !cands.has(k)) cands.set(k, { address: n.address, port: n.port, network: n.network });
+    if (n.port && !cands.has(k) && (n.network !== 'onion' || TOR)) cands.set(k, { address: n.address, port: n.port, network: n.network });
   }
 
   // Peers connected right now (inbound ones too: they are nodes we met, even if not listening).
-  const peers = cli('getpeerinfo');
+  const peers = await cli('getpeerinfo');
   for (const p of peers) {
     const m = p.addr.match(/^\[?(.+?)\]?:(\d+)$/);
     if (!m) continue;

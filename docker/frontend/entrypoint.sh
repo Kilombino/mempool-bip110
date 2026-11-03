@@ -13,6 +13,19 @@ fi
 sed -i "s/__MEMPOOL_BACKEND_MAINNET_HTTP_HOST__/${__MEMPOOL_BACKEND_MAINNET_HTTP_HOST__}/g" /etc/nginx/conf.d/nginx-mempool.conf
 sed -i "s/__MEMPOOL_BACKEND_MAINNET_HTTP_PORT__/${__MEMPOOL_BACKEND_MAINNET_HTTP_PORT__}/g" /etc/nginx/conf.d/nginx-mempool.conf
 
+# Packages (StartOS, Umbrel): Bitcoin Nodes World Map served by a sidecar (contrib/nodes-map).
+# Our own deploy routes /nodes-map/ in the Cloudflare tunnel instead and leaves this unset.
+if [ -n "${NODES_MAP_UPSTREAM}" ] && ! grep -q "location /nodes-map" /etc/nginx/conf.d/nginx-mempool.conf; then
+  sed -i "1i location /nodes-map { proxy_pass ${NODES_MAP_UPSTREAM}; proxy_set_header Host \$host; proxy_connect_timeout 5s; proxy_read_timeout 30s; }" /etc/nginx/conf.d/nginx-mempool.conf
+fi
+# The Lightning directory's signed-edit API lives on our own server (ln-directory); packages
+# turn its route off (LN_DIRECTORY_API=off) so nothing is sent to an address on the user's LAN.
+if [ "${LN_DIRECTORY_API}" = "off" ]; then
+  sed -i '/^\tlocation \/api\/ln-directory\/ {/,/^\t}/d' /etc/nginx/conf.d/nginx-mempool.conf
+elif [ -n "${LN_DIRECTORY_API}" ]; then
+  sed -i "s|proxy_pass http://[0-9.]*:3221/;|proxy_pass ${LN_DIRECTORY_API};|" /etc/nginx/conf.d/nginx-mempool.conf
+fi
+
 cp /etc/nginx/nginx.conf /patch/nginx.conf
 sed -i "s/__MEMPOOL_FRONTEND_HTTP_PORT__/${__MEMPOOL_FRONTEND_HTTP_PORT__}/g" /patch/nginx.conf
 cat /patch/nginx.conf > /etc/nginx/nginx.conf

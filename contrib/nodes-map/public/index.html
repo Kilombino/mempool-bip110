@@ -49,7 +49,7 @@
 </style>
 </head>
 <body>
-<header><a href="/">mempool.kilombino.com</a><a class="back" href="/">← Back to the explorer</a></header>
+<header><a href="/" id="home">Explorer</a><a class="back" href="/">← Back to the explorer</a></header>
 <main>
   <h1>Bitcoin Nodes World Map</h1>
   <div class="stats" id="stats"></div>
@@ -79,6 +79,8 @@ const ago = (t) => { const s = Date.now()/1000 - t; if (s < 3600) return Math.ma
 const addr = (n) => n.port ? (n.network === 'ipv6' ? `[${n.address}]:${n.port}` : `${n.address}:${n.port}`) : n.address;
 const place = (n) => n.geo ? [n.geo.city, n.geo.country].filter(Boolean).join(', ') : (n.network === 'onion' ? 'Tor' : '—');
 
+// The explorer's own hostname, whatever it is served under (mempool.kilombino.com, a StartOS or Umbrel box...).
+document.getElementById('home').textContent = location.host || 'Explorer';
 const EMBED = /\/embed\/?$/.test(location.pathname);
 if (EMBED) { document.body.classList.add('embed'); const b = document.createElement('base'); b.target = '_blank'; document.head.appendChild(b); }
 // One world only: no wrapping, and the map cannot be dragged past its edges
