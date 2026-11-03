@@ -71,6 +71,7 @@ class DatabaseMigration {
     logger.debug('MIGRATIONS: Latest DatabaseMigration.version is ' + DatabaseMigration.currentVersion);
     if (databaseSchemaVersion >= DatabaseMigration.currentVersion) {
       logger.debug('MIGRATIONS: Nothing to do.');
+      await this.$widenBlockHeaderColumn();
       return;
     }
 
@@ -96,7 +97,29 @@ class DatabaseMigration {
       }
     }
 
+    await this.$widenBlockHeaderColumn();
     return;
+  }
+
+  /**
+   * BLAKE2b chain: a block header is 164 bytes (328 hex characters), more than
+   * upstream's varchar(160) holds. Checked on every start rather than as a numbered
+   * migration, so it never collides with a schema version upstream adds later.
+   */
+  private async $widenBlockHeaderColumn(): Promise<void> {
+    try {
+      const [rows] = await DB.query({
+        sql: `SELECT CHARACTER_MAXIMUM_LENGTH AS len FROM information_schema.COLUMNS
+          WHERE TABLE_SCHEMA = '${config.DATABASE.DATABASE}' AND TABLE_NAME = 'blocks' AND COLUMN_NAME = 'header'`,
+        timeout: this.queryTimeout,
+      }) as any[];
+      if (rows.length && rows[0].len < 500) {
+        await this.$executeQuery('ALTER TABLE `blocks` MODIFY `header` varchar(500) NOT NULL');
+        logger.notice('MIGRATIONS: blocks.header widened to varchar(500) for 164-byte BLAKE2b headers');
+      }
+    } catch (e) {
+      logger.err('MIGRATIONS: Unable to widen blocks.header for BLAKE2b headers. ' + e);
+    }
   }
 
   /**
