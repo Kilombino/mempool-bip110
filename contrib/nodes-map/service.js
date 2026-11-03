@@ -58,14 +58,15 @@ async function updateGeoip() {
 function crawl() {
   return new Promise((resolve) => {
     const child = fork(path.join(__dirname, 'crawl.js'), [], { stdio: 'inherit' });
-    child.on('exit', (code) => { log('crawl finished, code', code); resolve(); });
+    child.on('exit', (code) => { log('crawl finished, code', code); resolve(code === 0); });
   });
 }
 
 (async function loop() {
   for (;;) {
     try { await updateGeoip(); } catch (e) { log('GeoIP:', e.message); }
-    if (fs.existsSync(GEOIP)) await crawl();
-    await new Promise((r) => setTimeout(r, fs.existsSync(GEOIP) ? INTERVAL : 600e3));
+    // A failed round (the node not up yet, no GeoIP database) is retried in 10 minutes.
+    const ok = fs.existsSync(GEOIP) && await crawl();
+    await new Promise((r) => setTimeout(r, ok ? INTERVAL : Math.min(INTERVAL, 600e3)));
   }
 })();
