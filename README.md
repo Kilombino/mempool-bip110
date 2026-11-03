@@ -1,16 +1,14 @@
-# Mempool — BIP110 edition
+<p align="center"><img src="frontend/src/resources/bip110-logo.png" alt="mempool.kilombino.com" width="180"></p>
 
-A self-hostable Bitcoin mempool explorer based on the **Retropex** fork of [mempool](https://github.com/mempool/mempool) (v3.4-dev), extended with:
+# Mempool for Bitcoin (BLAKE2b) — mempool.kilombino.com
 
-- **BIP110 "Reduced Data Temporary Softfork" violation detection.** Blocks and transactions that would be *invalid* under the proposed BIP110 consensus rules are flagged:
-  - ☢️ radioactive indicator + violation count on each block in the block list.
-  - "BIP110 Violations" row on the block detail page.
-  - Per-transaction badge with a tooltip explaining **which of the 7 rules** it breaks, and a warning banner on the transaction page.
-  - All 7 rules per `bip-0110.mediawiki` (oversized scriptPubKey, large PUSHDATA/witness items, undefined witness versions, Taproot annex, large control blocks, OP_SUCCESS, OP_IF/NOTIF in tapscript).
-- **BIP110 miner signaling** display (version bit 4) — inherited from Retropex.
-- **Node distribution chart split by IPv4 / IPv6 / Tor** (Knots nodes), with network percentages computed from active nodes.
+The explorer running at **[mempool.kilombino.com](https://mempool.kilombino.com)**: a self-hostable Bitcoin mempool explorer for the chain that moved its proof of work to BLAKE2b at block 961640, based on the **Retropex** fork of [mempool](https://github.com/mempool/mempool) and on [paulscode/mempool-bip110](https://github.com/paulscode/mempool-bip110). It adds:
 
-Violation detection logic ported from [paulscode/mempool-bip110](https://github.com/paulscode/mempool-bip110).
+- **BLAKE2b blocks**: 164-byte headers, the activation headline, block weight and difficulty of this chain.
+- **Mining pools of this chain**: our own `pools-v2.json`, kept up to date by an hourly autotagger and by your pull requests (new pools, logos).
+- **Bitcoin Nodes World Map**: an hourly registry of the nodes on this chain that our node finds, on a world map in the dashboard and at [/nodes-map/](https://mempool.kilombino.com/nodes-map/) (code in `contrib/nodes-map`).
+- **My Bitcoin Peers** by version and by network, from the node behind the explorer.
+- BIP110 rule checks and miner signalling, inherited from the BIP110 edition.
 
 ## Credits & license
 
@@ -48,10 +46,6 @@ Then point a `docker-compose.yml` at your own Bitcoin node (Core/Knots RPC) and 
 ---
 
 # The Mempool Open Source Project® [![mempool](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/ry4br7/master&style=flat-square)](https://dashboard.cypress.io/projects/ry4br7/runs)
-
-https://user-images.githubusercontent.com/93150691/226236121-375ea64f-b4a1-4cc0-8fad-a6fb33226840.mp4
-
-<br>
 
 Mempool is the fully-featured mempool visualizer, explorer, and API service running at [mempool.space](https://mempool.space/). 
 
