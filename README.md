@@ -1,91 +1,81 @@
 <p align="center"><img src="frontend/src/resources/bip110-logo.png" alt="mempool.kilombino.com" width="180"></p>
 
-# Mempool for Bitcoin (BLAKE2b) — mempool.kilombino.com
+# Mempool for Bitcoin (BLAKE2b)
 
-The explorer running at **[mempool.kilombino.com](https://mempool.kilombino.com)**: a self-hostable Bitcoin mempool explorer for the chain that moved its proof of work to BLAKE2b at block 961640, based on the **Retropex** fork of [mempool](https://github.com/mempool/mempool) and on [paulscode/mempool-bip110](https://github.com/paulscode/mempool-bip110). It adds:
+A self-hostable mempool explorer for **Bitcoin (BLAKE2b)**, the chain that moved its proof of work to BLAKE2b at block **961640**. It's what runs at **[mempool.kilombino.com](https://mempool.kilombino.com)**.
 
-- **BLAKE2b blocks**: 164-byte headers, the activation headline, block weight and difficulty of this chain.
-- **Mining pools of this chain**: our own `pools-v2.json`, kept up to date by an hourly autotagger and by your pull requests (new pools, logos).
-- **Bitcoin Nodes World Map**: an hourly registry of the nodes on this chain that our node finds, on a world map in the dashboard and at [/nodes-map/](https://mempool.kilombino.com/nodes-map/) (code in `contrib/nodes-map`).
-- **My Bitcoin Peers** by version and by network, from the node behind the explorer.
-- BIP110 rule checks and miner signalling, inherited from the BIP110 edition.
+Blocks, transactions, fees, mining and Lightning work the same way as on the explorer you already know, adapted to this chain:
 
-## Credits & license
+- **BLAKE2b blocks:** 164-byte headers, the activation headline, this chain's block weight (800k WU), and difficulty and hashrate charts that start at the activation block.
+- **Who mines each block:** our own `pools-v2.json` (TerminusPool, RouteHash, AlphaPool, the PyBLOCK services, DATUM solo miners…). An hourly autotagger and your pull requests keep it up to date, and DATUM blocks without a name are grouped as "Unnamed DATUM".
+- **Replay protection:** the unified sighash (`0x20` bit) is recognised and flagged. On a transaction page you can see whether it was replayed to or from the Spamchain and which of its outputs were already spent there.
+- **Coinjoins:** Kilojoin rounds (equal outputs, every input signed with the unified sighash) are detected and flagged.
+- **Bitcoin Nodes World Map:** an hourly registry of the BLAKE2b nodes our node finds, shown on a world map in the dashboard and at [/nodes-map/](https://mempool.kilombino.com/nodes-map/). The code is in `contrib/nodes-map`.
+- **My Bitcoin Peers:** the explorer's own node's peers, by client version and by network (IPv4, IPv6, Tor, I2P, CJDNS).
+- **Lightning on BLAKE2b:** network map, the [Nodex](https://nodex.kilombino.com) explorer, a node directory where operators publish their own card by signing with their node, and Lightning2Lightning reputation badges.
+- **Price widget** (`/api/v1/blake2b/…`): price in 35 currencies, the Poolsats rate, network hashrate, and current, previous and expected next difficulty.
 
-- [mempool/mempool](https://github.com/mempool/mempool) — AGPL-3.0
-- [Retropex/mempool](https://github.com/Retropex/mempool)
-- [paulscode/mempool-bip110](https://github.com/paulscode/mempool-bip110)
+## Install
 
-Licensed under AGPL-3.0 (see `LICENSE`).
+### StartOS
 
-## Build (Docker, self-host)
+In **Marketplace → Change registry**, add `https://registry.kilombino.com` and install **Mempool Kilombino**. You need a Bitcoin (BLAKE2b) node, e.g. Knots BLAKE2b from Paul's registry, `https://start9.paulscode.com`.
+
+### Umbrel
+
+Add the community app store `https://github.com/Kilombino/umbrel-store` and install **kilombino-mempool**. It uses your Bitcoin (BLAKE2b) node and an Electrs that understands BLAKE2b headers.
+
+### Docker (self-host)
 
 ```sh
-# 1. Prepare the repo for Dockerization (copies Dockerfiles into backend/ and frontend/, downloads GeoIP data)
-sh docker/init.sh
+sh docker/init.sh        # copies the Dockerfiles into backend/ and frontend/ and downloads GeoIP data
 
-# 2. Build the backend (Rust gbt + Node)
-docker buildx build \
-  --tag mempoolbackend:bip110 \
-  --build-context rustgbt=./rust \
-  --build-context backend=./backend \
-  --build-arg commitHash=bip110 \
-  --load ./backend/
+# Backend: Rust GBT + Node. The named build contexts are required.
+docker buildx build --tag mempool-bip110-backend:local \
+  --build-context rustgbt=./rust --build-context backend=./backend \
+  --build-arg commitHash=$(git rev-parse --short HEAD) --load ./backend/
 
-# 3. Build the frontend (Angular)
-docker buildx build \
-  --tag mempoolfrontend:bip110 \
-  --build-arg commitHash=bip110 \
-  --load ./frontend/
+# Frontend (Angular)
+docker buildx build --tag mempool-bip110-frontend:local \
+  --build-arg commitHash=$(git rev-parse --short HEAD) --load ./frontend/
 ```
 
-Then point a `docker-compose.yml` at your own Bitcoin node (Core/Knots RPC) and an Electrum server (Fulcrum / electrs), set the database, and run. See `docker/README.md` for full self-hosting instructions.
+Then use `docker/docker-compose.yml` as a starting point. `docker/README.md` lists every option. To update: `git pull`, rebuild both images and `docker compose up -d`.
 
-> Note: BIP110 violation counts populate for blocks summarised by this build. To backfill historical blocks, let the summaries indexer re-run (or re-summarise).
+## What it needs
 
----
+- **A Bitcoin (BLAKE2b) node** (Knots BLAKE2b) with `txindex=1`. Blocks arrive slowly on this chain, so the node can stay in "initial block download" for a long time. Raise `maxtipage` so wallets and the explorer don't treat it as out of sync. The node must allow RPC from the Docker subnet (`rpcallowip=172.16.0.0/12`).
+- **An Electrum server that understands 164-byte headers**, for address search and history. A stock Fulcrum or electrs stops at block 961639. Use a BLAKE2b build, such as the privkeyio Fulcrum (what mempool.kilombino.com uses), Shulcrum (`Kilombino/Fulcrum`, branch `blake2b-headers`) or Paul's electrs, with `MEMPOOL_BACKEND=electrum`.
+- **MariaDB**. The `blocks.header` column is widened to `varchar(500)` by a migration, because BLAKE2b headers don't fit the original 160 characters.
 
-# The Mempool Open Source Project® [![mempool](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/ry4br7/master&style=flat-square)](https://dashboard.cypress.io/projects/ry4br7/runs)
+Settings that matter on this chain:
 
-Mempool is the fully-featured mempool visualizer, explorer, and API service running at [mempool.space](https://mempool.space/). 
+| Variable | Value | Why |
+|---|---|---|
+| `MEMPOOL_BLOCK_WEIGHT_UNITS` / `BLOCK_WEIGHT_UNITS` | `800000` | this chain's block weight (backend / frontend) |
+| `MEMPOOL_AUTOMATIC_POOLS_UPDATE` | `true` | picks up new miners from `pools-v2.json` |
+| `MEMPOOL_POOLS_JSON_TREE_URL` | `https://api.github.com/repos/Kilombino/mempool-bip110/git/trees/main` | the miner list lives in this repo |
+| `MEMPOOL_POOLS_UPDATE_DELAY` | `3600` | check hourly instead of weekly; newly tagged blocks are re-attributed |
+| `SPAMCHAIN_RPC_URL`, `SPAMCHAIN_ELECTRUM_*`, `SPAMCHAIN_EXPLORER_URL` | optional | a Spamchain node, for the replay information on transaction pages |
+| `NODES_MAP_UPSTREAM` | optional | routes `/nodes-map` to the `contrib/nodes-map` container |
 
-It is an open-source project developed and operated for the benefit of the Bitcoin community, with a focus on the emerging transaction fee market that is evolving Bitcoin into a multi-layer ecosystem.
+## Adding a miner
 
-# Installation Methods
+Mining a block and showing up as "Unknown"? Open a pull request that adds your entry to `pools-v2.json` with its payout addresses and/or a coinbase tag, and a logo at `frontend/src/resources/mining-pools/<slug>.svg`. That directory is gitignored, so use `git add -f`. Keep the file on one line, as it is now.
 
-Mempool can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server. 
-
-Most people should use a <a href="#one-click-installation">one-click install method</a>.
-
-Other install methods are meant for developers and others with experience managing servers. If you want support for your own production instance of Mempool, or if you'd like to have your own instance of Mempool run by the mempool.space team on their own global ISP infrastructure—check out <a href="https://mempool.space/enterprise" target="_blank">Mempool Enterprise®</a>.
-
-<a id="one-click-installation"></a>
-## One-Click Installation
-
-Mempool can be conveniently installed on the following full-node distros: 
-- [Umbrel](https://github.com/getumbrel/umbrel)
-- [RaspiBlitz](https://github.com/rootzoll/raspiblitz)
-- [RoninDojo](https://code.samourai.io/ronindojo/RoninDojo)
-- [myNode](https://github.com/mynodebtc/mynode)
-- [StartOS](https://github.com/Start9Labs/start-os)
-- [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/blob/a1eacce6768ca4894f365af8f79be5bbd594e1c3/examples/configuration.nix#L129)
-
-**We highly recommend you deploy your own Mempool instance this way.** No matter which option you pick, you'll be able to get your own fully-sovereign instance of Mempool up quickly without needing to fiddle with any settings.
-
-## Advanced Installation Methods
-
-Mempool can be installed in other ways too, but we only recommend doing so if you're a developer, have experience managing servers, or otherwise know what you're doing.
-
-- See the [`docker/`](./docker/) directory for instructions on deploying Mempool with Docker.
-- See the [`backend/`](./backend/) and [`frontend/`](./frontend/) directories for manual install instructions oriented for developers.
-- See the [`production/`](./production/) directory for guidance on setting up a more serious Mempool instance designed for high performance at scale.
-## Keeping `pools-v2.json` current for the BLAKE2b chain
-
-`pools-v2.json` at the repo root is the miner list the backend imports (see `MEMPOOL.POOLS_JSON_URL`). `scripts/blake2b-unknown-tags.py` reports coinbases since the fork height that the list does not name, using the backend's own matching rules (per entry: payout addresses, then case-insensitive regex tags):
+`scripts/blake2b-unknown-tags.py` lists coinbases since block 961640 that the list doesn't name yet, using the backend's own matching rules: payout addresses first, then case-insensitive regex tags.
 
 ```sh
 python3 scripts/blake2b-unknown-tags.py                # against mempool.guide's public API
 python3 scripts/blake2b-unknown-tags.py --api http://127.0.0.1:8999/api/v1 --pools pools-v2.json
 ```
 
-It prints one line per unmatched identity (block count, first height, coinbase tag, payout address) and one per entry that matched by address while the coinbase carries a different tag, which usually means a placeholder name. Blocks are cached in `~/.cache/blake2b-unknown-tags.json`, so a cron run fetches only new blocks; `--quiet` prints nothing when the list is complete. Standard library only.
+It prints one line per unmatched identity (block count, first height, coinbase tag, payout address). It also prints one line per entry that matched by address while the coinbase carries a different tag, which usually means the entry has a placeholder name. Blocks are cached in `~/.cache/blake2b-unknown-tags.json`, so a cron run fetches only new blocks. `--quiet` prints nothing when the list is complete. It uses only the standard library.
+
+## Credits & license
+
+Built on [mempool/mempool](https://github.com/mempool/mempool), through [Retropex/mempool](https://github.com/Retropex/mempool) and [paulscode/mempool-bip110](https://github.com/paulscode/mempool-bip110). Thanks to everyone who sent miners and logos.
+
+Licensed under **AGPL-3.0** (see `LICENSE`). This is an independent project, not affiliated with The Mempool Open Source Project®.
+
+Contact: [X](https://x.com/Kilombino_) · [Telegram](https://t.me/kilombino) · [GitHub](https://github.com/Kilombino) · kilombino@proton.me
