@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as fs from 'fs';
 import bitcoinClient from './bitcoin/bitcoin-client';
 import logger from '../logger';
 import difficultyAdjustment from './difficulty-adjustment';
@@ -35,6 +36,20 @@ const FIATS = ['EUR', 'GBP', 'JPY', 'CHF', 'CNY', 'RON', 'PLN', 'CZK', 'HUF', 'S
   'TRY', 'CAD', 'AUD', 'NZD', 'BRL', 'MXN', 'ARS', 'CLP', 'COP', 'PEN', 'UYU', 'VES', 'INR', 'KRW',
   'HKD', 'SGD', 'ZAR', 'ILS', 'THB', 'IDR', 'PHP', 'MYR'];
 const STALE_MAX_MS = 6 * 3600_000;
+// Escasez Blake2b: BTC in UTXOs created at or after the fork, measured once a day on a
+// pruned node by /mnt/datos2/utxo-scarcity/run.sh and mounted here read-only.
+const SCARCITY_FILE = process.env.BLAKE2B_SCARCITY_FILE || '/scarcity/scarcity.json';
+
+export interface Scarcity {
+  // Active supply now: the day's measurement plus the coins mined since (they exist only here).
+  activeSupplyBtc: number;
+  totalSupplyBtc: number;
+  activeShare: number;
+  activeUtxos: number;
+  measuredHeight: number;
+  measuredAt: number;
+  forkHeight: number;
+}
 const HTTP_TIMEOUT_MS = 8_000;
 
 // Minero de referencia del "1 BTC = kWh": el mismo que el cabecero.
@@ -55,6 +70,9 @@ interface WidgetData {
   miner: string;
   yshValue: number | null;
   yshUnit: string | null;
+  // Escasez Blake2b (see Scarcity); null until the first daily measurement exists.
+  activeSupplyBtc: number | null;
+  activeSupplyShare: number | null;
   chainSizeGB: number | null;
   // Precio (añadido para Kilombino wallet: así la app no depende de xbt.live).
   xbtUsd: number | null;
@@ -176,6 +194,29 @@ class Blake2bWidget {
     return supply;
   }
 
+  private scarcityCache: { mtime: number; data: any } | null = null;
+
+  /** The day's measurement, brought up to `height` with the subsidies mined since. Null if missing. */
+  public scarcityAt(height: number): Scarcity | null {
+    try {
+      const st = fs.statSync(SCARCITY_FILE);
+      if (!this.scarcityCache || this.scarcityCache.mtime !== st.mtimeMs) {
+        this.scarcityCache = { mtime: st.mtimeMs, data: JSON.parse(fs.readFileSync(SCARCITY_FILE, 'utf8')) };
+      }
+      const d = this.scarcityCache.data;
+      if (!d || typeof d.activeSats !== 'number' || typeof d.height !== 'number') { return null; }
+      const minted = height > d.height ? this.supplyAtHeight(height) - this.supplyAtHeight(d.height) : 0;
+      const active = d.activeSats / 1e8 + minted;
+      const total = this.supplyAtHeight(height);
+      return {
+        activeSupplyBtc: active, totalSupplyBtc: total, activeShare: active / total,
+        activeUtxos: d.activeUtxos, measuredHeight: d.height, measuredAt: d.measuredAt, forkHeight: d.forkHeight,
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
   private async $refresh(): Promise<WidgetData> {
     const prev = this.cache;
     const settle = async <T>(p: Promise<T>): Promise<T | null> => {
@@ -234,8 +275,11 @@ class Blake2bWidget {
     const kwhPerBtc = thsBtcDay && thsBtcDay > 0 ? ((MINER_WATTS / MINER_THS) * 24 / 1000) / thsBtcDay : null;
 
     let yshValue: number | null = null, yshUnit: string | null = null;
+    const scarcity = height !== null ? this.scarcityAt(height) : null;
     if (hashps && height !== null) {
-      const perBtc = hashps / this.supplyAtHeight(height);
+      // YSH over the coins that live on this chain (moved or mined since the fork), not the
+      // whole supply: coins nobody has touched since the PoW change pay for none of its security.
+      const perBtc = hashps / (scarcity ? scarcity.activeSupplyBtc : this.supplyAtHeight(height));
       const units: [number, string][] = [[1e18, 'EH/s'], [1e15, 'PH/s'], [1e12, 'TH/s'], [1e9, 'GH/s'], [1e6, 'MH/s'], [1e3, 'kH/s']];
       yshValue = perBtc; yshUnit = 'H/s';
       for (const [f, u] of units) {
@@ -279,6 +323,8 @@ class Blake2bWidget {
       miner: MINER_NAME,
       yshValue,
       yshUnit,
+      activeSupplyBtc: scarcity ? scarcity.activeSupplyBtc : (prev?.activeSupplyBtc ?? null),
+      activeSupplyShare: scarcity ? scarcity.activeShare : (prev?.activeSupplyShare ?? null),
       chainSizeGB,
       xbtUsd: usdNow,
       xbtEur,

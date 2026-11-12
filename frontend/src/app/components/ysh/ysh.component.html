@@ -4,8 +4,8 @@
     <h2><ng-container i18n="@@ysh.title">Your Security Hashrate</ng-container> <span class="sigla">YSH</span></h2>
     <p class="lead" i18n="@@ysh.intro">
       Your YSH is the break-even point between what you mine and what you hold
-      in Bitcoin-Blake2b: the network's hashrate shared out among every coin in circulation,
-      multiplied by the coins you keep. It is the share of the chain's security that your own
+      in Bitcoin-Blake2b: the network's hashrate shared out among the coins that live on this
+      chain (moved or mined since the BLAKE2b fork), multiplied by the coins you keep. It is the share of the chain's security that your own
       money calls for.
     </p>
     <p class="lead" i18n="@@ysh.intro2">
@@ -133,10 +133,16 @@
               <td i18n="@@ysh.network-hashrate">Network hashrate</td>
               <td class="text-end">{{ formatHashrate(networkHashrate) }}</td>
             </tr>
-            <tr>
-              <td i18n="@@ysh.coins-in-circulation">Coins in circulation</td>
-              <td class="text-end">{{ circulatingSupply | number: '1.0-0' }} BTC</td>
+            <tr *ngIf="activeSupply !== null; else issuedRow">
+              <td i18n="@@header.blake2b-scarcity">Blake2b scarcity</td>
+              <td class="text-end">{{ activeSupply | number: '1.0-0' }} BTC<span *ngIf="activeShare !== null"> ({{ activeShare * 100 | number: '1.1-1' }}%)</span></td>
             </tr>
+            <ng-template #issuedRow>
+              <tr>
+                <td i18n="@@ysh.coins-in-circulation">Coins in circulation</td>
+                <td class="text-end">{{ circulatingSupply | number: '1.0-0' }} BTC</td>
+              </tr>
+            </ng-template>
             <tr>
               <td i18n="@@ysh.per-coin">YSH per coin</td>
               <td class="text-end">1 BTC = {{ formatHashrate(hashPerBtc) }}</td>
@@ -151,8 +157,10 @@
         <p class="footnote" i18n="@@ysh.footnote">
           The figures refresh every minute. The network hashrate is an estimate from recent
           blocks, so it wobbles a little between readings; that is why the balance verdict is
-          given with a wide margin, give or take 25 %. The supply is what has been issued up to
-          the current height, adding up the subsidy of each halving epoch.
+          given with a wide margin, give or take 25 %. The coins counted are those in outputs created
+          since the BLAKE2b fork (block 961640), each counted once however often it moves, measured
+          once a day plus what has been mined since; coins untouched since the PoW change pay for
+          none of this chain's security.
         </p>
 
       </div>

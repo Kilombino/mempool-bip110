@@ -409,7 +409,7 @@ main {
       flex-grow: 0;
     }
   }
-  #btn-yield .yield-info, #btn-rent .yield-info, #btn-ysh .yield-info, #btn-chainsize .chain-size {
+  #btn-yield .yield-info, #btn-rent .yield-info, #btn-ysh .yield-info, #btn-chainsize .chain-size, #btn-scarcity .chain-size {
     font-size: 0.75rem;
     gap: 4px;
   }
@@ -421,7 +421,7 @@ main {
     font-size: 0.7rem;
   }
   #btn-yield .nav-link, #btn-rent .nav-link, #btn-price .nav-link, #btn-price-btc .nav-link,
-  #btn-energy .nav-link, #btn-ysh .nav-link, #btn-chainsize .nav-link {
+  #btn-energy .nav-link, #btn-ysh .nav-link, #btn-chainsize .nav-link, #btn-scarcity .nav-link {
     padding-left: 9px;
     padding-right: 9px;
   }
@@ -443,7 +443,7 @@ main {
   color: #d9b48a;
   font-size: 0.78rem;
 }
-#btn-ysh .yield-info, #btn-chainsize .chain-size {
+#btn-ysh .yield-info, #btn-chainsize .chain-size, #btn-scarcity .chain-size {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -456,11 +456,11 @@ main {
   cursor: pointer;
   text-decoration: none;
 }
-#btn-ysh .yield-label, #btn-chainsize .yield-label {
+#btn-ysh .yield-label, #btn-chainsize .yield-label, #btn-scarcity .yield-label {
   color: #ff9d1c;
   font-weight: 600;
 }
-#btn-ysh .yield-value, #btn-chainsize .yield-value {
+#btn-ysh .yield-value, #btn-chainsize .yield-value, #btn-scarcity .yield-value {
   color: #d9b48a;
 }
 

@@ -33,6 +33,9 @@ export class YshComponent implements OnInit, OnDestroy {
 
   networkHashrate: number | null = null;   // H/s
   circulatingSupply: number | null = null; // BTC emitidos
+  // Escasez Blake2b: BTC in outputs created since the fork (/api/v1/blake2b/scarcity).
+  activeSupply: number | null = null;
+  activeShare: number | null = null;
   blockHeight: number | null = null;
 
   /** Coste de alquiler más barato de 1 TH/s al día, en BTC real, y el precio del BTC real. */
@@ -53,6 +56,13 @@ export class YshComponent implements OnInit, OnDestroy {
       this.http.get<any>('/api/v1/mining/hashrate/3d').pipe(catchError(() => of(null))).subscribe((res) => {
         if (res && typeof res.currentHashrate === 'number' && res.currentHashrate > 0) {
           this.networkHashrate = res.currentHashrate;
+          this.cd.markForCheck();
+        }
+      });
+      this.http.get<any>('/api/v1/blake2b/scarcity').pipe(catchError(() => of(null))).subscribe((r) => {
+        if (r && typeof r.activeSupplyBtc === 'number' && r.activeSupplyBtc > 0) {
+          this.activeSupply = r.activeSupplyBtc;
+          this.activeShare = typeof r.activeShare === 'number' ? r.activeShare : null;
           this.cd.markForCheck();
         }
       });
@@ -114,7 +124,8 @@ export class YshComponent implements OnInit, OnDestroy {
 
   /** Hashrate que respalda cada BTC, en H/s. */
   get hashPerBtc(): number | null {
-    return this.ready ? this.networkHashrate / this.circulatingSupply : null;
+    // Over the coins that live on this chain once measured; the issued supply until then.
+    return this.ready ? this.networkHashrate / (this.activeSupply ?? this.circulatingSupply) : null;
   }
 
   /** Hashrate que le correspondería a la cantidad introducida, en H/s. */

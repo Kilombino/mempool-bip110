@@ -74,6 +74,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/peers-by-version', this.getBlake2bPeersByVersion.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/chain-size', this.getBlake2bChainSize.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/widget', this.getBlake2bWidget.bind(this))
+      .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/scarcity', this.getBlake2bScarcity.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/spamchain/tx/:txId', this.getBlake2bSpamchainTx.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'blake2b/relay-policy', this.getBlake2bRelayPolicy)
       .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/blake2b-header', this.getBlake2bBlockHeader.bind(this))
@@ -553,6 +554,22 @@ class BitcoinRoutes {
   }
 
   /** Datos del cabecero para el widget de Android. Ver api/blake2b-widget.ts. */
+  private async getBlake2bScarcity(req: Request, res: Response) {
+    try {
+      const height = await bitcoinClient.getBlockCount();
+      const s = blake2bWidget.scarcityAt(height);
+      res.setHeader('Cache-Control', 'public, max-age=300');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      if (!s) {
+        res.status(503).send('No measurement yet');
+        return;
+      }
+      res.json(s);
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get scarcity: ' + (e instanceof Error ? e.message : e));
+    }
+  }
+
   private async getBlake2bWidget(req: Request, res: Response) {
     try {
       const data = await blake2bWidget.$get();

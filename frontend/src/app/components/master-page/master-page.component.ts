@@ -64,6 +64,10 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   yshUnit = 'GH/s';
   private networkHashrate: number | null = null;  // H/s
   private circulatingSupply: number | null = null; // BTC emitidos hasta la punta
+  // Escasez Blake2b: BTC in UTXOs created since the fork (moved or mined on this chain),
+  // measured daily on a pruned node; served by /api/v1/blake2b/scarcity.
+  activeSupply: number | null = null;
+  activeShare: number | null = null;
   // Energía equivalente a 1 BTC (Bitcoin-Blake2b) minándolo con el ASIC de referencia.
   kwhPerBtc: number | null = null;
 
@@ -114,6 +118,13 @@ export class MasterPageComponent implements OnInit, OnDestroy {
         }
         if (res && typeof res.currentHashrate === 'number' && res.currentHashrate > 0) {
           this.networkHashrate = res.currentHashrate;
+          this.recomputeYsh();
+        }
+      });
+      this.http.get<any>('/api/v1/blake2b/scarcity').pipe(catchError(() => of(null))).subscribe((r) => {
+        if (r && typeof r.activeSupplyBtc === 'number' && r.activeSupplyBtc > 0) {
+          this.activeSupply = r.activeSupplyBtc;
+          this.activeShare = typeof r.activeShare === 'number' ? r.activeShare : null;
           this.recomputeYsh();
         }
       });
@@ -210,8 +221,11 @@ export class MasterPageComponent implements OnInit, OnDestroy {
    * 0,0017 y no se leería). Si algún día la red crece lo bastante, pasará a TH/s por sí solo.
    */
   private recomputeYsh(): void {
-    if (!this.networkHashrate || !this.circulatingSupply) { return; }
-    const hsPerBtc = this.networkHashrate / this.circulatingSupply;
+    // Over the coins that live on this chain when the daily measurement is there: coins nobody
+    // has touched since the PoW change pay for none of its security.
+    const supply = this.activeSupply ?? this.circulatingSupply;
+    if (!this.networkHashrate || !supply) { return; }
+    const hsPerBtc = this.networkHashrate / supply;
     const units: [number, string][] = [[1e18, 'EH/s'], [1e15, 'PH/s'], [1e12, 'TH/s'], [1e9, 'GH/s'], [1e6, 'MH/s'], [1e3, 'kH/s']];
     for (const [factor, label] of units) {
       if (hsPerBtc >= factor) {
