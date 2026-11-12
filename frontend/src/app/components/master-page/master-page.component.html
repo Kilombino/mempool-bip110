@@ -68,7 +68,7 @@
     <a *ngIf="mrrBtcPerThDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s rent <b>{{ mrrPoolsatsPerThDay | number: '1.0-0' }} Poolsats/day</b><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></a>
     <a *ngIf="kwhPerBtc !== null" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer">1 BTC = <b>{{ kwhPerBtc | number: '1.0-0' }} kWh</b> ({{ minerName }})</a>
     <a *ngIf="yshValue !== null" [routerLink]="['/tools/ysh' | relativeUrl]">YSH 1 BTC = <b>{{ yshValue | number: '1.2-2' }} {{ yshUnit }}</b></a>
-    <span *ngIf="activeSupply !== null"><span i18n="@@header.blake2b-scarcity">Blake2b scarcity</span>&nbsp;<b>{{ activeSupply / 1000000 | number: '1.2-2' }}M BTC</b><span *ngIf="activeShare !== null"> ({{ activeShare * 100 | number: '1.1-1' }}%)</span></span>
+    <span *ngIf="activeSupply !== null"><span i18n="@@header.blake2b-scarcity">New PoW Scarcity</span>&nbsp;<b>{{ activeSupply / 1000000 | number: '1.2-2' }}M BTC</b><span *ngIf="activeShare !== null"> ({{ activeShare * 100 | number: '1.1-1' }}%)</span></span>
     <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
   </div>
 
@@ -165,10 +165,10 @@
           <span class="yield-value">1 BTC = {{ yshValue | number: '1.2-2' }} {{ yshUnit }}</span>
         </a>
       </li>
-      <!-- Escasez Blake2b: BTC que ya viven en esta cadena (movidos o minados desde la bifurcación) -->
+      <!-- New PoW Scarcity: BTC que ya viven en esta cadena (movidos o minados desde la bifurcación) -->
       <li class="nav-item d-none d-lg-flex" id="btn-scarcity" *ngIf="activeSupply !== null">
         <span class="nav-link yield-info chain-size" i18n-title="@@header.blake2b-scarcity-title" title="BTC in outputs created since the BLAKE2b fork (block 961640): coins moved or mined on this chain, each counted once. Measured once a day; the rest of the supply has not moved since the PoW change.">
-          <span class="yield-label" i18n="@@header.blake2b-scarcity">Blake2b scarcity</span>
+          <span class="yield-label" i18n="@@header.blake2b-scarcity">New PoW Scarcity</span>
           <span class="yield-value">{{ activeSupply / 1000000 | number: '1.2-2' }}M BTC<span *ngIf="activeShare !== null"> ({{ activeShare * 100 | number: '1.1-1' }}%)</span></span>
         </span>
       </li>

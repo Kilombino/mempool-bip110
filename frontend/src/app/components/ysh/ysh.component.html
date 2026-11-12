@@ -134,7 +134,7 @@
               <td class="text-end">{{ formatHashrate(networkHashrate) }}</td>
             </tr>
             <tr *ngIf="activeSupply !== null; else issuedRow">
-              <td i18n="@@header.blake2b-scarcity">Blake2b scarcity</td>
+              <td i18n="@@header.blake2b-scarcity">New PoW Scarcity</td>
               <td class="text-end">{{ activeSupply | number: '1.0-0' }} BTC<span *ngIf="activeShare !== null"> ({{ activeShare * 100 | number: '1.1-1' }}%)</span></td>
             </tr>
             <ng-template #issuedRow>

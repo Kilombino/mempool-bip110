@@ -11948,7 +11948,7 @@
         <source>Something went wrong. Try again in a while.</source>
         <target>Algo ha fallado. Prueba de nuevo dentro de un rato.</target>
       </trans-unit>
-      <trans-unit id="header.blake2b-scarcity" datatype="html"><target>Escasez Blake2b</target></trans-unit>
+      <trans-unit id="header.blake2b-scarcity" datatype="html"><target>New PoW Scarcity</target></trans-unit>
       <trans-unit id="header.blake2b-scarcity-title" datatype="html"><target>BTC en salidas creadas desde la bifurcación BLAKE2b (bloque 961640): monedas movidas o minadas en esta cadena, cada una contada una vez. Se mide una vez al día; el resto del suministro no se ha movido desde el cambio de PoW.</target></trans-unit>
     </body>
   </file>

@@ -33,7 +33,7 @@ export class YshComponent implements OnInit, OnDestroy {
 
   networkHashrate: number | null = null;   // H/s
   circulatingSupply: number | null = null; // BTC emitidos
-  // Escasez Blake2b: BTC in outputs created since the fork (/api/v1/blake2b/scarcity).
+  // New PoW Scarcity: BTC in outputs created since the fork (/api/v1/blake2b/scarcity).
   activeSupply: number | null = null;
   activeShare: number | null = null;
   blockHeight: number | null = null;

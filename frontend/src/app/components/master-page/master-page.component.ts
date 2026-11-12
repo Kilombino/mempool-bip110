@@ -64,7 +64,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   yshUnit = 'GH/s';
   private networkHashrate: number | null = null;  // H/s
   private circulatingSupply: number | null = null; // BTC emitidos hasta la punta
-  // Escasez Blake2b: BTC in UTXOs created since the fork (moved or mined on this chain),
+  // New PoW Scarcity: BTC in UTXOs created since the fork (moved or mined on this chain),
   // measured daily on a pruned node; served by /api/v1/blake2b/scarcity.
   activeSupply: number | null = null;
   activeShare: number | null = null;
