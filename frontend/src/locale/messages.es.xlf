@@ -11497,7 +11497,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="ysh.intro" datatype="html">
-        <target>Tu YSH es el punto de equilibrio entre lo que minas y lo que tienes en Bitcoin-Blake2b: el hashrate de la red repartido entre las monedas que viven en esta cadena (movidas o minadas desde la bifurcación BLAKE2b), multiplicado por las que guardas. Es la parte de la seguridad de la cadena que te toca pagar por tu propio dinero.</target>
+        <target>Tu YSH es el punto de equilibrio entre lo que minas y lo que tienes en Bitcoin-Blake2b: el hashrate de la red repartido entre las monedas que viven en esta cadena (movidas o minadas desde que se bifurcó Spamchain), multiplicado por las que guardas. Es la parte de la seguridad de la cadena que te toca pagar por tu propio dinero.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
         </context-group>
@@ -11653,7 +11653,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="ysh.footnote" datatype="html">
-        <target>Los datos se refrescan cada minuto. El hashrate de la red es una estimación a partir de los bloques recientes, así que baila un poco de una lectura a otra; por eso el veredicto de equilibrio se da con un margen ancho, de más o menos un 25 %. Las monedas que cuentan son las que están en salidas creadas desde la bifurcación BLAKE2b (bloque 961640), cada una una sola vez aunque se mueva muchas veces, medidas una vez al día más lo minado desde entonces; las que nadie ha tocado desde el cambio de PoW no pagan nada de la seguridad de esta cadena.</target>
+        <target>Los datos se refrescan cada minuto. El hashrate de la red es una estimación a partir de los bloques recientes, así que baila un poco de una lectura a otra; por eso el veredicto de equilibrio se da con un margen ancho, de más o menos un 25 %. Las monedas que cuentan son las que están en salidas creadas desde que se bifurcó Spamchain (bloque 961640), cada una una sola vez aunque se mueva muchas veces, medidas una vez al día más lo minado desde entonces; las que nadie ha tocado desde el cambio de PoW no pagan nada de la seguridad de esta cadena.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/ysh/ysh.component.html</context>
         </context-group>
@@ -11949,7 +11949,7 @@
         <target>Algo ha fallado. Prueba de nuevo dentro de un rato.</target>
       </trans-unit>
       <trans-unit id="header.blake2b-scarcity" datatype="html"><target>New PoW Scarcity</target></trans-unit>
-      <trans-unit id="header.blake2b-scarcity-title" datatype="html"><target>BTC en salidas creadas desde la bifurcación BLAKE2b (bloque 961640): monedas movidas o minadas en esta cadena, cada una contada una vez. Se mide una vez al día; el resto del suministro no se ha movido desde el cambio de PoW.</target></trans-unit>
+      <trans-unit id="header.blake2b-scarcity-title" datatype="html"><target>BTC en salidas creadas desde que se bifurcó Spamchain (bloque 961640): monedas movidas o minadas en esta cadena, cada una contada una vez. Se mide una vez al día; el resto del suministro no se ha movido desde el cambio de PoW.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -167,7 +167,7 @@
       </li>
       <!-- New PoW Scarcity: BTC que ya viven en esta cadena (movidos o minados desde la bifurcación) -->
       <li class="nav-item d-none d-lg-flex" id="btn-scarcity" *ngIf="activeSupply !== null">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.blake2b-scarcity-title" title="BTC in outputs created since the BLAKE2b fork (block 961640): coins moved or mined on this chain, each counted once. Measured once a day; the rest of the supply has not moved since the PoW change.">
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.blake2b-scarcity-title" title="BTC in outputs created since the Spamchain forked off (block 961640): coins moved or mined on this chain, each counted once. Measured once a day; the rest of the supply has not moved since the PoW change.">
           <span class="yield-label" i18n="@@header.blake2b-scarcity">New PoW Scarcity</span>
           <span class="yield-value">{{ activeSupply / 1000000 | number: '1.2-2' }}M BTC<span *ngIf="activeShare !== null"> ({{ activeShare * 100 | number: '1.1-1' }}%)</span></span>
         </span>
