@@ -172,6 +172,11 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     return this.thsBtcDay === null ? null : this.thsBtcDay * 100000000;
   }
 
+  /** The estimated earnings of 1 TH/s converted to Poolsats (sats of the SHA-256 coin) per day. */
+  get thsPoolsatsDay(): number | null {
+    return this.thsUsdDay && this.realBtcUsd ? this.thsUsdDay / this.realBtcUsd * 100000000 : null;
+  }
+
   /** The cheapest rent of 1 TH/s converted to sats of BTC (BLAKE2b), to compare with what it earns. */
   get mrrSatsPerThDay(): number | null {
     return this.mrrUsdPerThDay && this.btcb2Price ? this.mrrUsdPerThDay / this.btcb2Price * 100000000 : null;
