@@ -167,6 +167,16 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     return this.mrrBtcPerThDay === null ? null : this.mrrBtcPerThDay * 100000000;
   }
 
+  /** The estimated earnings of 1 TH/s in sats of BTC (BLAKE2b) per day. */
+  get thsSatsDay(): number | null {
+    return this.thsBtcDay === null ? null : this.thsBtcDay * 100000000;
+  }
+
+  /** The cheapest rent of 1 TH/s converted to sats of BTC (BLAKE2b), to compare with what it earns. */
+  get mrrSatsPerThDay(): number | null {
+    return this.mrrUsdPerThDay && this.btcb2Price ? this.mrrUsdPerThDay / this.btcb2Price * 100000000 : null;
+  }
+
   private recomputeRentCost(): void {
     if (this.mrrBtcPerThDay && this.realBtcUsd) {
       this.mrrUsdPerThDay = this.mrrBtcPerThDay * this.realBtcUsd;
