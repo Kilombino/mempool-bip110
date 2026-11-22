@@ -71,6 +71,7 @@
     <ng-container *ngIf="splitCoins">
       <span><span i18n="@@header.split-only-btc">Moved only on Bitcoin</span>&nbsp;<b>{{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
       <span><span i18n="@@header.split-both">Moved on Spamcoin and Bitcoin</span>&nbsp;<b>{{ splitCoins.both.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
+      <span *ngIf="splitCoins.minedSinceSplit"><span i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</span>&nbsp;<b>{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.minedSinceSplit.share * 100 | number: '1.2-2' }}%)</span>
     </ng-container>
     <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
   </div>
@@ -180,6 +181,12 @@
         <span class="nav-link yield-info chain-size" i18n-title="@@header.split-both-title" title="Coins that existed when the chains split that have been spent on both Spamcoin and Bitcoin: {{ splitCoins.both.sameTx.btc | number: '1.0-0' }} BTC by the same transaction on both (replayed) and {{ splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC by a different one. Another {{ splitCoins.onlySpam.btc | number: '1.0-0' }} BTC have moved only on Spamcoin. Updated every block.">
           <span class="yield-label" i18n="@@header.split-both">Moved on Spamcoin and Bitcoin</span>
           <span class="yield-value">{{ splitCoins.both.btc | number: '1.0-0' }} BTC ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
+        </span>
+      </li>
+      <li class="nav-item d-none d-lg-flex" id="btn-split-mined" *ngIf="splitCoins?.minedSinceSplit">
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-mined-title" title="New coins (block subsidy) mined on Bitcoin since block 961632; fees do not count because they are not new coins.">
+          <span class="yield-label" i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</span>
+          <span class="yield-value">{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC ({{ splitCoins.minedSinceSplit.share * 100 | number: '1.2-2' }}%)</span>
         </span>
       </li>
       <!-- Lo que pesa la cadena Bitcoin-Blake2b en disco -->
