@@ -11490,6 +11490,12 @@ Publicera för att lägga till den i mempoolen.</target>
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>Endast flyttade på Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Flyttade på Spamcoin och Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Mint på Bitcoin sedan Spamcoins hardfork</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mynt som fanns när kedjorna delades (utgångar skapade till och med block 961631, finns på båda) som har spenderats på Bitcoin och fortfarande är ospenderade på Spamcoin. Procentsatsen avser de <x id="INTERPOLATION"/>M BTC som fanns vid delningen. Uppdateras vid varje block.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Mynt som fanns när kedjorna delades och som har spenderats på både Spamcoin och Bitcoin: <x id="INTERPOLATION"/> BTC med samma transaktion på båda (replay) och <x id="INTERPOLATION_1"/> BTC med en annan. Ytterligare <x id="INTERPOLATION_2"/> BTC har bara flyttats på Spamcoin. Uppdateras vid varje block.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>Nya mynt (blocksubvention) minade på Bitcoin sedan block 961632; avgifter räknas inte eftersom de inte är nya mynt.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -11489,6 +11489,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>فقط در Bitcoin جابه‌جا شده</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>در Spamcoin و Bitcoin جابه‌جا شده</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>استخراج‌شده در Bitcoin از زمان hardfork اسپم‌کوین</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>سکه‌هایی که هنگام جدا شدن زنجیره‌ها وجود داشتند (خروجی‌های ساخته‌شده تا بلوک 961631، موجود در هر دو) که در Bitcoin خرج شده‌اند و در Spamcoin هنوز خرج نشده‌اند. درصد نسبت به <x id="INTERPOLATION"/>M BTC موجود در زمان جدایی است. با هر بلوک به‌روز می‌شود.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>سکه‌هایی که هنگام جدا شدن زنجیره‌ها وجود داشتند و هم در Spamcoin و هم در Bitcoin خرج شده‌اند: <x id="INTERPOLATION"/> BTC با همان تراکنش در هر دو (replay) و <x id="INTERPOLATION_1"/> BTC با تراکنشی دیگر. <x id="INTERPOLATION_2"/> BTC دیگر فقط در Spamcoin جابه‌جا شده‌اند. با هر بلوک به‌روز می‌شود.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>سکه‌های جدید (پاداش بلوک) استخراج‌شده در Bitcoin از بلوک 961632؛ کارمزدها حساب نمی‌شوند چون سکهٔ جدید نیستند.</target></trans-unit>
     </body>
   </file>
 </xliff>

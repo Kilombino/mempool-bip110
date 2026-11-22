@@ -11489,6 +11489,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>הועברו רק בביטקוין</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>הועברו ב-Spamcoin ובביטקוין</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>נכרה בביטקוין מאז ה-hardfork של Spamcoin</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>מטבעות שהיו קיימים כשהשרשראות נפרדו (פלטים שנוצרו עד בלוק 961631, קיימים בשתיהן) שהוצאו בביטקוין ועדיין לא הוצאו ב-Spamcoin. האחוז הוא מתוך <x id="INTERPOLATION"/>M BTC שהיו קיימים בעת הפיצול. מתעדכן בכל בלוק.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>מטבעות שהיו קיימים כשהשרשראות נפרדו והוצאו גם ב-Spamcoin וגם בביטקוין: <x id="INTERPOLATION"/> BTC באותה עסקה בשתיהן (replay) ו-<x id="INTERPOLATION_1"/> BTC בעסקה אחרת. עוד <x id="INTERPOLATION_2"/> BTC הועברו רק ב-Spamcoin. מתעדכן בכל בלוק.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>מטבעות חדשים (סבסוד בלוק) שנכרו בביטקוין מאז בלוק 961632; עמלות אינן נספרות כי הן אינן מטבעות חדשים.</target></trans-unit>
     </body>
   </file>
 </xliff>

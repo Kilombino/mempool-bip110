@@ -10844,6 +10844,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>Premaknjeno samo na Bitcoinu</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Premaknjeno na Spamcoinu in Bitcoinu</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Izkopano na Bitcoinu od hardforka Spamcoina</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Kovanci, ki so obstajali ob ločitvi verig (izhodi, ustvarjeni do bloka 961631, prisotni na obeh), porabljeni na Bitcoinu in še neporabljeni na Spamcoinu. Odstotek je od <x id="INTERPOLATION"/>M BTC, ki so obstajali ob ločitvi. Posodobi se z vsakim blokom.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Kovanci, ki so obstajali ob ločitvi verig in so bili porabljeni na Spamcoinu in Bitcoinu: <x id="INTERPOLATION"/> BTC z isto transakcijo na obeh (replay) in <x id="INTERPOLATION_1"/> BTC z drugo. Še <x id="INTERPOLATION_2"/> BTC se je premaknilo samo na Spamcoinu. Posodobi se z vsakim blokom.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>Novi kovanci (blokovna subvencija), izkopani na Bitcoinu od bloka 961632; provizije se ne štejejo, ker niso novi kovanci.</target></trans-unit>
     </body>
   </file>
 </xliff>

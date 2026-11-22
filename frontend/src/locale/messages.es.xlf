@@ -11952,9 +11952,9 @@
       <trans-unit id="header.blake2b-scarcity-title" datatype="html"><target>BTC en salidas creadas desde que se bifurcó Spamchain (bloque 961640): monedas movidas o minadas en esta cadena, cada una contada una vez. Se mide una vez al día; el resto del suministro no se ha movido desde el cambio de PoW.</target></trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Movidas solo en Bitcoin</target></trans-unit>
       <trans-unit id="header.split-both" datatype="html"><target>Movidas en Spamcoin y Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Minado en Bitcoin desde el hardfork de Spamcoin</target></trans-unit>
       <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monedas que existían al separarse las cadenas (salidas creadas hasta el bloque 961631, presentes en las dos) que se han gastado en Bitcoin y siguen sin gastar en Spamcoin. El porcentaje es sobre los <x id="INTERPOLATION"/>M BTC que había al separarse. Se actualiza a cada bloque.</target></trans-unit>
       <trans-unit id="header.split-both-title" datatype="html"><target>Monedas que existían al separarse las cadenas y que se han gastado tanto en Spamcoin como en Bitcoin: <x id="INTERPOLATION"/> BTC con la misma transacción en las dos (replay) y <x id="INTERPOLATION_1"/> BTC con otra distinta. Otros <x id="INTERPOLATION_2"/> BTC se han movido solo en Spamcoin. Se actualiza a cada bloque.</target></trans-unit>
-      <trans-unit id="header.split-mined" datatype="html"><target>Minado en Bitcoin desde el hardfork de Spamcoin</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Monedas nuevas (subsidio de bloque) minadas en Bitcoin desde el bloque 961632; las comisiones no cuentan porque no son monedas nuevas.</target></trans-unit>
     </body>
   </file>

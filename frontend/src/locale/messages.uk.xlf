@@ -11303,6 +11303,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>Переміщено лише в Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Переміщено в Spamcoin і Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Видобуто в Bitcoin після хардфорку Spamcoin</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Монети, що існували на момент розділення ланцюжків (виходи, створені до блоку 961631, наявні в обох), які витрачено в Bitcoin і досі не витрачено в Spamcoin. Відсоток рахується від <x id="INTERPOLATION"/>M BTC, що існували на момент розділення. Оновлюється з кожним блоком.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Монети, що існували на момент розділення ланцюжків і витрачені і в Spamcoin, і в Bitcoin: <x id="INTERPOLATION"/> BTC тією самою транзакцією в обох (replay) і <x id="INTERPOLATION_1"/> BTC іншою. Ще <x id="INTERPOLATION_2"/> BTC переміщено лише в Spamcoin. Оновлюється з кожним блоком.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>Нові монети (субсидія блоку), видобуті в Bitcoin з блоку 961632; комісії не враховуються, бо це не нові монети.</target></trans-unit>
     </body>
   </file>
 </xliff>

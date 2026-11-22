@@ -11489,6 +11489,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>Kun flyttet på Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Flyttet på Spamcoin og Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Utvunnet på Bitcoin siden Spamcoin-hardforken</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mynter som fantes da kjedene skilte lag (utganger opprettet til og med blokk 961631, til stede på begge) som er brukt på Bitcoin og fortsatt ubrukt på Spamcoin. Prosenten er av de <x id="INTERPOLATION"/>M BTC som fantes ved delingen. Oppdateres for hver blokk.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Mynter som fantes da kjedene skilte lag, og som er brukt på både Spamcoin og Bitcoin: <x id="INTERPOLATION"/> BTC med samme transaksjon på begge (replay) og <x id="INTERPOLATION_1"/> BTC med en annen. Ytterligere <x id="INTERPOLATION_2"/> BTC er bare flyttet på Spamcoin. Oppdateres for hver blokk.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>Nye mynter (blokksubsidie) utvunnet på Bitcoin siden blokk 961632; gebyrer teller ikke fordi de ikke er nye mynter.</target></trans-unit>
     </body>
   </file>
 </xliff>

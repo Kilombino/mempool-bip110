@@ -11478,6 +11478,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>نُقلت على Bitcoin فقط</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>نُقلت على Spamcoin وBitcoin</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>المُعدَّن على Bitcoin منذ hardfork الـ Spamcoin</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>عملات كانت موجودة عند انفصال السلسلتين (مخرجات أُنشئت حتى الكتلة 961631، موجودة في كلتيهما) أُنفقت على Bitcoin ولا تزال غير منفقة على Spamcoin. النسبة من <x id="INTERPOLATION"/>M BTC الموجودة عند الانفصال. يُحدَّث مع كل كتلة.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>عملات كانت موجودة عند انفصال السلسلتين وأُنفقت على Spamcoin وعلى Bitcoin معًا: <x id="INTERPOLATION"/> BTC بالمعاملة نفسها في كلتيهما (replay) و<x id="INTERPOLATION_1"/> BTC بمعاملة مختلفة. و<x id="INTERPOLATION_2"/> BTC أخرى نُقلت على Spamcoin فقط. يُحدَّث مع كل كتلة.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>عملات جديدة (مكافأة الكتلة) عُدِّنت على Bitcoin منذ الكتلة 961632؛ الرسوم لا تُحتسب لأنها ليست عملات جديدة.</target></trans-unit>
     </body>
   </file>
 </xliff>

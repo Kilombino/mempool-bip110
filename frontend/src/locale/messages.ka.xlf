@@ -11012,6 +11012,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>გადაადგილებული მხოლოდ Bitcoin-ზე</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>გადაადგილებული Spamcoin-ზე და Bitcoin-ზე</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Bitcoin-ზე მოპოვებული Spamcoin-ის hardfork-ის შემდეგ</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>მონეტები, რომლებიც არსებობდა ჯაჭვების გაყოფისას (961631-ე ბლოკამდე შექმნილი გამოსავლები, ორივე ჯაჭვზე), რომლებიც დაიხარჯა Bitcoin-ზე და Spamcoin-ზე ჯერ არ დახარჯულა. პროცენტი გამოითვლება გაყოფისას არსებული <x id="INTERPOLATION"/>M BTC-დან. ახლდება ყოველ ბლოკზე.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>მონეტები, რომლებიც არსებობდა ჯაჭვების გაყოფისას და დაიხარჯა როგორც Spamcoin-ზე, ისე Bitcoin-ზე: <x id="INTERPOLATION"/> BTC ერთი და იგივე ტრანზაქციით ორივეზე (replay) და <x id="INTERPOLATION_1"/> BTC სხვა ტრანზაქციით. კიდევ <x id="INTERPOLATION_2"/> BTC გადაადგილდა მხოლოდ Spamcoin-ზე. ახლდება ყოველ ბლოკზე.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>ახალი მონეტები (ბლოკის სუბსიდია), მოპოვებული Bitcoin-ზე 961632-ე ბლოკიდან; საკომისიოები არ ითვლება, რადგან ისინი ახალი მონეტები არ არის.</target></trans-unit>
     </body>
   </file>
 </xliff>

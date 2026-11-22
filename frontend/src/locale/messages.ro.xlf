@@ -11475,6 +11475,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>Mutate doar pe Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Mutate pe Spamcoin și Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Minat pe Bitcoin de la hardfork-ul Spamcoin</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monede care existau la separarea lanțurilor (ieșiri create până la blocul 961631, prezente pe ambele) cheltuite pe Bitcoin și încă necheltuite pe Spamcoin. Procentul este din cei <x id="INTERPOLATION"/>M BTC existenți la separare. Se actualizează la fiecare bloc.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Monede care existau la separarea lanțurilor, cheltuite atât pe Spamcoin, cât și pe Bitcoin: <x id="INTERPOLATION"/> BTC prin aceeași tranzacție pe ambele (replay) și <x id="INTERPOLATION_1"/> BTC prin alta. Alți <x id="INTERPOLATION_2"/> BTC s-au mutat doar pe Spamcoin. Se actualizează la fiecare bloc.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>Monede noi (subvenția blocului) minate pe Bitcoin de la blocul 961632; comisioanele nu se iau în calcul, deoarece nu sunt monede noi.</target></trans-unit>
     </body>
   </file>
 </xliff>

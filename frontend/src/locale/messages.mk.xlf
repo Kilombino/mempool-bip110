@@ -11026,6 +11026,12 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="header.split-only-btc" datatype="html"><target>Преместени само на Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Преместени на Spamcoin и Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-mined" datatype="html"><target>Ископано на Bitcoin од хардфоркот на Spamcoin</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Монети што постоеја кога се разделија синџирите (излези создадени до блок 961631, присутни на двата) потрошени на Bitcoin и сè уште непотрошени на Spamcoin. Процентот е од <x id="INTERPOLATION"/>M BTC што постоеја при разделувањето. Се ажурира со секој блок.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Монети што постоеја кога се разделија синџирите и се потрошени и на Spamcoin и на Bitcoin: <x id="INTERPOLATION"/> BTC со истата трансакција на двата (replay) и <x id="INTERPOLATION_1"/> BTC со друга. Уште <x id="INTERPOLATION_2"/> BTC се преместени само на Spamcoin. Се ажурира со секој блок.</target></trans-unit>
+      <trans-unit id="header.split-mined-title" datatype="html"><target>Нови монети (субвенција на блок) ископани на Bitcoin од блок 961632; провизиите не се сметаат бидејќи не се нови монети.</target></trans-unit>
     </body>
   </file>
 </xliff>
