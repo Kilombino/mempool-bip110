@@ -11303,12 +11303,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Переміщено лише в Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Переміщено в Spamcoin і Bitcoin (по-різному)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Видобуто в Bitcoin після хардфорку Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Монети, що існували на момент розділення ланцюжків (виходи до блоку 961631), відстежені через транзакції, повторені однаково в обох ланцюжках, які витрачено в Bitcoin і досі не витрачено в Spamcoin. Відсоток рахується від <x id="INTERPOLATION"/>M BTC на момент розділення. Оновлюється з кожним блоком.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Монети, що існували на момент розділення ланцюжків, відстежені через повторені транзакції, які витрачено в Spamcoin і в Bitcoin різними транзакціями. Ще <x id="INTERPOLATION"/> BTC переміщено лише в Spamcoin, <x id="INTERPOLATION_1"/> BTC досі спільні без розділення, а <x id="INTERPOLATION_2"/> BTC пішли на комісії повторених транзакцій. Оновлюється з кожним блоком.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Нові монети (субсидія блоку), видобуті в Bitcoin з блоку 961632; комісії не враховуються, бо це не нові монети.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Досі в обох ланцюжках (не розділені)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Розділені рухом у Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Переміщено виключно в Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Переміщено в обох, різні транзакції</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Переміщено лише в Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(у Bitcoin вони недоторкані й власник може їх витратити)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC досі однакові в обох ланцюжках: монети, що існували на момент розділення (блок 961631) і ніколи не рухалися або рухалися лише транзакціями, повтореними однаково в обох ланцюжках, відстежені через будь-яку кількість повторів. Оновлюється раз на день (05:00 за мадридським часом); востаннє: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC розділилися, рухаючись у Bitcoin: <x id="INTERPOLATION_1"/> BTC переміщено виключно в Bitcoin (у Spamcoin досі не витрачені) і <x id="INTERPOLATION_2"/> BTC витрачено в обох ланцюжках різними транзакціями (інший отримувач або сума). Оновлюється раз на день (05:00 за мадридським часом); востаннє: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC переміщено в Spamcoin, і в Bitcoin вони досі не витрачені, де власник ще може їх витратити. Якщо ту саму транзакцію Spamcoin згодом повторять у Bitcoin, ці монети знову будуть в обох ланцюжках. Оновлюється раз на день (05:00 за мадридським часом); востаннє: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Нові монети (субсидія блоку), видобуті в Bitcoin з блоку 961632; комісії не враховуються, бо це не нові монети. Оновлюється раз на день (05:00 за мадридським часом); востаннє: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

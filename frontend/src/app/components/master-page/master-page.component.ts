@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, Inject, LOCALE_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Env, StateService } from '@app/services/state.service';
@@ -71,6 +71,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   // Monedas de la separación de cadenas (salidas hasta 961631) movidas solo en Bitcoin / en Spamcoin y
   // Bitcoin; viene en splitCoins de /api/v1/blake2b/scarcity (indexador split-coins, a cada bloque).
   splitCoins: any = null;
+  splitUpdated = '';   // fecha del último cálculo diario, en hora de Madrid y en el idioma del visitante
   // Energía equivalente a 1 BTC (Bitcoin-Blake2b) minándolo con el ASIC de referencia.
   kwhPerBtc: number | null = null;
 
@@ -94,6 +95,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     private storageService: StorageService,
     private router: Router,
     private http: HttpClient,
+    @Inject(LOCALE_ID) private locale: string,
   ) { }
 
   private startBtcb2PricePolling(): void {
@@ -132,6 +134,12 @@ export class MasterPageComponent implements OnInit, OnDestroy {
         }
         if (r && r.splitCoins && r.splitCoins.onlyBtc && r.splitCoins.both) {
           this.splitCoins = r.splitCoins;
+          try {
+            this.splitUpdated = new Intl.DateTimeFormat(this.locale, { timeZone: 'Europe/Madrid', dateStyle: 'medium', timeStyle: 'short' })
+              .format(new Date(r.splitCoins.updatedAt * 1000));
+          } catch (e) {
+            this.splitUpdated = new Date(r.splitCoins.updatedAt * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+          }
         }
       });
       this.http.get<any>('/api/blocks/tip/height').pipe(catchError(() => of(null))).subscribe((h) => {

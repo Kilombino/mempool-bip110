@@ -10844,12 +10844,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Premaknjeno samo na Bitcoinu</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Premaknjeno na Spamcoinu in Bitcoinu (različno)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Izkopano na Bitcoinu od hardforka Spamcoina</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Kovanci, ki so obstajali ob ločitvi verig (izhodi do bloka 961631), sledeni skozi transakcije, ponovljene enako na obeh verigah, porabljeni na Bitcoinu in še neporabljeni na Spamcoinu. Odstotek je od <x id="INTERPOLATION"/>M BTC ob ločitvi. Posodobi se z vsakim blokom.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Kovanci, ki so obstajali ob ločitvi verig, sledeni skozi ponovljene transakcije, porabljeni na Spamcoinu in na Bitcoinu z različnima transakcijama. Še <x id="INTERPOLATION"/> BTC se je premaknilo samo na Spamcoinu, <x id="INTERPOLATION_1"/> BTC je še skupnih brez ločitve, <x id="INTERPOLATION_2"/> BTC pa je šlo za provizije ponovljenih transakcij. Posodobi se z vsakim blokom.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Novi kovanci (blokovna subvencija), izkopani na Bitcoinu od bloka 961632; provizije se ne štejejo, ker niso novi kovanci.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Še na obeh verigah (neločeno)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Ločeno s premikanjem na Bitcoinu</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Premaknjeno izključno na Bitcoinu</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Premaknjeno na obeh, različni tx</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Premaknjeno samo na Spamcoinu</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(na Bitcoinu ostajajo nedotaknjeni in jih lastnik lahko porabi)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC je še enakih na obeh verigah: kovanci, ki so obstajali ob ločitvi (blok 961631) in se nikoli niso premaknili ali so se premaknili le s transakcijami, ponovljenimi enako na obeh verigah, sledeni skozi poljubno število ponovitev. Posodobljeno enkrat na dan (05:00 po madridskem času); nazadnje: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se je ločilo s premikanjem na Bitcoinu: <x id="INTERPOLATION_1"/> BTC premaknjenih izključno na Bitcoinu (na Spamcoinu še neporabljenih) in <x id="INTERPOLATION_2"/> BTC porabljenih na obeh verigah z različnimi transakcijami (drug prejemnik ali znesek). Posodobljeno enkrat na dan (05:00 po madridskem času); nazadnje: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se je premaknilo na Spamcoinu in so na Bitcoinu še neporabljeni, kjer jih lastnik še lahko porabi. Če se ista transakcija Spamcoina pozneje ponovi na Bitcoinu, so ti kovanci spet na obeh verigah. Posodobljeno enkrat na dan (05:00 po madridskem času); nazadnje: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Novi kovanci (blokovna subvencija), izkopani na Bitcoinu od bloka 961632; provizije se ne štejejo, ker niso novi kovanci. Posodobljeno enkrat na dan (05:00 po madridskem času); nazadnje: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

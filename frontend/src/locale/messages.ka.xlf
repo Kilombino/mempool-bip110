@@ -11012,12 +11012,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>გადაადგილებული მხოლოდ Bitcoin-ზე</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>გადაადგილებული Spamcoin-ზე და Bitcoin-ზე (განსხვავებულად)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Bitcoin-ზე მოპოვებული Spamcoin-ის hardfork-ის შემდეგ</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>მონეტები, რომლებიც არსებობდა ჯაჭვების გაყოფისას (გამოსავლები 961631-ე ბლოკამდე), თვალყურდევნებული ორივე ჯაჭვზე იდენტურად გამეორებული ტრანზაქციების გავლით, რომლებიც დაიხარჯა Bitcoin-ზე და Spamcoin-ზე ჯერ არ დახარჯულა. პროცენტი გამოითვლება გაყოფისას არსებული <x id="INTERPOLATION"/>M BTC-დან. ახლდება ყოველ ბლოკზე.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>მონეტები, რომლებიც არსებობდა ჯაჭვების გაყოფისას, თვალყურდევნებული გამეორებული ტრანზაქციების გავლით, რომლებიც დაიხარჯა Spamcoin-ზე და Bitcoin-ზე სხვადასხვა ტრანზაქციით. კიდევ <x id="INTERPOLATION"/> BTC გადაადგილდა მხოლოდ Spamcoin-ზე, <x id="INTERPOLATION_1"/> BTC ჯერ კიდევ საერთოა გაუყოფლად და <x id="INTERPOLATION_2"/> BTC წავიდა გამეორებული ტრანზაქციების საკომისიოებზე. ახლდება ყოველ ბლოკზე.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>ახალი მონეტები (ბლოკის სუბსიდია), მოპოვებული Bitcoin-ზე 961632-ე ბლოკიდან; საკომისიოები არ ითვლება, რადგან ისინი ახალი მონეტები არ არის.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>კვლავ ორივე ჯაჭვზე (გაუყოფელი)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>გაყოფილი Bitcoin-ზე მოძრაობით</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>გადაადგილებული მხოლოდ Bitcoin-ზე</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>გადაადგილებული ორივეზე, განსხვავებული ტრანზაქციები</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>გადაადგილებული მხოლოდ Spamcoin-ზე</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(Bitcoin-ზე ხელუხლებელია და მფლობელს შეუძლია მათი დახარჯვა)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC კვლავ იდენტურია ორივე ჯაჭვზე: მონეტები, რომლებიც გაყოფისას (ბლოკი 961631) არსებობდა და არასდროს გადაადგილებულა, ან მხოლოდ ორივე ჯაჭვზე იდენტურად გამეორებული ტრანზაქციებით გადაადგილდა, თვალყურდევნებული გამეორებების ნებისმიერ რაოდენობაში. ახლდება დღეში ერთხელ (05:00, მადრიდის დროით); ბოლოს: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC გაიყო Bitcoin-ზე მოძრაობით: <x id="INTERPOLATION_1"/> BTC გადაადგილდა მხოლოდ Bitcoin-ზე (Spamcoin-ზე ჯერ დაუხარჯავი) და <x id="INTERPOLATION_2"/> BTC დაიხარჯა ორივე ჯაჭვზე სხვადასხვა ტრანზაქციით (სხვა მიმღები ან თანხა). ახლდება დღეში ერთხელ (05:00, მადრიდის დროით); ბოლოს: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC გადაადგილდა Spamcoin-ზე და Bitcoin-ზე ჯერ დაუხარჯავია, სადაც მფლობელს კვლავ შეუძლია მისი დახარჯვა. თუ იგივე Spamcoin-ის ტრანზაქცია მოგვიანებით Bitcoin-ზე გამეორდება, ეს მონეტები ისევ ორივე ჯაჭვზე იქნება. ახლდება დღეში ერთხელ (05:00, მადრიდის დროით); ბოლოს: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>ახალი მონეტები (ბლოკის სუბსიდია), მოპოვებული Bitcoin-ზე 961632-ე ბლოკიდან; საკომისიოები არ ითვლება, რადგან ისინი ახალი მონეტები არ არის. ახლდება დღეში ერთხელ (05:00, მადრიდის დროით); ბოლოს: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

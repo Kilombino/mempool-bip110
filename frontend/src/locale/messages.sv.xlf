@@ -11490,12 +11490,17 @@ Publicera för att lägga till den i mempoolen.</target>
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Endast flyttade på Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Flyttade på Spamcoin och Bitcoin (olika)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Mint på Bitcoin sedan Spamcoins hardfork</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mynt som fanns när kedjorna delades (utgångar till och med block 961631), följda genom transaktioner som upprepats identiskt på båda kedjorna, som har spenderats på Bitcoin och fortfarande är ospenderade på Spamcoin. Procentsatsen avser de <x id="INTERPOLATION"/>M BTC vid delningen. Uppdateras vid varje block.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Mynt som fanns när kedjorna delades, följda genom upprepade transaktioner, som har spenderats på Spamcoin och på Bitcoin med olika transaktioner. Ytterligare <x id="INTERPOLATION"/> BTC har bara flyttats på Spamcoin, <x id="INTERPOLATION_1"/> BTC är fortfarande gemensamma utan delning och <x id="INTERPOLATION_2"/> BTC gick till avgifter för upprepade transaktioner. Uppdateras vid varje block.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Nya mynt (blocksubvention) minade på Bitcoin sedan block 961632; avgifter räknas inte eftersom de inte är nya mynt.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Fortfarande på båda kedjorna (ej delade)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Delade genom rörelse på Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Endast flyttade på Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Flyttade på båda, avvikande txs</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Endast flyttade på Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(på Bitcoin är de orörda och kan spenderas av ägaren)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC är fortfarande identiska på båda kedjorna: mynt som fanns vid delningen (block 961631) och aldrig har flyttats, eller bara har flyttats med transaktioner som upprepats identiskt på båda kedjorna, följda genom valfritt antal upprepningar. Uppdateras en gång om dagen (05:00, Madridtid); senast: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC har delats genom att röra sig på Bitcoin: <x id="INTERPOLATION_1"/> BTC endast flyttade på Bitcoin (fortfarande ospenderade på Spamcoin) och <x id="INTERPOLATION_2"/> BTC spenderade på båda kedjorna med olika transaktioner (annan mottagare eller annat belopp). Uppdateras en gång om dagen (05:00, Madridtid); senast: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC har flyttats på Spamcoin och är fortfarande ospenderade på Bitcoin, där ägaren fortfarande kan spendera dem. Om samma Spamcoin-transaktion senare upprepas på Bitcoin finns mynten åter på båda kedjorna. Uppdateras en gång om dagen (05:00, Madridtid); senast: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Nya mynt (blocksubvention) minade på Bitcoin sedan block 961632; avgifter räknas inte eftersom de inte är nya mynt. Uppdateras en gång om dagen (05:00, Madridtid); senast: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Siirretty vain Bitcoinissa</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Siirretty Spamcoinissa ja Bitcoinissa (eri tavoin)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Louhittu Bitcoinissa Spamcoinin hardforkin jälkeen</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Kolikot, jotka olivat olemassa ketjujen erotessa (ulostulot lohkoon 961631 asti), seurattuna molemmissa ketjuissa identtisinä toistettujen transaktioiden läpi, jotka on käytetty Bitcoinissa ja ovat yhä käyttämättä Spamcoinissa. Prosentti on erottaessa olleista <x id="INTERPOLATION"/>M BTC:stä. Päivittyy joka lohkolla.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Kolikot, jotka olivat olemassa ketjujen erotessa, seurattuna toistettujen transaktioiden läpi, jotka on käytetty Spamcoinissa ja Bitcoinissa eri transaktioilla. Lisäksi <x id="INTERPOLATION"/> BTC on siirretty vain Spamcoinissa, <x id="INTERPOLATION_1"/> BTC on yhä yhteisiä erottamatta ja <x id="INTERPOLATION_2"/> BTC meni toistettujen transaktioiden maksuihin. Päivittyy joka lohkolla.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Uudet kolikot (lohkopalkkio) louhittu Bitcoinissa lohkosta 961632 lähtien; siirtomaksuja ei lasketa, koska ne eivät ole uusia kolikoita.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Yhä molemmissa ketjuissa (erottamatta)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Erkaantuneet liikkumalla Bitcoinissa</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Siirretty vain Bitcoinissa</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Siirretty molemmissa, eri transaktiot</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Siirretty vain Spamcoinissa</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(Bitcoinissa ne ovat koskemattomia ja omistajansa käytettävissä)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC on yhä identtisiä molemmissa ketjuissa: kolikot, jotka olivat olemassa erotessa (lohko 961631) eivätkä ole koskaan liikkuneet, tai ovat liikkuneet vain molemmissa ketjuissa identtisinä toistetuilla transaktioilla, seurattuna minkä tahansa toistomäärän läpi. Päivitetään kerran päivässä (05:00 Madridin aikaa); viimeksi: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC on erkaantunut liikkumalla Bitcoinissa: <x id="INTERPOLATION_1"/> BTC siirretty vain Bitcoinissa (yhä käyttämättä Spamcoinissa) ja <x id="INTERPOLATION_2"/> BTC käytetty molemmissa ketjuissa eri transaktioilla (eri vastaanottaja tai summa). Päivitetään kerran päivässä (05:00 Madridin aikaa); viimeksi: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC on siirretty Spamcoinissa ja on yhä käyttämättä Bitcoinissa, jossa omistaja voi yhä käyttää ne. Jos sama Spamcoin-transaktio toistetaan myöhemmin Bitcoinissa, kolikot ovat taas molemmissa ketjuissa. Päivitetään kerran päivässä (05:00 Madridin aikaa); viimeksi: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Uudet kolikot (lohkopalkkio) louhittu Bitcoinissa lohkosta 961632 lähtien; siirtomaksuja ei lasketa, koska ne eivät ole uusia kolikoita. Päivitetään kerran päivässä (05:00 Madridin aikaa); viimeksi: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

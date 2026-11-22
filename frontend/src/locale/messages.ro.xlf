@@ -11475,12 +11475,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Mutate doar pe Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Mutate pe Spamcoin și Bitcoin (diferit)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minat pe Bitcoin de la hardfork-ul Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monede care existau la separarea lanțurilor (ieșiri până la blocul 961631), urmărite prin tranzacțiile reluate identic pe ambele lanțuri, cheltuite pe Bitcoin și încă necheltuite pe Spamcoin. Procentul este din cei <x id="INTERPOLATION"/>M BTC existenți la separare. Se actualizează la fiecare bloc.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Monede care existau la separarea lanțurilor, urmărite prin tranzacțiile reluate, cheltuite pe Spamcoin și pe Bitcoin prin tranzacții diferite. Alți <x id="INTERPOLATION"/> BTC s-au mutat doar pe Spamcoin, <x id="INTERPOLATION_1"/> BTC sunt încă comune, neseparate, iar <x id="INTERPOLATION_2"/> BTC s-au dus pe comisioanele tranzacțiilor reluate. Se actualizează la fiecare bloc.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Monede noi (subvenția blocului) minate pe Bitcoin de la blocul 961632; comisioanele nu se iau în calcul, deoarece nu sunt monede noi.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Încă pe ambele lanțuri (neseparate)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Separate prin mișcare pe Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Mutate exclusiv pe Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Mutate pe ambele, tx divergente</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Mutate doar pe Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(pe Bitcoin rămân intacte și pot fi cheltuite de proprietar)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC sunt încă identici pe ambele lanțuri: monede care existau la separare (blocul 961631) și nu s-au mișcat niciodată sau s-au mișcat doar prin tranzacții reluate identic pe ambele lanțuri, urmărite prin oricâte reluări. Actualizat o dată pe zi (05:00, ora Madridului); ultima dată: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s-au separat mișcându-se pe Bitcoin: <x id="INTERPOLATION_1"/> BTC mutați exclusiv pe Bitcoin (încă necheltuiți pe Spamcoin) și <x id="INTERPOLATION_2"/> BTC cheltuiți pe ambele lanțuri prin tranzacții diferite (altă destinație sau sumă). Actualizat o dată pe zi (05:00, ora Madridului); ultima dată: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s-au mutat pe Spamcoin și sunt încă necheltuiți pe Bitcoin, unde proprietarul îi poate cheltui în continuare. Dacă aceeași tranzacție Spamcoin este reluată ulterior pe Bitcoin, aceste monede revin pe ambele lanțuri. Actualizat o dată pe zi (05:00, ora Madridului); ultima dată: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Monede noi (subvenția blocului) minate pe Bitcoin de la blocul 961632; comisioanele nu se iau în calcul, deoarece nu sunt monede noi. Actualizat o dată pe zi (05:00, ora Madridului); ultima dată: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -10758,12 +10758,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Mogudes només a Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Mogudes a Spamcoin i Bitcoin (de manera diferent)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minat a Bitcoin des del hardfork de Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monedes que existien quan les cadenes es van separar (sortides fins al bloc 961631), seguides a través de les transaccions replicades idèntiques a totes dues, que s'han gastat a Bitcoin i encara no s'han gastat a Spamcoin. El percentatge és sobre els <x id="INTERPOLATION"/>M BTC que hi havia en separar-se. S'actualitza a cada bloc.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Monedes que existien quan les cadenes es van separar, seguides a través de les transaccions replicades, que s'han gastat a Spamcoin i a Bitcoin amb transaccions diferents. Uns altres <x id="INTERPOLATION"/> BTC s'han mogut només a Spamcoin, <x id="INTERPOLATION_1"/> BTC continuen compartides sense separar i <x id="INTERPOLATION_2"/> BTC han anat a comissions de transaccions replicades. S'actualitza a cada bloc.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Monedes noves (subsidi de bloc) minades a Bitcoin des del bloc 961632; les comissions no compten perquè no són monedes noves.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Continuen a totes dues cadenes (sense separar)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Separades movent-se a Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Mogudes només a Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Mogudes a totes dues, txs divergents</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Mogudes només a Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(a Bitcoin continuen intactes i gastables pel seu propietari)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC continuen idèntics a totes dues cadenes: monedes que existien en separar-se (bloc 961631) i no s'han mogut mai, o només s'han mogut amb transaccions replicades idèntiques a totes dues, seguides a través de qualsevol nombre de repeticions. Actualitzat un cop al dia (05:00, hora de Madrid); darrera vegada: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s'han separat movent-se a Bitcoin: <x id="INTERPOLATION_1"/> BTC moguts només a Bitcoin (encara sense gastar a Spamcoin) i <x id="INTERPOLATION_2"/> BTC gastats a totes dues cadenes amb transaccions diferents (una altra destinació o import). Actualitzat un cop al dia (05:00, hora de Madrid); darrera vegada: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s'han mogut a Spamcoin i continuen sense gastar a Bitcoin, on el seu propietari encara els pot gastar. Si la mateixa transacció de Spamcoin es replica després a Bitcoin, aquestes monedes tornen a ser a totes dues cadenes. Actualitzat un cop al dia (05:00, hora de Madrid); darrera vegada: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Monedes noves (subsidi de bloc) minades a Bitcoin des del bloc 961632; les comissions no compten perquè no són monedes noves. Actualitzat un cop al dia (05:00, hora de Madrid); darrera vegada: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

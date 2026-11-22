@@ -11950,12 +11950,17 @@
       </trans-unit>
       <trans-unit id="header.blake2b-scarcity" datatype="html"><target>New PoW Scarcity</target></trans-unit>
       <trans-unit id="header.blake2b-scarcity-title" datatype="html"><target>BTC en salidas creadas desde que se bifurcó Spamchain (bloque 961640): monedas movidas o minadas en esta cadena, cada una contada una vez. Se mide una vez al día; el resto del suministro no se ha movido desde el cambio de PoW.</target></trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Movidas solo en Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Movidas en Spamcoin y Bitcoin (de forma distinta)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minado en Bitcoin desde el hardfork de Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monedas que existían al separarse las cadenas (salidas hasta el bloque 961631), seguidas a través de las transacciones replayadas idénticas en las dos, que se han gastado en Bitcoin y siguen sin gastar en Spamcoin. El porcentaje es sobre los <x id="INTERPOLATION"/>M BTC que había al separarse. Se actualiza a cada bloque.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Monedas que existían al separarse las cadenas, seguidas a través de las transacciones replayadas, que se han gastado en Spamcoin y en Bitcoin con transacciones distintas. Otros <x id="INTERPOLATION"/> BTC se han movido solo en Spamcoin, <x id="INTERPOLATION_1"/> BTC siguen compartidas sin separar y <x id="INTERPOLATION_2"/> BTC se fueron en comisiones de transacciones replayadas. Se actualiza a cada bloque.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Monedas nuevas (subsidio de bloque) minadas en Bitcoin desde el bloque 961632; las comisiones no cuentan porque no son monedas nuevas.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Siguen en ambas cadenas (sin separar)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Separadas moviéndose en Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Movidas solamente en Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Movidas en las dos, txs divergentes</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Movidas solo en Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(en Bitcoin siguen intactas y gastables por su dueño)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC siguen idénticos en las dos cadenas: monedas que existían al separarse (bloque 961631) y nunca se han movido, o solo se han movido con transacciones replayadas idénticas en las dos, seguidas a través de cualquier número de replays. Actualizado una vez al día (05:00, hora de Madrid); última vez: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se han separado moviéndose en Bitcoin: <x id="INTERPOLATION_1"/> BTC movidos solamente en Bitcoin (siguen sin gastar en Spamcoin) y <x id="INTERPOLATION_2"/> BTC gastados en las dos cadenas con transacciones distintas (otro destino o importe). Actualizado una vez al día (05:00, hora de Madrid); última vez: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se han movido en Spamcoin y siguen sin gastar en Bitcoin, donde su dueño todavía puede gastarlos. Si la misma transacción de Spamcoin se replaya después en Bitcoin, esas monedas vuelven a estar en ambas cadenas. Actualizado una vez al día (05:00, hora de Madrid); última vez: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Monedas nuevas (subsidio de bloque) minadas en Bitcoin desde el bloque 961632; las comisiones no cuentan porque no son monedas nuevas. Actualizado una vez al día (05:00, hora de Madrid); última vez: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

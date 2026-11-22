@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>הועברו רק בביטקוין</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>הועברו ב-Spamcoin ובביטקוין (באופן שונה)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>נכרה בביטקוין מאז ה-hardfork של Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>מטבעות שהיו קיימים כשהשרשראות נפרדו (פלטים עד בלוק 961631), שנעקבו דרך העסקאות שהושמעו מחדש באופן זהה בשתי השרשראות, שהוצאו בביטקוין ועדיין לא הוצאו ב-Spamcoin. האחוז הוא מתוך <x id="INTERPOLATION"/>M BTC בעת הפיצול. מתעדכן בכל בלוק.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>מטבעות שהיו קיימים כשהשרשראות נפרדו, שנעקבו דרך עסקאות שהושמעו מחדש, שהוצאו ב-Spamcoin ובביטקוין בעסקאות שונות. עוד <x id="INTERPOLATION"/> BTC הועברו רק ב-Spamcoin, <x id="INTERPOLATION_1"/> BTC עדיין משותפים ללא פיצול, ו-<x id="INTERPOLATION_2"/> BTC הלכו לעמלות של עסקאות שהושמעו מחדש. מתעדכן בכל בלוק.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>מטבעות חדשים (סבסוד בלוק) שנכרו בביטקוין מאז בלוק 961632; עמלות אינן נספרות כי הן אינן מטבעות חדשים.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>עדיין בשתי השרשראות (לא נפרדו)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>נפרדו בתנועה בביטקוין</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>הועברו אך ורק בביטקוין</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>הועברו בשתיהן, עסקאות שונות</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>הועברו רק ב-Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(בביטקוין הם נשארים שלמים וניתנים להוצאה על ידי בעליהם)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC עדיין זהים בשתי השרשראות: מטבעות שהיו קיימים בעת הפיצול (בלוק 961631) ומעולם לא זזו, או זזו רק בעסקאות שהושמעו מחדש באופן זהה בשתי השרשראות, שנעקבו דרך כל מספר של השמעות חוזרות. מתעדכן פעם ביום (05:00, שעון מדריד); עדכון אחרון: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC נפרדו בתנועה בביטקוין: <x id="INTERPOLATION_1"/> BTC הועברו אך ורק בביטקוין (עדיין לא הוצאו ב-Spamcoin) ו-<x id="INTERPOLATION_2"/> BTC הוצאו בשתי השרשראות בעסקאות שונות (יעד או סכום אחר). מתעדכן פעם ביום (05:00, שעון מדריד); עדכון אחרון: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC הועברו ב-Spamcoin ועדיין לא הוצאו בביטקוין, שם בעליהם עדיין יכולים להוציא אותם. אם אותה עסקת Spamcoin תושמע מחדש מאוחר יותר בביטקוין, המטבעות האלה חוזרים להיות בשתי השרשראות. מתעדכן פעם ביום (05:00, שעון מדריד); עדכון אחרון: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>מטבעות חדשים (סבסוד בלוק) שנכרו בביטקוין מאז בלוק 961632; עמלות אינן נספרות כי הן אינן מטבעות חדשים. מתעדכן פעם ביום (05:00, שעון מדריד); עדכון אחרון: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

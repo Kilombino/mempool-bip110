@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Kun flyttet på Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Flyttet på Spamcoin og Bitcoin (forskelligt)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minet på Bitcoin siden Spamcoin-hardforken</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mønter, der fandtes da kæderne skiltes (outputs til og med blok 961631), fulgt gennem transaktioner gentaget identisk på begge kæder, som er brugt på Bitcoin og stadig ubrugte på Spamcoin. Procentdelen er af de <x id="INTERPOLATION"/>M BTC ved adskillelsen. Opdateres ved hver blok.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Mønter, der fandtes da kæderne skiltes, fulgt gennem gentagne transaktioner, som er brugt på Spamcoin og på Bitcoin med forskellige transaktioner. Yderligere <x id="INTERPOLATION"/> BTC er kun flyttet på Spamcoin, <x id="INTERPOLATION_1"/> BTC er stadig fælles uden adskillelse, og <x id="INTERPOLATION_2"/> BTC gik til gebyrer for gentagne transaktioner. Opdateres ved hver blok.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Nye mønter (bloksubsidie) minet på Bitcoin siden blok 961632; gebyrer tæller ikke, fordi de ikke er nye mønter.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Stadig på begge kæder (ikke adskilt)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Adskilt ved bevægelse på Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Kun flyttet på Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Flyttet på begge, afvigende txs</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Kun flyttet på Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(på Bitcoin er de urørte og kan bruges af ejeren)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC er stadig identiske på begge kæder: mønter, der fandtes ved adskillelsen (blok 961631) og aldrig er flyttet, eller kun er flyttet med transaktioner gentaget identisk på begge kæder, fulgt gennem et vilkårligt antal gentagelser. Opdateres én gang om dagen (05:00, Madrid-tid); senest: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC er adskilt ved at bevæge sig på Bitcoin: <x id="INTERPOLATION_1"/> BTC kun flyttet på Bitcoin (stadig ubrugte på Spamcoin) og <x id="INTERPOLATION_2"/> BTC brugt på begge kæder med forskellige transaktioner (anden modtager eller andet beløb). Opdateres én gang om dagen (05:00, Madrid-tid); senest: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC er flyttet på Spamcoin og stadig ubrugte på Bitcoin, hvor ejeren stadig kan bruge dem. Hvis den samme Spamcoin-transaktion senere gentages på Bitcoin, er mønterne igen på begge kæder. Opdateres én gang om dagen (05:00, Madrid-tid); senest: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Nye mønter (bloksubsidie) minet på Bitcoin siden blok 961632; gebyrer tæller ikke, fordi de ikke er nye mønter. Opdateres én gang om dagen (05:00, Madrid-tid); senest: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

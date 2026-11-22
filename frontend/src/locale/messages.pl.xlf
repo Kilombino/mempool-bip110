@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Przeniesione tylko w Bitcoinie</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Przeniesione w Spamcoinie i Bitcoinie (inaczej)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Wydobyte w Bitcoinie od hardforka Spamcoina</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monety istniejące w chwili rozdzielenia łańcuchów (wyjścia do bloku 961631), śledzone przez transakcje powtórzone identycznie w obu łańcuchach, które wydano w Bitcoinie, a w Spamcoinie wciąż są niewydane. Procent liczony od <x id="INTERPOLATION"/>M BTC istniejących w chwili rozdzielenia. Aktualizowane co blok.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Monety istniejące w chwili rozdzielenia łańcuchów, śledzone przez powtórzone transakcje, wydane w Spamcoinie i w Bitcoinie różnymi transakcjami. Kolejne <x id="INTERPOLATION"/> BTC przeniesiono tylko w Spamcoinie, <x id="INTERPOLATION_1"/> BTC wciąż jest wspólnych bez rozdzielenia, a <x id="INTERPOLATION_2"/> BTC poszło na opłaty powtórzonych transakcji. Aktualizowane co blok.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Nowe monety (subsydium blokowe) wydobyte w Bitcoinie od bloku 961632; opłaty się nie liczą, bo nie są nowymi monetami.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Wciąż w obu łańcuchach (nierozdzielone)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Rozdzielone przez ruch w Bitcoinie</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Przeniesione wyłącznie w Bitcoinie</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Przeniesione w obu, rozbieżne tx</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Przeniesione tylko w Spamcoinie</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(w Bitcoinie pozostają nietknięte i do wydania przez właściciela)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC jest wciąż identycznych w obu łańcuchach: monety istniejące w chwili rozdzielenia (blok 961631), które nigdy się nie ruszyły albo ruszyły się tylko w transakcjach powtórzonych identycznie w obu łańcuchach, śledzone przez dowolną liczbę powtórzeń. Aktualizowane raz dziennie (05:00 czasu madryckiego); ostatnio: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC rozdzieliło się przez ruch w Bitcoinie: <x id="INTERPOLATION_1"/> BTC przeniesionych wyłącznie w Bitcoinie (wciąż niewydanych w Spamcoinie) i <x id="INTERPOLATION_2"/> BTC wydanych w obu łańcuchach różnymi transakcjami (inny odbiorca lub kwota). Aktualizowane raz dziennie (05:00 czasu madryckiego); ostatnio: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC przeniesiono w Spamcoinie i wciąż są niewydane w Bitcoinie, gdzie właściciel nadal może je wydać. Jeśli ta sama transakcja Spamcoina zostanie później powtórzona w Bitcoinie, monety wrócą do obu łańcuchów. Aktualizowane raz dziennie (05:00 czasu madryckiego); ostatnio: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Nowe monety (subsydium blokowe) wydobyte w Bitcoinie od bloku 961632; opłaty się nie liczą, bo nie są nowymi monetami. Aktualizowane raz dziennie (05:00 czasu madryckiego); ostatnio: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

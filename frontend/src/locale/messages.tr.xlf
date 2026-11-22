@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Yalnızca Bitcoin'de taşınan</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Spamcoin ve Bitcoin'de taşınan (farklı şekilde)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Spamcoin hardfork'undan beri Bitcoin'de kazılan</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Zincirler ayrıldığında var olan (961631. bloğa kadarki çıktılar), her iki zincirde aynen tekrarlanan işlemler üzerinden izlenen ve Bitcoin'de harcanmış ama Spamcoin'de hâlâ harcanmamış coinler. Yüzde, ayrılma anındaki <x id="INTERPOLATION"/>M BTC üzerindendir. Her blokta güncellenir.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Zincirler ayrıldığında var olan, tekrarlanan işlemler üzerinden izlenen ve Spamcoin'de ve Bitcoin'de farklı işlemlerle harcanmış coinler. Ayrıca <x id="INTERPOLATION"/> BTC yalnızca Spamcoin'de taşındı, <x id="INTERPOLATION_1"/> BTC hâlâ ayrılmadan ortak ve <x id="INTERPOLATION_2"/> BTC tekrarlanan işlemlerin ücretlerine gitti. Her blokta güncellenir.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>961632. bloktan beri Bitcoin'de kazılan yeni coinler (blok ödülü); ücretler yeni coin olmadığı için sayılmaz.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Hâlâ iki zincirde (ayrılmamış)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Bitcoin'de hareket ederek ayrılan</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Yalnızca Bitcoin'de taşınan</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>İkisinde de taşınan, farklı işlemler</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Yalnızca Spamcoin'de taşınan</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(Bitcoin'de dokunulmamış durumda ve sahibi harcayabilir)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC iki zincirde hâlâ aynı: ayrılma anında (blok 961631) var olan ve hiç hareket etmemiş ya da yalnızca iki zincirde aynen tekrarlanan işlemlerle hareket etmiş coinler; istenen sayıda tekrar boyunca izlenir. Günde bir kez güncellenir (05:00, Madrid saati); son güncelleme: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC Bitcoin'de hareket ederek ayrıldı: <x id="INTERPOLATION_1"/> BTC yalnızca Bitcoin'de taşındı (Spamcoin'de hâlâ harcanmamış) ve <x id="INTERPOLATION_2"/> BTC iki zincirde farklı işlemlerle harcandı (farklı hedef veya tutar). Günde bir kez güncellenir (05:00, Madrid saati); son güncelleme: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC Spamcoin'de taşındı ve Bitcoin'de hâlâ harcanmamış durumda; sahibi orada hâlâ harcayabilir. Aynı Spamcoin işlemi daha sonra Bitcoin'de tekrarlanırsa bu coinler yeniden iki zincirde olur. Günde bir kez güncellenir (05:00, Madrid saati); son güncelleme: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>961632. bloktan beri Bitcoin'de kazılan yeni coinler (blok ödülü); ücretler yeni coin olmadığı için sayılmaz. Günde bir kez güncellenir (05:00, Madrid saati); son güncelleme: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

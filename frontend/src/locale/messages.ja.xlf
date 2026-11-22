@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Bitcoinでのみ移動</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>SpamcoinとBitcoinで移動（別々に）</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Spamcoinのハードフォーク以降にBitcoinで採掘</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>チェーン分岐時に存在していたコイン（ブロック961631までの出力）を、両チェーンで同一にリプレイされたトランザクションをたどって追跡したもののうち、Bitcoinで使用され、Spamcoinではまだ未使用のもの。割合は分岐時の<x id="INTERPOLATION"/>M BTCに対する値です。ブロックごとに更新。</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>チェーン分岐時に存在していたコインを、リプレイされたトランザクションをたどって追跡したもののうち、SpamcoinとBitcoinで異なるトランザクションによって使用されたもの。さらに<x id="INTERPOLATION"/> BTCがSpamcoinでのみ移動し、<x id="INTERPOLATION_1"/> BTCは分かれずに共有されたままで、<x id="INTERPOLATION_2"/> BTCはリプレイされたトランザクションの手数料になりました。ブロックごとに更新。</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>ブロック961632以降にBitcoinで採掘された新規コイン（ブロック報酬）。手数料は新規コインではないため含みません。</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>両チェーンに残存（未分離）</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Bitcoinでの移動により分離</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Bitcoinのみで移動</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>両方で移動、異なるtx</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Spamcoinのみで移動</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>（Bitcoinではそのまま残り、所有者が使用可能）</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTCは両チェーンで今も同一です：分岐時（ブロック961631）に存在し、一度も動いていないか、両チェーンで同一にリプレイされたトランザクションでのみ動いたコインで、何回のリプレイでも追跡します。 1日1回更新（マドリード時間05:00）；最終更新：<x id="INTERPOLATION_1"/>。</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTCがBitcoinでの移動により分離しました：Bitcoinのみで移動した<x id="INTERPOLATION_1"/> BTC（Spamcoinではまだ未使用）と、両チェーンで異なるトランザクション（別の宛先または金額）により使用された<x id="INTERPOLATION_2"/> BTC。 1日1回更新（マドリード時間05:00）；最終更新：<x id="INTERPOLATION_3"/>。</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTCはSpamcoinで移動し、Bitcoinではまだ未使用で、所有者は引き続き使用できます。同じSpamcoinのトランザクションが後でBitcoinにリプレイされると、これらのコインは再び両チェーンに戻ります。 1日1回更新（マドリード時間05:00）；最終更新：<x id="INTERPOLATION_1"/>。</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>ブロック961632以降にBitcoinで採掘された新規コイン（ブロック報酬）。手数料は新規コインではないため含みません。 1日1回更新（マドリード時間05:00）；最終更新：<x id="INTERPOLATION"/>。</target></trans-unit>
     </body>
   </file>
 </xliff>

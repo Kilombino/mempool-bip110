@@ -11401,12 +11401,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Chỉ di chuyển trên Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Di chuyển trên Spamcoin và Bitcoin (khác nhau)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Đào trên Bitcoin kể từ hardfork của Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Các đồng tiền tồn tại khi hai chuỗi tách ra (đầu ra đến khối 961631), được theo dõi qua các giao dịch được phát lại y hệt trên cả hai chuỗi, đã được tiêu trên Bitcoin và vẫn chưa được tiêu trên Spamcoin. Tỷ lệ phần trăm tính trên <x id="INTERPOLATION"/>M BTC lúc tách. Cập nhật mỗi khối.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Các đồng tiền tồn tại khi hai chuỗi tách ra, được theo dõi qua các giao dịch được phát lại, đã được tiêu trên Spamcoin và trên Bitcoin bằng các giao dịch khác nhau. Thêm <x id="INTERPOLATION"/> BTC chỉ di chuyển trên Spamcoin, <x id="INTERPOLATION_1"/> BTC vẫn còn chung chưa tách và <x id="INTERPOLATION_2"/> BTC đã thành phí của các giao dịch được phát lại. Cập nhật mỗi khối.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Đồng tiền mới (trợ cấp khối) được đào trên Bitcoin kể từ khối 961632; phí không được tính vì không phải là tiền mới.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Vẫn trên cả hai chuỗi (chưa tách)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Đã tách do di chuyển trên Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Chỉ di chuyển trên Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Di chuyển trên cả hai, giao dịch khác nhau</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Chỉ di chuyển trên Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(trên Bitcoin vẫn còn nguyên và chủ sở hữu có thể tiêu)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC vẫn giống hệt nhau trên cả hai chuỗi: các đồng tiền tồn tại lúc tách (khối 961631) chưa bao giờ di chuyển, hoặc chỉ di chuyển qua các giao dịch được phát lại y hệt trên cả hai chuỗi, được theo dõi qua bất kỳ số lần phát lại nào. Cập nhật mỗi ngày một lần (05:00 giờ Madrid); lần cuối: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC đã tách do di chuyển trên Bitcoin: <x id="INTERPOLATION_1"/> BTC chỉ di chuyển trên Bitcoin (vẫn chưa tiêu trên Spamcoin) và <x id="INTERPOLATION_2"/> BTC được tiêu trên cả hai chuỗi bằng các giao dịch khác nhau (đích đến hoặc số tiền khác). Cập nhật mỗi ngày một lần (05:00 giờ Madrid); lần cuối: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC đã di chuyển trên Spamcoin và vẫn chưa được tiêu trên Bitcoin, nơi chủ sở hữu vẫn có thể tiêu. Nếu cùng giao dịch Spamcoin đó sau này được phát lại trên Bitcoin, các đồng tiền này sẽ trở lại trên cả hai chuỗi. Cập nhật mỗi ngày một lần (05:00 giờ Madrid); lần cuối: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Đồng tiền mới (trợ cấp khối) được đào trên Bitcoin kể từ khối 961632; phí không được tính vì không phải là tiền mới. Cập nhật mỗi ngày một lần (05:00 giờ Madrid); lần cuối: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

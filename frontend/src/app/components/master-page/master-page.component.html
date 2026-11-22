@@ -68,10 +68,13 @@
     <a *ngIf="mrrBtcPerThDay !== null" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer">1 TH/s rent <b>{{ mrrPoolsatsPerThDay | number: '1.0-0' }} Poolsats/day</b><span *ngIf="mrrSatsPerThDay !== null"> ≈ {{ mrrSatsPerThDay | number: '1.0-0' }} sats</span><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></a>
     <a *ngIf="kwhPerBtc !== null" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer">1 BTC = <b>{{ kwhPerBtc | number: '1.0-0' }} kWh</b> ({{ minerName }})</a>
     <a *ngIf="yshValue !== null" [routerLink]="['/tools/ysh' | relativeUrl]">YSH 1 BTC = <b>{{ yshValue | number: '1.2-2' }} {{ yshUnit }}</b></a>
-    <ng-container *ngIf="splitCoins">
-      <span><span i18n="@@header.split-only-btc">Moved only on Bitcoin</span>&nbsp;<b>{{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
-      <span><span i18n="@@header.split-both">Moved on Spamcoin and Bitcoin (differently)</span>&nbsp;<b>{{ splitCoins.both.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
-      <span *ngIf="splitCoins.minedSinceSplit"><span i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</span>&nbsp;<b>{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.minedSinceSplit.share * 100 | number: '1.2-2' }}%)</span>
+    <ng-container *ngIf="splitCoins?.stillShared">
+      <span>🔗 <span i18n="@@header.sc-shared">Still on both chains (not split)</span>:&nbsp;<b>{{ splitCoins.stillShared.share * 100 | number: '1.1-1' }}%</b></span>
+      <span>✂️ <span i18n="@@header.sc-split">Split, moving on Bitcoin</span>:&nbsp;<b>{{ (splitCoins.onlyBtc.share + splitCoins.both.diffTx.share) * 100 | number: '1.2-2' }}%</b></span>
+      <span class="sc-sub-m">• <span i18n="@@header.sc-only-btc">Moved only on Bitcoin</span>:&nbsp;{{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%</span>
+      <span class="sc-sub-m">• <span i18n="@@header.sc-diff">Moved on both, divergent txs</span>:&nbsp;{{ splitCoins.both.diffTx.share * 100 | number: '1.2-2' }}%</span>
+      <span>🟠 <span i18n="@@header.sc-only-spam">Moved only on Spamcoin</span>:&nbsp;<b>{{ splitCoins.onlySpam.share * 100 | number: '1.2-2' }}%</b></span>
+      <span *ngIf="splitCoins.minedSinceSplit">⛏️ <span i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</span>:&nbsp;<b>{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC</b></span>
     </ng-container>
     <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
   </div>
@@ -169,23 +172,32 @@
           <span class="yield-value">1 BTC = {{ yshValue | number: '1.2-2' }} {{ yshUnit }}</span>
         </a>
       </li>
-      <!-- Monedas que existían al separarse las cadenas (hasta 961631): movidas solo en Bitcoin / en las dos.
-           Indexador ~/Projects/blake2b/split-coins (a cada bloque), servido en /api/v1/blake2b/scarcity. -->
-      <li class="nav-item d-none d-lg-flex" id="btn-split-btc" *ngIf="splitCoins">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-only-btc-title" title="Coins that existed when the chains split (outputs up to block 961631), followed through the transactions replayed identically on both chains, that have been spent on Bitcoin and are still unspent on Spamcoin. The percentage is over the {{ splitCoins.splitSupplyBtc / 1000000 | number: '1.2-2' }}M BTC that existed at the split. Updated every block.">
-          <span class="yield-label" i18n="@@header.split-only-btc">Moved only on Bitcoin</span>
-          <span class="yield-value">{{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
+      <!-- Monedas de la separación (salidas hasta 961631) seguidas a través de las txs replayadas. Indexador
+           split-coins v2 (~/Projects/blake2b/split-coins/indexer2.py, diario 05:00 Madrid) vía /api/v1/blake2b/scarcity. -->
+      <li class="nav-item d-none d-lg-flex" id="btn-sc-shared" *ngIf="splitCoins?.stillShared">
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-shared-title" title="{{ splitCoins.stillShared.btc | number: '1.0-0' }} BTC are still identical on both chains: coins that existed at the split (block 961631) and have never moved, or have only moved through transactions replayed identically on both chains, followed through any number of replays. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+          <span class="yield-label">🔗 <ng-container i18n="@@header.sc-shared">Still on both chains (not split)</ng-container></span>
+          <span class="yield-value">{{ splitCoins.stillShared.share * 100 | number: '1.1-1' }}%</span>
         </span>
       </li>
-      <li class="nav-item d-none d-lg-flex" id="btn-split-both" *ngIf="splitCoins">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-both-title" title="Coins that existed when the chains split, followed through replayed transactions, that have been spent on Spamcoin and on Bitcoin by different transactions. Another {{ splitCoins.onlySpam?.btc | number: '1.0-0' }} BTC have moved only on Spamcoin, {{ splitCoins.stillShared?.btc | number: '1.0-0' }} BTC are still shared without splitting and {{ splitCoins.replayed?.feeBtc | number: '1.0-2' }} BTC went to fees of replayed transactions. Updated every block.">
-          <span class="yield-label" i18n="@@header.split-both">Moved on Spamcoin and Bitcoin (differently)</span>
-          <span class="yield-value">{{ splitCoins.both.btc | number: '1.0-0' }} BTC ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
+      <li class="nav-item d-none d-lg-flex" id="btn-sc-split" *ngIf="splitCoins?.stillShared">
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-split-title" title="{{ splitCoins.onlyBtc.btc + splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC have split by moving on Bitcoin: {{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC moved only on Bitcoin (still unspent on Spamcoin) and {{ splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC spent on both chains by different transactions (different destination or amount). Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+          <span class="yield-label">✂️ <ng-container i18n="@@header.sc-split">Split, moving on Bitcoin</ng-container></span>
+          <span class="yield-value">{{ (splitCoins.onlyBtc.share + splitCoins.both.diffTx.share) * 100 | number: '1.2-2' }}%</span>
+          <span class="sc-sub">• <ng-container i18n="@@header.sc-only-btc">Moved only on Bitcoin</ng-container> {{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%</span>
+          <span class="sc-sub">• <ng-container i18n="@@header.sc-diff">Moved on both, divergent txs</ng-container> {{ splitCoins.both.diffTx.share * 100 | number: '1.2-2' }}%</span>
+        </span>
+      </li>
+      <li class="nav-item d-none d-lg-flex" id="btn-sc-spam" *ngIf="splitCoins?.stillShared">
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-only-spam-title" title="{{ splitCoins.onlySpam.btc | number: '1.0-0' }} BTC have moved on Spamcoin and are still unspent on Bitcoin, where their owner can still spend them. If the same Spamcoin transaction is later replayed on Bitcoin, these coins go back to being on both chains. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+          <span class="yield-label">🟠 <ng-container i18n="@@header.sc-only-spam">Moved only on Spamcoin</ng-container></span>
+          <span class="yield-value">{{ splitCoins.onlySpam.share * 100 | number: '1.2-2' }}%</span>
+          <span class="sc-sub" i18n="@@header.sc-only-spam-note">(on Bitcoin they remain intact and spendable by their owner)</span>
         </span>
       </li>
       <li class="nav-item d-none d-lg-flex" id="btn-split-mined" *ngIf="splitCoins?.minedSinceSplit">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-mined-title" title="New coins (block subsidy) mined on Bitcoin since block 961632; fees do not count because they are not new coins.">
-          <span class="yield-label" i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</span>
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-mined-title" title="New coins (block subsidy) mined on Bitcoin since block 961632; fees do not count because they are not new coins. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+          <span class="yield-label">⛏️ <ng-container i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</ng-container></span>
           <span class="yield-value">{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC ({{ splitCoins.minedSinceSplit.share * 100 | number: '1.2-2' }}%)</span>
         </span>
       </li>

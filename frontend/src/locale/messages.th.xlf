@@ -11254,12 +11254,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>ย้ายเฉพาะบน Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>ย้ายบน Spamcoin และ Bitcoin (ต่างกัน)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>ขุดได้บน Bitcoin นับตั้งแต่ hardfork ของ Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>เหรียญที่มีอยู่ตอนที่เชนแยกกัน (เอาต์พุตจนถึงบล็อก 961631) ติดตามผ่านธุรกรรมที่ถูก replay เหมือนกันบนทั้งสองเชน ที่ถูกใช้บน Bitcoin แล้วแต่ยังไม่ถูกใช้บน Spamcoin เปอร์เซ็นต์คิดจาก <x id="INTERPOLATION"/>M BTC ตอนแยก อัปเดตทุกบล็อก</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>เหรียญที่มีอยู่ตอนที่เชนแยกกัน ติดตามผ่านธุรกรรมที่ถูก replay ที่ถูกใช้บน Spamcoin และบน Bitcoin ด้วยธุรกรรมต่างกัน อีก <x id="INTERPOLATION"/> BTC ย้ายเฉพาะบน Spamcoin, <x id="INTERPOLATION_1"/> BTC ยังคงใช้ร่วมกันโดยไม่แยก และ <x id="INTERPOLATION_2"/> BTC เป็นค่าธรรมเนียมของธุรกรรมที่ถูก replay อัปเดตทุกบล็อก</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>เหรียญใหม่ (เงินอุดหนุนบล็อก) ที่ขุดได้บน Bitcoin ตั้งแต่บล็อก 961632 ค่าธรรมเนียมไม่นับเพราะไม่ใช่เหรียญใหม่</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>ยังอยู่บนทั้งสองเชน (ยังไม่แยก)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>แยกจากการเคลื่อนไหวบน Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>ย้ายเฉพาะบน Bitcoin เท่านั้น</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>ย้ายบนทั้งสองเชน ธุรกรรมต่างกัน</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>ย้ายเฉพาะบน Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(บน Bitcoin ยังคงอยู่ครบและเจ้าของใช้จ่ายได้)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC ยังเหมือนกันบนทั้งสองเชน: เหรียญที่มีอยู่ตอนแยก (บล็อก 961631) และไม่เคยเคลื่อนไหว หรือเคลื่อนไหวเฉพาะด้วยธุรกรรมที่ถูก replay เหมือนกันบนทั้งสองเชน ติดตามผ่านการ replay กี่ครั้งก็ได้ อัปเดตวันละครั้ง (05:00 เวลามาดริด); ล่าสุด: <x id="INTERPOLATION_1"/></target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC แยกออกจากการเคลื่อนไหวบน Bitcoin: <x id="INTERPOLATION_1"/> BTC ย้ายเฉพาะบน Bitcoin (ยังไม่ถูกใช้บน Spamcoin) และ <x id="INTERPOLATION_2"/> BTC ถูกใช้บนทั้งสองเชนด้วยธุรกรรมต่างกัน (ปลายทางหรือจำนวนต่างกัน) อัปเดตวันละครั้ง (05:00 เวลามาดริด); ล่าสุด: <x id="INTERPOLATION_3"/></target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC ย้ายบน Spamcoin และยังไม่ถูกใช้บน Bitcoin ซึ่งเจ้าของยังใช้จ่ายได้ หากธุรกรรม Spamcoin เดียวกันถูก replay บน Bitcoin ภายหลัง เหรียญเหล่านี้จะกลับมาอยู่บนทั้งสองเชน อัปเดตวันละครั้ง (05:00 เวลามาดริด); ล่าสุด: <x id="INTERPOLATION_1"/></target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>เหรียญใหม่ (เงินอุดหนุนบล็อก) ที่ขุดได้บน Bitcoin ตั้งแต่บล็อก 961632 ค่าธรรมเนียมไม่นับเพราะไม่ใช่เหรียญใหม่ อัปเดตวันละครั้ง (05:00 เวลามาดริด); ล่าสุด: <x id="INTERPOLATION"/></target></trans-unit>
     </body>
   </file>
 </xliff>

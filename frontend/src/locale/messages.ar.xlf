@@ -11478,12 +11478,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>نُقلت على Bitcoin فقط</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>نُقلت على Spamcoin وBitcoin (بشكل مختلف)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>المُعدَّن على Bitcoin منذ hardfork الـ Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>عملات كانت موجودة عند انفصال السلسلتين (مخرجات حتى الكتلة 961631)، تمت متابعتها عبر المعاملات المُعاد بثها بشكل مطابق على السلسلتين، أُنفقت على Bitcoin ولا تزال غير منفقة على Spamcoin. النسبة من <x id="INTERPOLATION"/>M BTC عند الانفصال. يُحدَّث مع كل كتلة.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>عملات كانت موجودة عند انفصال السلسلتين، تمت متابعتها عبر المعاملات المُعاد بثها، أُنفقت على Spamcoin وعلى Bitcoin بمعاملات مختلفة. و<x id="INTERPOLATION"/> BTC أخرى نُقلت على Spamcoin فقط، و<x id="INTERPOLATION_1"/> BTC لا تزال مشتركة دون انفصال، و<x id="INTERPOLATION_2"/> BTC ذهبت رسومًا لمعاملات مُعاد بثها. يُحدَّث مع كل كتلة.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>عملات جديدة (مكافأة الكتلة) عُدِّنت على Bitcoin منذ الكتلة 961632؛ الرسوم لا تُحتسب لأنها ليست عملات جديدة.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>لا تزال على السلسلتين (غير منفصلة)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>انفصلت بالتحرك على Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>نُقلت على Bitcoin حصرًا</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>نُقلت على كلتيهما بمعاملات مختلفة</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>نُقلت على Spamcoin فقط</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(على Bitcoin تبقى سليمة ويمكن لمالكها إنفاقها)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC لا تزال متطابقة على السلسلتين: عملات كانت موجودة عند الانفصال (الكتلة 961631) ولم تتحرك قط، أو تحركت فقط بمعاملات أُعيد بثها بشكل مطابق على السلسلتين، تمت متابعتها عبر أي عدد من مرات إعادة البث. يُحدَّث مرة يوميًا (05:00 بتوقيت مدريد)؛ آخر تحديث: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC انفصلت بالتحرك على Bitcoin: <x id="INTERPOLATION_1"/> BTC نُقلت على Bitcoin حصرًا (لا تزال غير منفقة على Spamcoin) و<x id="INTERPOLATION_2"/> BTC أُنفقت على السلسلتين بمعاملات مختلفة (وجهة أو مبلغ مختلف). يُحدَّث مرة يوميًا (05:00 بتوقيت مدريد)؛ آخر تحديث: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC نُقلت على Spamcoin ولا تزال غير منفقة على Bitcoin، حيث يستطيع مالكها إنفاقها. إذا أُعيد بث معاملة Spamcoin نفسها لاحقًا على Bitcoin، تعود هذه العملات إلى السلسلتين. يُحدَّث مرة يوميًا (05:00 بتوقيت مدريد)؛ آخر تحديث: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>عملات جديدة (مكافأة الكتلة) عُدِّنت على Bitcoin منذ الكتلة 961632؛ الرسوم لا تُحتسب لأنها ليست عملات جديدة. يُحدَّث مرة يوميًا (05:00 بتوقيت مدريد)؛ آخر تحديث: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>فقط در Bitcoin جابه‌جا شده</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>در Spamcoin و Bitcoin جابه‌جا شده (به‌طور متفاوت)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>استخراج‌شده در Bitcoin از زمان hardfork اسپم‌کوین</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>سکه‌هایی که هنگام جدا شدن زنجیره‌ها وجود داشتند (خروجی‌ها تا بلوک 961631)، که از طریق تراکنش‌های تکرارشدهٔ یکسان در هر دو زنجیره دنبال شده‌اند و در Bitcoin خرج شده‌اند و در Spamcoin هنوز خرج نشده‌اند. درصد نسبت به <x id="INTERPOLATION"/>M BTC در زمان جدایی است. با هر بلوک به‌روز می‌شود.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>سکه‌هایی که هنگام جدا شدن زنجیره‌ها وجود داشتند، که از طریق تراکنش‌های تکرارشده دنبال شده‌اند و در Spamcoin و Bitcoin با تراکنش‌های متفاوت خرج شده‌اند. <x id="INTERPOLATION"/> BTC دیگر فقط در Spamcoin جابه‌جا شده‌اند، <x id="INTERPOLATION_1"/> BTC هنوز بدون جدایی مشترک‌اند و <x id="INTERPOLATION_2"/> BTC صرف کارمزد تراکنش‌های تکرارشده شده است. با هر بلوک به‌روز می‌شود.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>سکه‌های جدید (پاداش بلوک) استخراج‌شده در Bitcoin از بلوک 961632؛ کارمزدها حساب نمی‌شوند چون سکهٔ جدید نیستند.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>هنوز در هر دو زنجیره (جدا نشده)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>جداشده با حرکت در Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>فقط در Bitcoin جابه‌جا شده</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>در هر دو جابه‌جا شده، تراکنش‌های متفاوت</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>فقط در Spamcoin جابه‌جا شده</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(در Bitcoin دست‌نخورده و قابل خرج توسط صاحبشان می‌مانند)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC هنوز در هر دو زنجیره یکسان‌اند: سکه‌هایی که هنگام جدایی (بلوک 961631) وجود داشتند و هرگز جابه‌جا نشده‌اند، یا فقط با تراکنش‌های تکرارشدهٔ یکسان در هر دو زنجیره جابه‌جا شده‌اند و از طریق هر تعداد تکرار دنبال می‌شوند. روزی یک بار به‌روز می‌شود (05:00 به وقت مادرید)؛ آخرین بار: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC با حرکت در Bitcoin جدا شده‌اند: <x id="INTERPOLATION_1"/> BTC فقط در Bitcoin جابه‌جا شده (هنوز در Spamcoin خرج نشده) و <x id="INTERPOLATION_2"/> BTC در هر دو زنجیره با تراکنش‌های متفاوت خرج شده (مقصد یا مبلغ دیگر). روزی یک بار به‌روز می‌شود (05:00 به وقت مادرید)؛ آخرین بار: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC در Spamcoin جابه‌جا شده و هنوز در Bitcoin خرج نشده‌اند، جایی که صاحبشان هنوز می‌تواند خرجشان کند. اگر همان تراکنش Spamcoin بعداً در Bitcoin تکرار شود، این سکه‌ها دوباره در هر دو زنجیره خواهند بود. روزی یک بار به‌روز می‌شود (05:00 به وقت مادرید)؛ آخرین بار: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>سکه‌های جدید (پاداش بلوک) استخراج‌شده در Bitcoin از بلوک 961632؛ کارمزدها حساب نمی‌شوند چون سکهٔ جدید نیستند. روزی یک بار به‌روز می‌شود (05:00 به وقت مادرید)؛ آخرین بار: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

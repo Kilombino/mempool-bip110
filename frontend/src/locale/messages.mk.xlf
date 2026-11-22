@@ -11026,12 +11026,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Преместени само на Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Преместени на Spamcoin и Bitcoin (различно)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Ископано на Bitcoin од хардфоркот на Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Монети што постоеја кога се разделија синџирите (излези до блок 961631), следени низ трансакциите повторени идентично на двата синџира, потрошени на Bitcoin и сè уште непотрошени на Spamcoin. Процентот е од <x id="INTERPOLATION"/>M BTC при разделувањето. Се ажурира со секој блок.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Монети што постоеја кога се разделија синџирите, следени низ повторените трансакции, потрошени на Spamcoin и на Bitcoin со различни трансакции. Уште <x id="INTERPOLATION"/> BTC се преместени само на Spamcoin, <x id="INTERPOLATION_1"/> BTC сè уште се заеднички без разделување, а <x id="INTERPOLATION_2"/> BTC отидоа на провизии за повторени трансакции. Се ажурира со секој блок.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Нови монети (субвенција на блок) ископани на Bitcoin од блок 961632; провизиите не се сметаат бидејќи не се нови монети.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Сè уште на двата синџира (неразделени)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Разделени со движење на Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Преместени исклучиво на Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Преместени на двата, различни трансакции</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Преместени само на Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(на Bitcoin остануваат недопрени и сопственикот може да ги потроши)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC се сè уште идентични на двата синџира: монети што постоеја при разделувањето (блок 961631) и никогаш не се преместиле, или се преместиле само со трансакции повторени идентично на двата синџира, следени низ кој било број повторувања. Се ажурира еднаш дневно (05:00 по мадридско време); последно: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC се разделија со движење на Bitcoin: <x id="INTERPOLATION_1"/> BTC преместени исклучиво на Bitcoin (сè уште непотрошени на Spamcoin) и <x id="INTERPOLATION_2"/> BTC потрошени на двата синџира со различни трансакции (друга дестинација или износ). Се ажурира еднаш дневно (05:00 по мадридско време); последно: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC се преместени на Spamcoin и сè уште се непотрошени на Bitcoin, каде што сопственикот сè уште може да ги потроши. Ако истата трансакција на Spamcoin подоцна се повтори на Bitcoin, овие монети повторно се на двата синџира. Се ажурира еднаш дневно (05:00 по мадридско време); последно: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Нови монети (субвенција на блок) ископани на Bitcoin од блок 961632; провизиите не се сметаат бидејќи не се нови монети. Се ажурира еднаш дневно (05:00 по мадридско време); последно: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

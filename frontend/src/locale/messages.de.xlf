@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Nur auf Bitcoin bewegt</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Auf Spamcoin und Bitcoin bewegt (unterschiedlich)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Auf Bitcoin gemined seit dem Spamcoin-Hardfork</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Coins, die bei der Trennung der Ketten existierten (Outputs bis Block 961631), verfolgt über die auf beiden Ketten identisch wiederholten Transaktionen, die auf Bitcoin ausgegeben wurden und auf Spamcoin noch unausgegeben sind. Der Prozentsatz bezieht sich auf die <x id="INTERPOLATION"/>M BTC zum Zeitpunkt der Trennung. Wird mit jedem Block aktualisiert.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Coins, die bei der Trennung der Ketten existierten, verfolgt über wiederholte Transaktionen, die auf Spamcoin und auf Bitcoin durch unterschiedliche Transaktionen ausgegeben wurden. Weitere <x id="INTERPOLATION"/> BTC wurden nur auf Spamcoin bewegt, <x id="INTERPOLATION_1"/> BTC sind noch ungetrennt gemeinsam und <x id="INTERPOLATION_2"/> BTC gingen an Gebühren wiederholter Transaktionen. Wird mit jedem Block aktualisiert.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Neue Coins (Blocksubvention), die seit Block 961632 auf Bitcoin gemined wurden; Gebühren zählen nicht, weil sie keine neuen Coins sind.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Noch auf beiden Ketten (ungetrennt)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Getrennt durch Bewegung auf Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Nur auf Bitcoin bewegt</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Auf beiden bewegt, abweichende Txs</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Nur auf Spamcoin bewegt</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(auf Bitcoin bleiben sie unberührt und für ihren Besitzer ausgebbar)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC sind auf beiden Ketten noch identisch: Coins, die bei der Trennung (Block 961631) existierten und nie bewegt wurden oder nur durch auf beiden Ketten identisch wiederholte Transaktionen, verfolgt über beliebig viele Wiederholungen. Einmal täglich aktualisiert (05:00 Uhr, Madrider Zeit); zuletzt: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC haben sich durch Bewegung auf Bitcoin getrennt: <x id="INTERPOLATION_1"/> BTC nur auf Bitcoin bewegt (auf Spamcoin noch unausgegeben) und <x id="INTERPOLATION_2"/> BTC auf beiden Ketten durch unterschiedliche Transaktionen ausgegeben (anderes Ziel oder anderer Betrag). Einmal täglich aktualisiert (05:00 Uhr, Madrider Zeit); zuletzt: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC wurden auf Spamcoin bewegt und sind auf Bitcoin noch unausgegeben, wo ihr Besitzer sie weiterhin ausgeben kann. Wird dieselbe Spamcoin-Transaktion später auf Bitcoin wiederholt, sind diese Coins wieder auf beiden Ketten. Einmal täglich aktualisiert (05:00 Uhr, Madrider Zeit); zuletzt: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Neue Coins (Blocksubvention), die seit Block 961632 auf Bitcoin gemined wurden; Gebühren zählen nicht, weil sie keine neuen Coins sind. Einmal täglich aktualisiert (05:00 Uhr, Madrider Zeit); zuletzt: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

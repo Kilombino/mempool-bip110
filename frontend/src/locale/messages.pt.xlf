@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Movidas só em Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Movidas em Spamcoin e Bitcoin (de forma diferente)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minerado em Bitcoin desde o hardfork da Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Moedas que existiam quando as cadeias se separaram (saídas até ao bloco 961631), seguidas através das transações replicadas idênticas nas duas, que foram gastas em Bitcoin e continuam por gastar em Spamcoin. A percentagem é sobre os <x id="INTERPOLATION"/>M BTC que existiam na separação. Atualizado a cada bloco.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Moedas que existiam quando as cadeias se separaram, seguidas através das transações replicadas, que foram gastas em Spamcoin e em Bitcoin por transações diferentes. Outros <x id="INTERPOLATION"/> BTC moveram-se só em Spamcoin, <x id="INTERPOLATION_1"/> BTC continuam partilhadas sem se separar e <x id="INTERPOLATION_2"/> BTC foram para taxas de transações replicadas. Atualizado a cada bloco.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Moedas novas (subsídio de bloco) mineradas em Bitcoin desde o bloco 961632; as taxas não contam porque não são moedas novas.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Continuam nas duas cadeias (sem separar)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Separadas a mover-se em Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Movidas somente em Bitcoin</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Movidas nas duas, txs divergentes</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Movidas só em Spamcoin</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(em Bitcoin continuam intactas e gastáveis pelo seu dono)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC continuam idênticos nas duas cadeias: moedas que existiam na separação (bloco 961631) e nunca se moveram, ou só se moveram com transações replicadas idênticas nas duas, seguidas através de qualquer número de replays. Atualizado uma vez por dia (05:00, hora de Madrid); última vez: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC separaram-se ao mover-se em Bitcoin: <x id="INTERPOLATION_1"/> BTC movidos somente em Bitcoin (ainda por gastar em Spamcoin) e <x id="INTERPOLATION_2"/> BTC gastos nas duas cadeias por transações diferentes (outro destino ou montante). Atualizado uma vez por dia (05:00, hora de Madrid); última vez: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC moveram-se em Spamcoin e continuam por gastar em Bitcoin, onde o seu dono ainda os pode gastar. Se a mesma transação de Spamcoin for depois replicada em Bitcoin, essas moedas voltam a estar nas duas cadeias. Atualizado uma vez por dia (05:00, hora de Madrid); última vez: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Moedas novas (subsídio de bloco) mineradas em Bitcoin desde o bloco 961632; as taxas não contam porque não são moedas novas. Atualizado uma vez por dia (05:00, hora de Madrid); última vez: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

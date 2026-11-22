@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Csak a Bitcoinon mozgatva</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>A Spamcoinon és a Bitcoinon mozgatva (eltérően)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>A Bitcoinon bányászva a Spamcoin hardfork óta</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>A láncok szétválásakor létező érmék (a 961631. blokkig létrejött kimenetek), a mindkét láncon azonosan megismételt tranzakciókon keresztül követve, amelyeket a Bitcoinon elköltöttek, a Spamcoinon viszont még nem. A százalék a szétváláskor létező <x id="INTERPOLATION"/>M BTC-hez viszonyítva. Minden blokkal frissül.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>A láncok szétválásakor létező érmék, a megismételt tranzakciókon keresztül követve, amelyeket a Spamcoinon és a Bitcoinon különböző tranzakciókkal költöttek el. További <x id="INTERPOLATION"/> BTC csak a Spamcoinon mozdult, <x id="INTERPOLATION_1"/> BTC még közös, szétválás nélkül, és <x id="INTERPOLATION_2"/> BTC a megismételt tranzakciók díjaira ment el. Minden blokkal frissül.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Új érmék (blokktámogatás), amelyeket a 961632. blokk óta bányásztak a Bitcoinon; a díjak nem számítanak, mert nem új érmék.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Még mindkét láncon (szétválás nélkül)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Szétvált a Bitcoinon mozogva</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Kizárólag a Bitcoinon mozgatva</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Mindkettőn mozgatva, eltérő tx-ek</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Csak a Spamcoinon mozgatva</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(a Bitcoinon érintetlenek és a tulajdonosuk elköltheti őket)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC még mindkét láncon azonos: a szétváláskor (961631. blokk) létező érmék, amelyek soha nem mozdultak, vagy csak mindkét láncon azonosan megismételt tranzakciókkal mozdultak, tetszőleges számú ismétlésen át követve. Naponta egyszer frissül (05:00, madridi idő szerint); legutóbb: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC vált szét a Bitcoinon mozogva: <x id="INTERPOLATION_1"/> BTC kizárólag a Bitcoinon mozgatva (a Spamcoinon még elköltetlen) és <x id="INTERPOLATION_2"/> BTC mindkét láncon különböző tranzakciókkal elköltve (más cél vagy összeg). Naponta egyszer frissül (05:00, madridi idő szerint); legutóbb: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC mozdult a Spamcoinon, és a Bitcoinon még elköltetlen, ahol a tulajdonosa továbbra is elköltheti. Ha ugyanazt a Spamcoin-tranzakciót később megismétlik a Bitcoinon, ezek az érmék újra mindkét láncon lesznek. Naponta egyszer frissül (05:00, madridi idő szerint); legutóbb: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Új érmék (blokktámogatás), amelyeket a 961632. blokk óta bányásztak a Bitcoinon; a díjak nem számítanak, mert nem új érmék. Naponta egyszer frissül (05:00, madridi idő szerint); legutóbb: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>

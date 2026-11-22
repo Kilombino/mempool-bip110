@@ -11489,12 +11489,17 @@
           <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="header.split-only-btc" datatype="html"><target>Přesunuto jen na Bitcoinu</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Přesunuto na Spamcoinu i Bitcoinu (odlišně)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Vytěženo na Bitcoinu od hardforku Spamcoinu</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mince, které existovaly při rozdělení řetězců (výstupy do bloku 961631), sledované přes transakce zopakované shodně v obou řetězcích, jež byly utraceny na Bitcoinu a na Spamcoinu zatím utraceny nejsou. Procento je z <x id="INTERPOLATION"/>M BTC existujících při rozdělení. Aktualizuje se s každým blokem.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Mince, které existovaly při rozdělení řetězců, sledované přes zopakované transakce, utracené na Spamcoinu a na Bitcoinu různými transakcemi. Dalších <x id="INTERPOLATION"/> BTC se pohnulo jen na Spamcoinu, <x id="INTERPOLATION_1"/> BTC je stále společných bez rozdělení a <x id="INTERPOLATION_2"/> BTC padlo na poplatky zopakovaných transakcí. Aktualizuje se s každým blokem.</target></trans-unit>
-      <trans-unit id="header.split-mined-title" datatype="html"><target>Nové mince (bloková odměna) vytěžené na Bitcoinu od bloku 961632; poplatky se nepočítají, protože nejde o nové mince.</target></trans-unit>
+      <trans-unit id="header.sc-shared" datatype="html"><target>Stále v obou řetězcích (nerozdělené)</target></trans-unit>
+      <trans-unit id="header.sc-split" datatype="html"><target>Oddělené pohybem na Bitcoinu</target></trans-unit>
+      <trans-unit id="header.sc-only-btc" datatype="html"><target>Přesunuto výhradně na Bitcoinu</target></trans-unit>
+      <trans-unit id="header.sc-diff" datatype="html"><target>Přesunuto v obou, odlišné tx</target></trans-unit>
+      <trans-unit id="header.sc-only-spam" datatype="html"><target>Přesunuto jen na Spamcoinu</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-note" datatype="html"><target>(na Bitcoinu zůstávají nedotčené a jejich vlastník je může utratit)</target></trans-unit>
+      <trans-unit id="header.sc-shared-title" datatype="html"><target><x id="INTERPOLATION"/> BTC je stále shodných v obou řetězcích: mince, které existovaly při rozdělení (blok 961631) a nikdy se nepohnuly, nebo se pohnuly jen transakcemi zopakovanými shodně v obou řetězcích, sledované přes libovolný počet opakování. Aktualizováno jednou denně (05:00 madridského času); naposledy: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se oddělilo pohybem na Bitcoinu: <x id="INTERPOLATION_1"/> BTC přesunuto výhradně na Bitcoinu (na Spamcoinu stále neutracené) a <x id="INTERPOLATION_2"/> BTC utraceno v obou řetězcích různými transakcemi (jiný příjemce nebo částka). Aktualizováno jednou denně (05:00 madridského času); naposledy: <x id="INTERPOLATION_3"/>.</target></trans-unit>
+      <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se pohnulo na Spamcoinu a na Bitcoinu jsou stále neutracené, kde je vlastník stále může utratit. Pokud se stejná transakce Spamcoinu později zopakuje na Bitcoinu, mince se vrátí do obou řetězců. Aktualizováno jednou denně (05:00 madridského času); naposledy: <x id="INTERPOLATION_1"/>.</target></trans-unit>
+      <trans-unit id="header.sc-mined-title" datatype="html"><target>Nové mince (bloková odměna) vytěžené na Bitcoinu od bloku 961632; poplatky se nepočítají, protože nejde o nové mince. Aktualizováno jednou denně (05:00 madridského času); naposledy: <x id="INTERPOLATION"/>.</target></trans-unit>
     </body>
   </file>
 </xliff>
