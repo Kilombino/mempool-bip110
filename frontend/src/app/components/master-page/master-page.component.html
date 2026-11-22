@@ -69,8 +69,8 @@
     <a *ngIf="kwhPerBtc !== null" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer">1 BTC = <b>{{ kwhPerBtc | number: '1.0-0' }} kWh</b> ({{ minerName }})</a>
     <a *ngIf="yshValue !== null" [routerLink]="['/tools/ysh' | relativeUrl]">YSH 1 BTC = <b>{{ yshValue | number: '1.2-2' }} {{ yshUnit }}</b></a>
     <ng-container *ngIf="splitCoins">
-      <span><span i18n="@@header.split-only-btc">Moved only on Bitcoin</span>&nbsp;<b>{{ splitCoins.onlyBtc.btc / 1000000 | number: '1.3-3' }}M BTC</b> ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
-      <span><span i18n="@@header.split-both">Moved on Spamcoin and Bitcoin</span>&nbsp;<b>{{ splitCoins.both.btc / 1000000 | number: '1.3-3' }}M BTC</b> ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
+      <span><span i18n="@@header.split-only-btc">Moved only on Bitcoin</span>&nbsp;<b>{{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
+      <span><span i18n="@@header.split-both">Moved on Spamcoin and Bitcoin</span>&nbsp;<b>{{ splitCoins.both.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
     </ng-container>
     <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
   </div>
@@ -173,13 +173,13 @@
       <li class="nav-item d-none d-lg-flex" id="btn-split-btc" *ngIf="splitCoins">
         <span class="nav-link yield-info chain-size" i18n-title="@@header.split-only-btc-title" title="Coins that existed when the chains split (outputs created up to block 961631, present on both chains) that have been spent on Bitcoin and are still unspent on Spamcoin. The percentage is over the {{ splitCoins.splitSupplyBtc / 1000000 | number: '1.2-2' }}M BTC that existed at the split. Updated every block.">
           <span class="yield-label" i18n="@@header.split-only-btc">Moved only on Bitcoin</span>
-          <span class="yield-value">{{ splitCoins.onlyBtc.btc / 1000000 | number: '1.3-3' }}M BTC ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
+          <span class="yield-value">{{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
         </span>
       </li>
       <li class="nav-item d-none d-lg-flex" id="btn-split-both" *ngIf="splitCoins">
         <span class="nav-link yield-info chain-size" i18n-title="@@header.split-both-title" title="Coins that existed when the chains split that have been spent on both Spamcoin and Bitcoin: {{ splitCoins.both.sameTx.btc | number: '1.0-0' }} BTC by the same transaction on both (replayed) and {{ splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC by a different one. Another {{ splitCoins.onlySpam.btc | number: '1.0-0' }} BTC have moved only on Spamcoin. Updated every block.">
           <span class="yield-label" i18n="@@header.split-both">Moved on Spamcoin and Bitcoin</span>
-          <span class="yield-value">{{ splitCoins.both.btc / 1000000 | number: '1.3-3' }}M BTC ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
+          <span class="yield-value">{{ splitCoins.both.btc | number: '1.0-0' }} BTC ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
         </span>
       </li>
       <!-- Lo que pesa la cadena Bitcoin-Blake2b en disco -->
