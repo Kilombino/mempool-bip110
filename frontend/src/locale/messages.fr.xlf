@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Déplacés uniquement sur Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Déplacés sur Spamcoin et Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Déplacés sur Spamcoin et Bitcoin (différemment)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minés sur Bitcoin depuis le hardfork de Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Pièces qui existaient lors de la séparation des chaînes (sorties créées jusqu'au bloc 961631, présentes sur les deux) dépensées sur Bitcoin et toujours non dépensées sur Spamcoin. Le pourcentage porte sur les <x id="INTERPOLATION"/>M BTC existant à la séparation. Mis à jour à chaque bloc.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Pièces qui existaient lors de la séparation des chaînes et dépensées à la fois sur Spamcoin et sur Bitcoin : <x id="INTERPOLATION"/> BTC par la même transaction sur les deux (rejouée) et <x id="INTERPOLATION_1"/> BTC par une transaction différente. <x id="INTERPOLATION_2"/> BTC supplémentaires n'ont bougé que sur Spamcoin. Mis à jour à chaque bloc.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Pièces qui existaient lors de la séparation des chaînes (sorties jusqu'au bloc 961631), suivies à travers les transactions rejouées à l'identique sur les deux, dépensées sur Bitcoin et toujours non dépensées sur Spamcoin. Le pourcentage porte sur les <x id="INTERPOLATION"/>M BTC existant à la séparation. Mis à jour à chaque bloc.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Pièces qui existaient lors de la séparation des chaînes, suivies à travers les transactions rejouées, dépensées sur Spamcoin et sur Bitcoin par des transactions différentes. <x id="INTERPOLATION"/> BTC supplémentaires n'ont bougé que sur Spamcoin, <x id="INTERPOLATION_1"/> BTC restent partagés sans séparation et <x id="INTERPOLATION_2"/> BTC sont partis en frais de transactions rejouées. Mis à jour à chaque bloc.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Nouvelles pièces (subvention de bloc) minées sur Bitcoin depuis le bloc 961632 ; les frais ne comptent pas car ce ne sont pas de nouvelles pièces.</target></trans-unit>
     </body>
   </file>

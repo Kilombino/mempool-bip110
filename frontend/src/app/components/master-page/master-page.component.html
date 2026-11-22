@@ -70,7 +70,7 @@
     <a *ngIf="yshValue !== null" [routerLink]="['/tools/ysh' | relativeUrl]">YSH 1 BTC = <b>{{ yshValue | number: '1.2-2' }} {{ yshUnit }}</b></a>
     <ng-container *ngIf="splitCoins">
       <span><span i18n="@@header.split-only-btc">Moved only on Bitcoin</span>&nbsp;<b>{{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
-      <span><span i18n="@@header.split-both">Moved on Spamcoin and Bitcoin</span>&nbsp;<b>{{ splitCoins.both.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
+      <span><span i18n="@@header.split-both">Moved on Spamcoin and Bitcoin (differently)</span>&nbsp;<b>{{ splitCoins.both.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
       <span *ngIf="splitCoins.minedSinceSplit"><span i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</span>&nbsp;<b>{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC</b> ({{ splitCoins.minedSinceSplit.share * 100 | number: '1.2-2' }}%)</span>
     </ng-container>
     <span *ngIf="chainSizeGB !== null">Blockchain <b>{{ chainSizeGB | number: '1.2-2' }} GB</b></span>
@@ -172,14 +172,14 @@
       <!-- Monedas que existían al separarse las cadenas (hasta 961631): movidas solo en Bitcoin / en las dos.
            Indexador ~/Projects/blake2b/split-coins (a cada bloque), servido en /api/v1/blake2b/scarcity. -->
       <li class="nav-item d-none d-lg-flex" id="btn-split-btc" *ngIf="splitCoins">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-only-btc-title" title="Coins that existed when the chains split (outputs created up to block 961631, present on both chains) that have been spent on Bitcoin and are still unspent on Spamcoin. The percentage is over the {{ splitCoins.splitSupplyBtc / 1000000 | number: '1.2-2' }}M BTC that existed at the split. Updated every block.">
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-only-btc-title" title="Coins that existed when the chains split (outputs up to block 961631), followed through the transactions replayed identically on both chains, that have been spent on Bitcoin and are still unspent on Spamcoin. The percentage is over the {{ splitCoins.splitSupplyBtc / 1000000 | number: '1.2-2' }}M BTC that existed at the split. Updated every block.">
           <span class="yield-label" i18n="@@header.split-only-btc">Moved only on Bitcoin</span>
           <span class="yield-value">{{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC ({{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%)</span>
         </span>
       </li>
       <li class="nav-item d-none d-lg-flex" id="btn-split-both" *ngIf="splitCoins">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-both-title" title="Coins that existed when the chains split that have been spent on both Spamcoin and Bitcoin: {{ splitCoins.both.sameTx.btc | number: '1.0-0' }} BTC by the same transaction on both (replayed) and {{ splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC by a different one. Another {{ splitCoins.onlySpam.btc | number: '1.0-0' }} BTC have moved only on Spamcoin. Updated every block.">
-          <span class="yield-label" i18n="@@header.split-both">Moved on Spamcoin and Bitcoin</span>
+        <span class="nav-link yield-info chain-size" i18n-title="@@header.split-both-title" title="Coins that existed when the chains split, followed through replayed transactions, that have been spent on Spamcoin and on Bitcoin by different transactions. Another {{ splitCoins.onlySpam?.btc | number: '1.0-0' }} BTC have moved only on Spamcoin, {{ splitCoins.stillShared?.btc | number: '1.0-0' }} BTC are still shared without splitting and {{ splitCoins.replayed?.feeBtc | number: '1.0-2' }} BTC went to fees of replayed transactions. Updated every block.">
+          <span class="yield-label" i18n="@@header.split-both">Moved on Spamcoin and Bitcoin (differently)</span>
           <span class="yield-value">{{ splitCoins.both.btc | number: '1.0-0' }} BTC ({{ splitCoins.both.share * 100 | number: '1.2-2' }}%)</span>
         </span>
       </li>

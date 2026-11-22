@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Csak a Bitcoinon mozgatva</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>A Spamcoinon és a Bitcoinon mozgatva</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>A Spamcoinon és a Bitcoinon mozgatva (eltérően)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>A Bitcoinon bányászva a Spamcoin hardfork óta</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>A láncok szétválásakor létező érmék (a 961631. blokkig létrehozott, mindkét láncon meglévő kimenetek), amelyeket a Bitcoinon elköltöttek, a Spamcoinon viszont még nem. A százalék a szétváláskor létező <x id="INTERPOLATION"/>M BTC-hez viszonyítva. Minden blokkal frissül.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>A láncok szétválásakor létező érmék, amelyeket a Spamcoinon és a Bitcoinon is elköltöttek: <x id="INTERPOLATION"/> BTC ugyanazzal a tranzakcióval mindkettőn (replay) és <x id="INTERPOLATION_1"/> BTC másikkal. További <x id="INTERPOLATION_2"/> BTC csak a Spamcoinon mozdult. Minden blokkal frissül.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>A láncok szétválásakor létező érmék (a 961631. blokkig létrejött kimenetek), a mindkét láncon azonosan megismételt tranzakciókon keresztül követve, amelyeket a Bitcoinon elköltöttek, a Spamcoinon viszont még nem. A százalék a szétváláskor létező <x id="INTERPOLATION"/>M BTC-hez viszonyítva. Minden blokkal frissül.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>A láncok szétválásakor létező érmék, a megismételt tranzakciókon keresztül követve, amelyeket a Spamcoinon és a Bitcoinon különböző tranzakciókkal költöttek el. További <x id="INTERPOLATION"/> BTC csak a Spamcoinon mozdult, <x id="INTERPOLATION_1"/> BTC még közös, szétválás nélkül, és <x id="INTERPOLATION_2"/> BTC a megismételt tranzakciók díjaira ment el. Minden blokkal frissül.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Új érmék (blokktámogatás), amelyeket a 961632. blokk óta bányásztak a Bitcoinon; a díjak nem számítanak, mert nem új érmék.</target></trans-unit>
     </body>
   </file>

@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Yalnızca Bitcoin'de taşınan</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Spamcoin ve Bitcoin'de taşınan</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Spamcoin ve Bitcoin'de taşınan (farklı şekilde)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Spamcoin hardfork'undan beri Bitcoin'de kazılan</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Zincirler ayrıldığında var olan (961631. bloğa kadar oluşturulmuş, her iki zincirde de bulunan çıktılar) ve Bitcoin'de harcanmış ama Spamcoin'de hâlâ harcanmamış coinler. Yüzde, ayrılma anında var olan <x id="INTERPOLATION"/>M BTC üzerindendir. Her blokta güncellenir.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Zincirler ayrıldığında var olan ve hem Spamcoin'de hem Bitcoin'de harcanmış coinler: <x id="INTERPOLATION"/> BTC her ikisinde aynı işlemle (replay) ve <x id="INTERPOLATION_1"/> BTC farklı bir işlemle. Ayrıca <x id="INTERPOLATION_2"/> BTC yalnızca Spamcoin'de taşındı. Her blokta güncellenir.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Zincirler ayrıldığında var olan (961631. bloğa kadarki çıktılar), her iki zincirde aynen tekrarlanan işlemler üzerinden izlenen ve Bitcoin'de harcanmış ama Spamcoin'de hâlâ harcanmamış coinler. Yüzde, ayrılma anındaki <x id="INTERPOLATION"/>M BTC üzerindendir. Her blokta güncellenir.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Zincirler ayrıldığında var olan, tekrarlanan işlemler üzerinden izlenen ve Spamcoin'de ve Bitcoin'de farklı işlemlerle harcanmış coinler. Ayrıca <x id="INTERPOLATION"/> BTC yalnızca Spamcoin'de taşındı, <x id="INTERPOLATION_1"/> BTC hâlâ ayrılmadan ortak ve <x id="INTERPOLATION_2"/> BTC tekrarlanan işlemlerin ücretlerine gitti. Her blokta güncellenir.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>961632. bloktan beri Bitcoin'de kazılan yeni coinler (blok ödülü); ücretler yeni coin olmadığı için sayılmaz.</target></trans-unit>
     </body>
   </file>

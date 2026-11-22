@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Bitcoin에서만 이동됨</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Spamcoin과 Bitcoin 모두에서 이동됨</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Spamcoin과 Bitcoin에서 이동됨(서로 다르게)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Spamcoin 하드포크 이후 Bitcoin에서 채굴됨</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>체인이 분리될 때 존재하던 코인(블록 961631까지 생성되어 두 체인 모두에 있는 출력) 중 Bitcoin에서 사용되었고 Spamcoin에서는 아직 사용되지 않은 코인. 비율은 분리 시점의 <x id="INTERPOLATION"/>M BTC 기준입니다. 블록마다 갱신됩니다.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>체인이 분리될 때 존재하던 코인 중 Spamcoin과 Bitcoin 모두에서 사용된 코인: 두 체인에서 같은 트랜잭션으로 사용된 <x id="INTERPOLATION"/> BTC(리플레이)와 다른 트랜잭션으로 사용된 <x id="INTERPOLATION_1"/> BTC. 그 밖에 <x id="INTERPOLATION_2"/> BTC는 Spamcoin에서만 이동했습니다. 블록마다 갱신됩니다.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>체인이 분리될 때 존재하던 코인(블록 961631까지의 출력)을 두 체인에서 똑같이 리플레이된 트랜잭션을 따라 추적한 것 중 Bitcoin에서 사용되었고 Spamcoin에서는 아직 사용되지 않은 코인. 비율은 분리 시점의 <x id="INTERPOLATION"/>M BTC 기준입니다. 블록마다 갱신됩니다.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>체인이 분리될 때 존재하던 코인을 리플레이된 트랜잭션을 따라 추적한 것 중 Spamcoin과 Bitcoin에서 서로 다른 트랜잭션으로 사용된 코인. 그 밖에 <x id="INTERPOLATION"/> BTC는 Spamcoin에서만 이동했고, <x id="INTERPOLATION_1"/> BTC는 분리되지 않고 여전히 공유되며, <x id="INTERPOLATION_2"/> BTC는 리플레이된 트랜잭션의 수수료로 나갔습니다. 블록마다 갱신됩니다.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>블록 961632 이후 Bitcoin에서 채굴된 새 코인(블록 보조금). 수수료는 새 코인이 아니므로 포함하지 않습니다.</target></trans-unit>
     </body>
   </file>

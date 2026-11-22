@@ -11491,10 +11491,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>仅在 Bitcoin 上移动</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>在 Spamcoin 和 Bitcoin 上都移动</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>在 Spamcoin 和 Bitcoin 上移动（方式不同）</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>自 Spamcoin 硬分叉以来在 Bitcoin 上挖出</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>链分离时已存在的币（截至区块 961631 创建、两条链上都有的输出）中，已在 Bitcoin 上花费而在 Spamcoin 上仍未花费的部分。百分比以分离时存在的 <x id="INTERPOLATION"/>M BTC 为基数。每个区块更新。</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>链分离时已存在、且在 Spamcoin 和 Bitcoin 上都已花费的币：<x id="INTERPOLATION"/> BTC 在两条链上由同一笔交易花费（重放），<x id="INTERPOLATION_1"/> BTC 由不同交易花费。另有 <x id="INTERPOLATION_2"/> BTC 仅在 Spamcoin 上移动。每个区块更新。</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>链分离时已存在的币（截至区块 961631 的输出），沿着在两条链上完全相同地重放的交易进行追踪，其中已在 Bitcoin 上花费而在 Spamcoin 上仍未花费的部分。百分比以分离时的 <x id="INTERPOLATION"/>M BTC 为基数。每个区块更新。</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>链分离时已存在的币，沿着重放的交易进行追踪，其中在 Spamcoin 和 Bitcoin 上被不同交易花费的部分。另有 <x id="INTERPOLATION"/> BTC 仅在 Spamcoin 上移动，<x id="INTERPOLATION_1"/> BTC 仍然共享、尚未分离，<x id="INTERPOLATION_2"/> BTC 用于支付重放交易的手续费。每个区块更新。</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>自区块 961632 以来在 Bitcoin 上挖出的新币（区块补贴）；手续费不计入，因为它们不是新币。</target></trans-unit>
     </body>
   </file>

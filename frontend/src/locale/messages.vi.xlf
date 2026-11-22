@@ -11402,10 +11402,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Chỉ di chuyển trên Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Di chuyển trên cả Spamcoin và Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Di chuyển trên Spamcoin và Bitcoin (khác nhau)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Đào trên Bitcoin kể từ hardfork của Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Các đồng tiền tồn tại khi hai chuỗi tách ra (đầu ra tạo đến khối 961631, có trên cả hai chuỗi) đã được tiêu trên Bitcoin và vẫn chưa được tiêu trên Spamcoin. Tỷ lệ phần trăm tính trên <x id="INTERPOLATION"/>M BTC tồn tại lúc tách. Cập nhật mỗi khối.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Các đồng tiền tồn tại khi hai chuỗi tách ra và đã được tiêu trên cả Spamcoin lẫn Bitcoin: <x id="INTERPOLATION"/> BTC bằng cùng một giao dịch trên cả hai (replay) và <x id="INTERPOLATION_1"/> BTC bằng giao dịch khác. Thêm <x id="INTERPOLATION_2"/> BTC chỉ di chuyển trên Spamcoin. Cập nhật mỗi khối.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Các đồng tiền tồn tại khi hai chuỗi tách ra (đầu ra đến khối 961631), được theo dõi qua các giao dịch được phát lại y hệt trên cả hai chuỗi, đã được tiêu trên Bitcoin và vẫn chưa được tiêu trên Spamcoin. Tỷ lệ phần trăm tính trên <x id="INTERPOLATION"/>M BTC lúc tách. Cập nhật mỗi khối.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Các đồng tiền tồn tại khi hai chuỗi tách ra, được theo dõi qua các giao dịch được phát lại, đã được tiêu trên Spamcoin và trên Bitcoin bằng các giao dịch khác nhau. Thêm <x id="INTERPOLATION"/> BTC chỉ di chuyển trên Spamcoin, <x id="INTERPOLATION_1"/> BTC vẫn còn chung chưa tách và <x id="INTERPOLATION_2"/> BTC đã thành phí của các giao dịch được phát lại. Cập nhật mỗi khối.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Đồng tiền mới (trợ cấp khối) được đào trên Bitcoin kể từ khối 961632; phí không được tính vì không phải là tiền mới.</target></trans-unit>
     </body>
   </file>

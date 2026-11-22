@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Pomaknuto samo na Bitcoinu</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Pomaknuto na Spamcoinu i Bitcoinu</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Pomaknuto na Spamcoinu i Bitcoinu (različito)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Iskopano na Bitcoinu od hardforka Spamcoina</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Kovanice koje su postojale kad su se lanci razdvojili (izlazi stvoreni do bloka 961631, prisutni na oba) potrošene na Bitcoinu i još nepotrošene na Spamcoinu. Postotak je od <x id="INTERPOLATION"/>M BTC koliko ih je bilo pri razdvajanju. Ažurira se svakim blokom.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Kovanice koje su postojale kad su se lanci razdvojili, potrošene i na Spamcoinu i na Bitcoinu: <x id="INTERPOLATION"/> BTC istom transakcijom na oba (replay) i <x id="INTERPOLATION_1"/> BTC drugom. Još <x id="INTERPOLATION_2"/> BTC pomaknuto je samo na Spamcoinu. Ažurira se svakim blokom.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Kovanice koje su postojale kad su se lanci razdvojili (izlazi do bloka 961631), praćene kroz transakcije ponovljene jednako na oba lanca, potrošene na Bitcoinu i još nepotrošene na Spamcoinu. Postotak je od <x id="INTERPOLATION"/>M BTC pri razdvajanju. Ažurira se svakim blokom.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Kovanice koje su postojale kad su se lanci razdvojili, praćene kroz ponovljene transakcije, potrošene na Spamcoinu i na Bitcoinu različitim transakcijama. Još <x id="INTERPOLATION"/> BTC pomaknuto je samo na Spamcoinu, <x id="INTERPOLATION_1"/> BTC i dalje je zajedničko bez razdvajanja, a <x id="INTERPOLATION_2"/> BTC otišlo je na naknade ponovljenih transakcija. Ažurira se svakim blokom.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Nove kovanice (subvencija bloka) iskopane na Bitcoinu od bloka 961632; naknade se ne računaju jer nisu nove kovanice.</target></trans-unit>
     </body>
   </file>

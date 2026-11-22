@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Alleen op Bitcoin verplaatst</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Op Spamcoin en Bitcoin verplaatst</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Op Spamcoin en Bitcoin verplaatst (verschillend)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Gemined op Bitcoin sinds de Spamcoin-hardfork</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Munten die bestonden toen de ketens splitsten (outputs aangemaakt tot blok 961631, aanwezig op beide) die op Bitcoin zijn uitgegeven en op Spamcoin nog niet. Het percentage is ten opzichte van de <x id="INTERPOLATION"/>M BTC die er bij de splitsing waren. Elk blok bijgewerkt.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Munten die bestonden toen de ketens splitsten en die zowel op Spamcoin als op Bitcoin zijn uitgegeven: <x id="INTERPOLATION"/> BTC met dezelfde transactie op beide (replay) en <x id="INTERPOLATION_1"/> BTC met een andere. Nog eens <x id="INTERPOLATION_2"/> BTC zijn alleen op Spamcoin verplaatst. Elk blok bijgewerkt.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Munten die bestonden toen de ketens splitsten (outputs tot blok 961631), gevolgd via de transacties die op beide ketens identiek zijn herhaald, die op Bitcoin zijn uitgegeven en op Spamcoin nog niet. Het percentage is ten opzichte van de <x id="INTERPOLATION"/>M BTC bij de splitsing. Elk blok bijgewerkt.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Munten die bestonden toen de ketens splitsten, gevolgd via herhaalde transacties, die op Spamcoin en op Bitcoin met verschillende transacties zijn uitgegeven. Nog eens <x id="INTERPOLATION"/> BTC zijn alleen op Spamcoin verplaatst, <x id="INTERPOLATION_1"/> BTC zijn nog gedeeld zonder splitsing en <x id="INTERPOLATION_2"/> BTC gingen naar kosten van herhaalde transacties. Elk blok bijgewerkt.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Nieuwe munten (bloksubsidie) gemined op Bitcoin sinds blok 961632; transactiekosten tellen niet mee omdat het geen nieuwe munten zijn.</target></trans-unit>
     </body>
   </file>

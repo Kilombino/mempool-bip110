@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Przeniesione tylko w Bitcoinie</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Przeniesione w Spamcoinie i Bitcoinie</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Przeniesione w Spamcoinie i Bitcoinie (inaczej)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Wydobyte w Bitcoinie od hardforka Spamcoina</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monety istniejące w chwili rozdzielenia łańcuchów (wyjścia utworzone do bloku 961631, obecne w obu), które wydano w Bitcoinie, a w Spamcoinie wciąż są niewydane. Procent liczony od <x id="INTERPOLATION"/>M BTC istniejących w chwili rozdzielenia. Aktualizowane co blok.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Monety istniejące w chwili rozdzielenia łańcuchów, wydane zarówno w Spamcoinie, jak i w Bitcoinie: <x id="INTERPOLATION"/> BTC tą samą transakcją w obu (replay) i <x id="INTERPOLATION_1"/> BTC inną. Kolejne <x id="INTERPOLATION_2"/> BTC przeniesiono tylko w Spamcoinie. Aktualizowane co blok.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monety istniejące w chwili rozdzielenia łańcuchów (wyjścia do bloku 961631), śledzone przez transakcje powtórzone identycznie w obu łańcuchach, które wydano w Bitcoinie, a w Spamcoinie wciąż są niewydane. Procent liczony od <x id="INTERPOLATION"/>M BTC istniejących w chwili rozdzielenia. Aktualizowane co blok.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Monety istniejące w chwili rozdzielenia łańcuchów, śledzone przez powtórzone transakcje, wydane w Spamcoinie i w Bitcoinie różnymi transakcjami. Kolejne <x id="INTERPOLATION"/> BTC przeniesiono tylko w Spamcoinie, <x id="INTERPOLATION_1"/> BTC wciąż jest wspólnych bez rozdzielenia, a <x id="INTERPOLATION_2"/> BTC poszło na opłaty powtórzonych transakcji. Aktualizowane co blok.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Nowe monety (subsydium blokowe) wydobyte w Bitcoinie od bloku 961632; opłaty się nie liczą, bo nie są nowymi monetami.</target></trans-unit>
     </body>
   </file>

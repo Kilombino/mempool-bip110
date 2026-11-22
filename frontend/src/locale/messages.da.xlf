@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Kun flyttet på Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Flyttet på Spamcoin og Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Flyttet på Spamcoin og Bitcoin (forskelligt)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minet på Bitcoin siden Spamcoin-hardforken</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mønter, der fandtes da kæderne skiltes (outputs oprettet til og med blok 961631, til stede på begge), som er brugt på Bitcoin og stadig ubrugte på Spamcoin. Procentdelen er af de <x id="INTERPOLATION"/>M BTC, der fandtes ved adskillelsen. Opdateres ved hver blok.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Mønter, der fandtes da kæderne skiltes, og som er brugt på både Spamcoin og Bitcoin: <x id="INTERPOLATION"/> BTC med samme transaktion på begge (replay) og <x id="INTERPOLATION_1"/> BTC med en anden. Yderligere <x id="INTERPOLATION_2"/> BTC er kun flyttet på Spamcoin. Opdateres ved hver blok.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mønter, der fandtes da kæderne skiltes (outputs til og med blok 961631), fulgt gennem transaktioner gentaget identisk på begge kæder, som er brugt på Bitcoin og stadig ubrugte på Spamcoin. Procentdelen er af de <x id="INTERPOLATION"/>M BTC ved adskillelsen. Opdateres ved hver blok.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Mønter, der fandtes da kæderne skiltes, fulgt gennem gentagne transaktioner, som er brugt på Spamcoin og på Bitcoin med forskellige transaktioner. Yderligere <x id="INTERPOLATION"/> BTC er kun flyttet på Spamcoin, <x id="INTERPOLATION_1"/> BTC er stadig fælles uden adskillelse, og <x id="INTERPOLATION_2"/> BTC gik til gebyrer for gentagne transaktioner. Opdateres ved hver blok.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Nye mønter (bloksubsidie) minet på Bitcoin siden blok 961632; gebyrer tæller ikke, fordi de ikke er nye mønter.</target></trans-unit>
     </body>
   </file>

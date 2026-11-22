@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Bitcoinでのみ移動</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>SpamcoinとBitcoinの両方で移動</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>SpamcoinとBitcoinで移動（別々に）</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Spamcoinのハードフォーク以降にBitcoinで採掘</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>チェーン分岐時に存在していたコイン（ブロック961631までに作成され、両チェーンに存在する出力）のうち、Bitcoinで使用され、Spamcoinではまだ未使用のもの。割合は分岐時に存在した<x id="INTERPOLATION"/>M BTCに対する値です。ブロックごとに更新。</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>チェーン分岐時に存在し、SpamcoinとBitcoinの両方で使用されたコイン：両方で同じトランザクションによるもの（リプレイ）<x id="INTERPOLATION"/> BTC、別のトランザクションによるもの<x id="INTERPOLATION_1"/> BTC。さらに<x id="INTERPOLATION_2"/> BTCがSpamcoinでのみ移動しています。ブロックごとに更新。</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>チェーン分岐時に存在していたコイン（ブロック961631までの出力）を、両チェーンで同一にリプレイされたトランザクションをたどって追跡したもののうち、Bitcoinで使用され、Spamcoinではまだ未使用のもの。割合は分岐時の<x id="INTERPOLATION"/>M BTCに対する値です。ブロックごとに更新。</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>チェーン分岐時に存在していたコインを、リプレイされたトランザクションをたどって追跡したもののうち、SpamcoinとBitcoinで異なるトランザクションによって使用されたもの。さらに<x id="INTERPOLATION"/> BTCがSpamcoinでのみ移動し、<x id="INTERPOLATION_1"/> BTCは分かれずに共有されたままで、<x id="INTERPOLATION_2"/> BTCはリプレイされたトランザクションの手数料になりました。ブロックごとに更新。</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>ブロック961632以降にBitcoinで採掘された新規コイン（ブロック報酬）。手数料は新規コインではないため含みません。</target></trans-unit>
     </body>
   </file>

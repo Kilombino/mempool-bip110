@@ -10759,10 +10759,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Mogudes només a Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Mogudes a Spamcoin i Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Mogudes a Spamcoin i Bitcoin (de manera diferent)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minat a Bitcoin des del hardfork de Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monedes que existien quan les cadenes es van separar (sortides creades fins al bloc 961631, presents a totes dues) que s'han gastat a Bitcoin i encara no s'han gastat a Spamcoin. El percentatge és sobre els <x id="INTERPOLATION"/>M BTC que hi havia en separar-se. S'actualitza a cada bloc.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Monedes que existien quan les cadenes es van separar i que s'han gastat tant a Spamcoin com a Bitcoin: <x id="INTERPOLATION"/> BTC amb la mateixa transacció a totes dues (replay) i <x id="INTERPOLATION_1"/> BTC amb una altra. Uns altres <x id="INTERPOLATION_2"/> BTC s'han mogut només a Spamcoin. S'actualitza a cada bloc.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monedes que existien quan les cadenes es van separar (sortides fins al bloc 961631), seguides a través de les transaccions replicades idèntiques a totes dues, que s'han gastat a Bitcoin i encara no s'han gastat a Spamcoin. El percentatge és sobre els <x id="INTERPOLATION"/>M BTC que hi havia en separar-se. S'actualitza a cada bloc.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Monedes que existien quan les cadenes es van separar, seguides a través de les transaccions replicades, que s'han gastat a Spamcoin i a Bitcoin amb transaccions diferents. Uns altres <x id="INTERPOLATION"/> BTC s'han mogut només a Spamcoin, <x id="INTERPOLATION_1"/> BTC continuen compartides sense separar i <x id="INTERPOLATION_2"/> BTC han anat a comissions de transaccions replicades. S'actualitza a cada bloc.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Monedes noves (subsidi de bloc) minades a Bitcoin des del bloc 961632; les comissions no compten perquè no són monedes noves.</target></trans-unit>
     </body>
   </file>

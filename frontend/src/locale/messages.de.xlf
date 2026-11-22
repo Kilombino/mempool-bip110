@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Nur auf Bitcoin bewegt</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Auf Spamcoin und Bitcoin bewegt</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Auf Spamcoin und Bitcoin bewegt (unterschiedlich)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Auf Bitcoin gemined seit dem Spamcoin-Hardfork</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Coins, die bei der Trennung der Ketten existierten (Outputs bis Block 961631, auf beiden vorhanden), die auf Bitcoin ausgegeben wurden und auf Spamcoin noch unausgegeben sind. Der Prozentsatz bezieht sich auf die <x id="INTERPOLATION"/>M BTC zum Zeitpunkt der Trennung. Wird mit jedem Block aktualisiert.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Coins, die bei der Trennung der Ketten existierten und sowohl auf Spamcoin als auch auf Bitcoin ausgegeben wurden: <x id="INTERPOLATION"/> BTC durch dieselbe Transaktion auf beiden (Replay) und <x id="INTERPOLATION_1"/> BTC durch eine andere. Weitere <x id="INTERPOLATION_2"/> BTC wurden nur auf Spamcoin bewegt. Wird mit jedem Block aktualisiert.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Coins, die bei der Trennung der Ketten existierten (Outputs bis Block 961631), verfolgt über die auf beiden Ketten identisch wiederholten Transaktionen, die auf Bitcoin ausgegeben wurden und auf Spamcoin noch unausgegeben sind. Der Prozentsatz bezieht sich auf die <x id="INTERPOLATION"/>M BTC zum Zeitpunkt der Trennung. Wird mit jedem Block aktualisiert.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Coins, die bei der Trennung der Ketten existierten, verfolgt über wiederholte Transaktionen, die auf Spamcoin und auf Bitcoin durch unterschiedliche Transaktionen ausgegeben wurden. Weitere <x id="INTERPOLATION"/> BTC wurden nur auf Spamcoin bewegt, <x id="INTERPOLATION_1"/> BTC sind noch ungetrennt gemeinsam und <x id="INTERPOLATION_2"/> BTC gingen an Gebühren wiederholter Transaktionen. Wird mit jedem Block aktualisiert.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Neue Coins (Blocksubvention), die seit Block 961632 auf Bitcoin gemined wurden; Gebühren zählen nicht, weil sie keine neuen Coins sind.</target></trans-unit>
     </body>
   </file>

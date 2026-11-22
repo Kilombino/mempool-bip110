@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Siirretty vain Bitcoinissa</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Siirretty Spamcoinissa ja Bitcoinissa</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Siirretty Spamcoinissa ja Bitcoinissa (eri tavoin)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Louhittu Bitcoinissa Spamcoinin hardforkin jälkeen</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Kolikot, jotka olivat olemassa ketjujen erotessa (ulostulot lohkoon 961631 asti, molemmissa ketjuissa), jotka on käytetty Bitcoinissa ja ovat yhä käyttämättä Spamcoinissa. Prosentti on erottaessa olleista <x id="INTERPOLATION"/>M BTC:stä. Päivittyy joka lohkolla.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Kolikot, jotka olivat olemassa ketjujen erotessa ja jotka on käytetty sekä Spamcoinissa että Bitcoinissa: <x id="INTERPOLATION"/> BTC samalla transaktiolla molemmissa (replay) ja <x id="INTERPOLATION_1"/> BTC eri transaktiolla. Lisäksi <x id="INTERPOLATION_2"/> BTC on siirretty vain Spamcoinissa. Päivittyy joka lohkolla.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Kolikot, jotka olivat olemassa ketjujen erotessa (ulostulot lohkoon 961631 asti), seurattuna molemmissa ketjuissa identtisinä toistettujen transaktioiden läpi, jotka on käytetty Bitcoinissa ja ovat yhä käyttämättä Spamcoinissa. Prosentti on erottaessa olleista <x id="INTERPOLATION"/>M BTC:stä. Päivittyy joka lohkolla.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Kolikot, jotka olivat olemassa ketjujen erotessa, seurattuna toistettujen transaktioiden läpi, jotka on käytetty Spamcoinissa ja Bitcoinissa eri transaktioilla. Lisäksi <x id="INTERPOLATION"/> BTC on siirretty vain Spamcoinissa, <x id="INTERPOLATION_1"/> BTC on yhä yhteisiä erottamatta ja <x id="INTERPOLATION_2"/> BTC meni toistettujen transaktioiden maksuihin. Päivittyy joka lohkolla.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Uudet kolikot (lohkopalkkio) louhittu Bitcoinissa lohkosta 961632 lähtien; siirtomaksuja ei lasketa, koska ne eivät ole uusia kolikoita.</target></trans-unit>
     </body>
   </file>

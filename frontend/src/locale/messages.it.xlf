@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Spostati solo su Bitcoin</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Spostati su Spamcoin e Bitcoin</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Spostati su Spamcoin e Bitcoin (in modo diverso)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Minati su Bitcoin dall'hardfork di Spamcoin</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monete esistenti al momento della separazione delle catene (output creati fino al blocco 961631, presenti su entrambe) spese su Bitcoin e ancora non spese su Spamcoin. La percentuale è sui <x id="INTERPOLATION"/>M BTC esistenti alla separazione. Aggiornato a ogni blocco.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Monete esistenti al momento della separazione delle catene spese sia su Spamcoin sia su Bitcoin: <x id="INTERPOLATION"/> BTC con la stessa transazione su entrambe (replay) e <x id="INTERPOLATION_1"/> BTC con una diversa. Altri <x id="INTERPOLATION_2"/> BTC si sono mossi solo su Spamcoin. Aggiornato a ogni blocco.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Monete esistenti alla separazione delle catene (output fino al blocco 961631), seguite attraverso le transazioni riprodotte identiche su entrambe, spese su Bitcoin e ancora non spese su Spamcoin. La percentuale è sui <x id="INTERPOLATION"/>M BTC esistenti alla separazione. Aggiornato a ogni blocco.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Monete esistenti alla separazione delle catene, seguite attraverso le transazioni riprodotte, spese su Spamcoin e su Bitcoin con transazioni diverse. Altri <x id="INTERPOLATION"/> BTC si sono mossi solo su Spamcoin, <x id="INTERPOLATION_1"/> BTC sono ancora condivisi senza separarsi e <x id="INTERPOLATION_2"/> BTC sono andati in commissioni di transazioni riprodotte. Aggiornato a ogni blocco.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Monete nuove (sussidio di blocco) minate su Bitcoin dal blocco 961632; le commissioni non contano perché non sono monete nuove.</target></trans-unit>
     </body>
   </file>

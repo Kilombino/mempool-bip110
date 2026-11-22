@@ -11490,10 +11490,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="header.split-only-btc" datatype="html"><target>Přesunuto jen na Bitcoinu</target></trans-unit>
-      <trans-unit id="header.split-both" datatype="html"><target>Přesunuto na Spamcoinu i Bitcoinu</target></trans-unit>
+      <trans-unit id="header.split-both" datatype="html"><target>Přesunuto na Spamcoinu i Bitcoinu (odlišně)</target></trans-unit>
       <trans-unit id="header.split-mined" datatype="html"><target>Vytěženo na Bitcoinu od hardforku Spamcoinu</target></trans-unit>
-      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mince, které existovaly při rozdělení řetězců (výstupy vytvořené do bloku 961631, přítomné v obou), jež byly utraceny na Bitcoinu a na Spamcoinu zatím utraceny nejsou. Procento je z <x id="INTERPOLATION"/>M BTC existujících při rozdělení. Aktualizuje se s každým blokem.</target></trans-unit>
-      <trans-unit id="header.split-both-title" datatype="html"><target>Mince, které existovaly při rozdělení řetězců a byly utraceny na Spamcoinu i na Bitcoinu: <x id="INTERPOLATION"/> BTC stejnou transakcí v obou (replay) a <x id="INTERPOLATION_1"/> BTC jinou. Dalších <x id="INTERPOLATION_2"/> BTC se pohnulo jen na Spamcoinu. Aktualizuje se s každým blokem.</target></trans-unit>
+      <trans-unit id="header.split-only-btc-title" datatype="html"><target>Mince, které existovaly při rozdělení řetězců (výstupy do bloku 961631), sledované přes transakce zopakované shodně v obou řetězcích, jež byly utraceny na Bitcoinu a na Spamcoinu zatím utraceny nejsou. Procento je z <x id="INTERPOLATION"/>M BTC existujících při rozdělení. Aktualizuje se s každým blokem.</target></trans-unit>
+      <trans-unit id="header.split-both-title" datatype="html"><target>Mince, které existovaly při rozdělení řetězců, sledované přes zopakované transakce, utracené na Spamcoinu a na Bitcoinu různými transakcemi. Dalších <x id="INTERPOLATION"/> BTC se pohnulo jen na Spamcoinu, <x id="INTERPOLATION_1"/> BTC je stále společných bez rozdělení a <x id="INTERPOLATION_2"/> BTC padlo na poplatky zopakovaných transakcí. Aktualizuje se s každým blokem.</target></trans-unit>
       <trans-unit id="header.split-mined-title" datatype="html"><target>Nové mince (bloková odměna) vytěžené na Bitcoinu od bloku 961632; poplatky se nepočítají, protože nejde o nové mince.</target></trans-unit>
     </body>
   </file>
