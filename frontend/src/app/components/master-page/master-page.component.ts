@@ -68,6 +68,9 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   // measured daily on a pruned node; served by /api/v1/blake2b/scarcity.
   activeSupply: number | null = null;
   activeShare: number | null = null;
+  // Monedas de la separación de cadenas (salidas hasta 961631) movidas solo en Bitcoin / en Spamcoin y
+  // Bitcoin; viene en splitCoins de /api/v1/blake2b/scarcity (indexador split-coins, a cada bloque).
+  splitCoins: any = null;
   // Energía equivalente a 1 BTC (Bitcoin-Blake2b) minándolo con el ASIC de referencia.
   kwhPerBtc: number | null = null;
 
@@ -126,6 +129,9 @@ export class MasterPageComponent implements OnInit, OnDestroy {
           this.activeSupply = r.activeSupplyBtc;
           this.activeShare = typeof r.activeShare === 'number' ? r.activeShare : null;
           this.recomputeYsh();
+        }
+        if (r && r.splitCoins && r.splitCoins.onlyBtc && r.splitCoins.both) {
+          this.splitCoins = r.splitCoins;
         }
       });
       this.http.get<any>('/api/blocks/tip/height').pipe(catchError(() => of(null))).subscribe((h) => {

@@ -39,6 +39,10 @@ const STALE_MAX_MS = 6 * 3600_000;
 // Escasez Blake2b: BTC in UTXOs created at or after the fork, measured once a day on a
 // pruned node by /mnt/datos2/utxo-scarcity/run.sh and mounted here read-only.
 const SCARCITY_FILE = process.env.BLAKE2B_SCARCITY_FILE || '/scarcity/scarcity.json';
+// Monedas de la bifurcación (salidas creadas hasta 961631, comunes a las dos cadenas) movidas
+// solo en Bitcoin, en las dos o solo en Spamcoin. Lo escribe a cada bloque el indexador
+// ~/Projects/blake2b/split-coins/indexer.py (user service split-coins).
+const SPLIT_COINS_FILE = process.env.BLAKE2B_SPLIT_COINS_FILE || '/scarcity/split-coins.json';
 
 export interface Scarcity {
   // Active supply now: the day's measurement plus the coins mined since (they exist only here).
@@ -195,6 +199,21 @@ class Blake2bWidget {
   }
 
   private scarcityCache: { mtime: number; data: any } | null = null;
+  private splitCoinsCache: { mtime: number; data: any } | null = null;
+
+  /** Último cálculo del indexador split-coins, o null si aún no existe. */
+  public splitCoins(): any | null {
+    try {
+      const st = fs.statSync(SPLIT_COINS_FILE);
+      if (!this.splitCoinsCache || this.splitCoinsCache.mtime !== st.mtimeMs) {
+        this.splitCoinsCache = { mtime: st.mtimeMs, data: JSON.parse(fs.readFileSync(SPLIT_COINS_FILE, 'utf8')) };
+      }
+      const d = this.splitCoinsCache.data;
+      return d && d.onlyBtc && d.both ? d : null;
+    } catch (e) {
+      return null;
+    }
+  }
 
   /** The day's measurement, brought up to `height` with the subsidies mined since. Null if missing. */
   public scarcityAt(height: number): Scarcity | null {

@@ -558,13 +558,14 @@ class BitcoinRoutes {
     try {
       const height = await bitcoinClient.getBlockCount();
       const s = blake2bWidget.scarcityAt(height);
-      res.setHeader('Cache-Control', 'public, max-age=300');
+      const splitCoins = blake2bWidget.splitCoins();
+      res.setHeader('Cache-Control', 'public, max-age=60');
       res.setHeader('Access-Control-Allow-Origin', '*');
-      if (!s) {
+      if (!s && !splitCoins) {
         res.status(503).send('No measurement yet');
         return;
       }
-      res.json(s);
+      res.json({ ...(s || {}), splitCoins });
     } catch (e) {
       handleError(req, res, 500, 'Failed to get scarcity: ' + (e instanceof Error ? e.message : e));
     }
