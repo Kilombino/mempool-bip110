@@ -559,3 +559,22 @@ main {
   padding-top: 2px !important;
   padding-bottom: 2px !important;
 }
+@media (min-width: 992px) {
+  /* Con un grupo abierto la nav crece hacia abajo: todo alineado arriba en vez de centrado con márgenes auto */
+  .navbar-nav > li {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    align-self: flex-start;
+  }
+  .stat-group .group-items > li {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+    min-height: 0;
+    height: auto;
+  }
+  .stat-group .group-items .nav-link {
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+  }
+}
