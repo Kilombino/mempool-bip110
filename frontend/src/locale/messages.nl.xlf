@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC zijn gesplitst door te bewegen op Bitcoin: <x id="INTERPOLATION_1"/> BTC alleen op Bitcoin verplaatst (op Spamcoin nog niet uitgegeven) en <x id="INTERPOLATION_2"/> BTC op beide ketens met verschillende transacties uitgegeven (andere bestemming of ander bedrag). Eén keer per dag bijgewerkt (05:00, Madrid-tijd); laatst: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC zijn op Spamcoin verplaatst en op Bitcoin nog niet uitgegeven, waar hun eigenaar ze nog kan uitgeven. Als dezelfde Spamcoin-transactie later op Bitcoin wordt herhaald, staan deze munten weer op beide ketens. Eén keer per dag bijgewerkt (05:00, Madrid-tijd); laatst: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Nieuwe munten (bloksubsidie) gemined op Bitcoin sinds blok 961632; transactiekosten tellen niet mee omdat het geen nieuwe munten zijn. Eén keer per dag bijgewerkt (05:00, Madrid-tijd); laatst: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Prijs</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Replays</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statistieken</target></trans-unit>
     </body>
   </file>
 </xliff>

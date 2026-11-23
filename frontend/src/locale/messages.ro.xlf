@@ -11486,6 +11486,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s-au separat mișcându-se pe Bitcoin: <x id="INTERPOLATION_1"/> BTC mutați exclusiv pe Bitcoin (încă necheltuiți pe Spamcoin) și <x id="INTERPOLATION_2"/> BTC cheltuiți pe ambele lanțuri prin tranzacții diferite (altă destinație sau sumă). Actualizat o dată pe zi (05:00, ora Madridului); ultima dată: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s-au mutat pe Spamcoin și sunt încă necheltuiți pe Bitcoin, unde proprietarul îi poate cheltui în continuare. Dacă aceeași tranzacție Spamcoin este reluată ulterior pe Bitcoin, aceste monede revin pe ambele lanțuri. Actualizat o dată pe zi (05:00, ora Madridului); ultima dată: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Monede noi (subvenția blocului) minate pe Bitcoin de la blocul 961632; comisioanele nu se iau în calcul, deoarece nu sunt monede noi. Actualizat o dată pe zi (05:00, ora Madridului); ultima dată: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Preț</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Reluări</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statistici</target></trans-unit>
     </body>
   </file>
 </xliff>

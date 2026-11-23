@@ -493,3 +493,40 @@ main {
   padding-left: 1.2em;
   opacity: 0.85;
 }
+
+/* Grupos plegables del cabecero */
+.group-toggle-item .group-toggle {
+  background: none;
+  border: 0;
+  color: #ff9d1c;
+  font-weight: 700;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  padding-left: 9px;
+  padding-right: 4px;
+  cursor: pointer;
+}
+.group-toggle-item .group-toggle .caret, .stats-toggle .caret {
+  display: inline-block;
+  width: 0.8em;
+}
+.header-extras-mobile .stats-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.header-extras-mobile .stats-summary .sep { color: #8a7660; }
+.header-extras-mobile .stats-toggle {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #ff9d1c;
+  font-weight: 600;
+  font-size: inherit;
+  cursor: pointer;
+}
+.header-extras-mobile .stats-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}

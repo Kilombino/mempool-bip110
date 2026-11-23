@@ -11314,6 +11314,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC розділилися, рухаючись у Bitcoin: <x id="INTERPOLATION_1"/> BTC переміщено виключно в Bitcoin (у Spamcoin досі не витрачені) і <x id="INTERPOLATION_2"/> BTC витрачено в обох ланцюжках різними транзакціями (інший отримувач або сума). Оновлюється раз на день (05:00 за мадридським часом); востаннє: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC переміщено в Spamcoin, і в Bitcoin вони досі не витрачені, де власник ще може їх витратити. Якщо ту саму транзакцію Spamcoin згодом повторять у Bitcoin, ці монети знову будуть в обох ланцюжках. Оновлюється раз на день (05:00 за мадридським часом); востаннє: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Нові монети (субсидія блоку), видобуті в Bitcoin з блоку 961632; комісії не враховуються, бо це не нові монети. Оновлюється раз на день (05:00 за мадридським часом); востаннє: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Ціна</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Хешрейт</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Повтори</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Статистика</target></trans-unit>
     </body>
   </file>
 </xliff>

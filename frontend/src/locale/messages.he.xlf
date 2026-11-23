@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC נפרדו בתנועה בביטקוין: <x id="INTERPOLATION_1"/> BTC הועברו אך ורק בביטקוין (עדיין לא הוצאו ב-Spamcoin) ו-<x id="INTERPOLATION_2"/> BTC הוצאו בשתי השרשראות בעסקאות שונות (יעד או סכום אחר). מתעדכן פעם ביום (05:00, שעון מדריד); עדכון אחרון: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC הועברו ב-Spamcoin ועדיין לא הוצאו בביטקוין, שם בעליהם עדיין יכולים להוציא אותם. אם אותה עסקת Spamcoin תושמע מחדש מאוחר יותר בביטקוין, המטבעות האלה חוזרים להיות בשתי השרשראות. מתעדכן פעם ביום (05:00, שעון מדריד); עדכון אחרון: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>מטבעות חדשים (סבסוד בלוק) שנכרו בביטקוין מאז בלוק 961632; עמלות אינן נספרות כי הן אינן מטבעות חדשים. מתעדכן פעם ביום (05:00, שעון מדריד); עדכון אחרון: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>מחיר</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>השמעות חוזרות</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>סטטיסטיקה</target></trans-unit>
     </body>
   </file>
 </xliff>

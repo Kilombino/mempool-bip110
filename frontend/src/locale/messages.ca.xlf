@@ -10769,6 +10769,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s'han separat movent-se a Bitcoin: <x id="INTERPOLATION_1"/> BTC moguts només a Bitcoin (encara sense gastar a Spamcoin) i <x id="INTERPOLATION_2"/> BTC gastats a totes dues cadenes amb transaccions diferents (una altra destinació o import). Actualitzat un cop al dia (05:00, hora de Madrid); darrera vegada: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC s'han mogut a Spamcoin i continuen sense gastar a Bitcoin, on el seu propietari encara els pot gastar. Si la mateixa transacció de Spamcoin es replica després a Bitcoin, aquestes monedes tornen a ser a totes dues cadenes. Actualitzat un cop al dia (05:00, hora de Madrid); darrera vegada: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Monedes noves (subsidi de bloc) minades a Bitcoin des del bloc 961632; les comissions no compten perquè no són monedes noves. Actualitzat un cop al dia (05:00, hora de Madrid); darrera vegada: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Preu</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Replays</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Estadístiques</target></trans-unit>
     </body>
   </file>
 </xliff>

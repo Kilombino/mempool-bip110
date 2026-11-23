@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC Bitcoin'de hareket ederek ayrıldı: <x id="INTERPOLATION_1"/> BTC yalnızca Bitcoin'de taşındı (Spamcoin'de hâlâ harcanmamış) ve <x id="INTERPOLATION_2"/> BTC iki zincirde farklı işlemlerle harcandı (farklı hedef veya tutar). Günde bir kez güncellenir (05:00, Madrid saati); son güncelleme: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC Spamcoin'de taşındı ve Bitcoin'de hâlâ harcanmamış durumda; sahibi orada hâlâ harcayabilir. Aynı Spamcoin işlemi daha sonra Bitcoin'de tekrarlanırsa bu coinler yeniden iki zincirde olur. Günde bir kez güncellenir (05:00, Madrid saati); son güncelleme: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>961632. bloktan beri Bitcoin'de kazılan yeni coinler (blok ödülü); ücretler yeni coin olmadığı için sayılmaz. Günde bir kez güncellenir (05:00, Madrid saati); son güncelleme: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Fiyat</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Tekrarlar</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>İstatistikler</target></trans-unit>
     </body>
   </file>
 </xliff>

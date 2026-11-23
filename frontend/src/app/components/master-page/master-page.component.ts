@@ -71,6 +71,25 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   // Monedas de la separación de cadenas (salidas hasta 961631) movidas solo en Bitcoin / en Spamcoin y
   // Bitcoin; viene en splitCoins de /api/v1/blake2b/scarcity (indexador split-coins, a cada bloque).
   splitCoins: any = null;
+  // Grupos plegables del cabecero (escritorio: price/hashrate/replays; móvil: un solo "Stats").
+  // Se leen al construir (sin salto de maquetación) y se guardan por navegador.
+  groups: { price: boolean; hashrate: boolean; replays: boolean; mobile: boolean } = MasterPageComponent.loadGroups();
+  private static readonly GROUPS_KEY = 'kb-header-groups';
+  private static loadGroups(): { price: boolean; hashrate: boolean; replays: boolean; mobile: boolean } {
+    const def = { price: true, hashrate: false, replays: false, mobile: false };
+    try {
+      const raw = window.localStorage.getItem(MasterPageComponent.GROUPS_KEY);
+      if (raw) {
+        const g = JSON.parse(raw);
+        for (const k of Object.keys(def)) { if (typeof g[k] === 'boolean') { (def as any)[k] = g[k]; } }
+      }
+    } catch (e) { /* sin almacenamiento: valores por defecto */ }
+    return def;
+  }
+  toggleGroup(name: 'price' | 'hashrate' | 'replays' | 'mobile'): void {
+    this.groups = { ...this.groups, [name]: !this.groups[name] };
+    try { window.localStorage.setItem(MasterPageComponent.GROUPS_KEY, JSON.stringify(this.groups)); } catch (e) { }
+  }
   splitUpdated = '';   // fecha del último cálculo diario, en hora de Madrid y en el idioma del visitante
   // Energía equivalente a 1 BTC (Bitcoin-Blake2b) minándolo con el ASIC de referencia.
   kwhPerBtc: number | null = null;

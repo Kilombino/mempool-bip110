@@ -11412,6 +11412,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC đã tách do di chuyển trên Bitcoin: <x id="INTERPOLATION_1"/> BTC chỉ di chuyển trên Bitcoin (vẫn chưa tiêu trên Spamcoin) và <x id="INTERPOLATION_2"/> BTC được tiêu trên cả hai chuỗi bằng các giao dịch khác nhau (đích đến hoặc số tiền khác). Cập nhật mỗi ngày một lần (05:00 giờ Madrid); lần cuối: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC đã di chuyển trên Spamcoin và vẫn chưa được tiêu trên Bitcoin, nơi chủ sở hữu vẫn có thể tiêu. Nếu cùng giao dịch Spamcoin đó sau này được phát lại trên Bitcoin, các đồng tiền này sẽ trở lại trên cả hai chuỗi. Cập nhật mỗi ngày một lần (05:00 giờ Madrid); lần cuối: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Đồng tiền mới (trợ cấp khối) được đào trên Bitcoin kể từ khối 961632; phí không được tính vì không phải là tiền mới. Cập nhật mỗi ngày một lần (05:00 giờ Madrid); lần cuối: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Giá</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Phát lại</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Thống kê</target></trans-unit>
     </body>
   </file>
 </xliff>

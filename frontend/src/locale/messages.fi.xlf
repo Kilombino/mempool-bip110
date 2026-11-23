@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC on erkaantunut liikkumalla Bitcoinissa: <x id="INTERPOLATION_1"/> BTC siirretty vain Bitcoinissa (yhä käyttämättä Spamcoinissa) ja <x id="INTERPOLATION_2"/> BTC käytetty molemmissa ketjuissa eri transaktioilla (eri vastaanottaja tai summa). Päivitetään kerran päivässä (05:00 Madridin aikaa); viimeksi: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC on siirretty Spamcoinissa ja on yhä käyttämättä Bitcoinissa, jossa omistaja voi yhä käyttää ne. Jos sama Spamcoin-transaktio toistetaan myöhemmin Bitcoinissa, kolikot ovat taas molemmissa ketjuissa. Päivitetään kerran päivässä (05:00 Madridin aikaa); viimeksi: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Uudet kolikot (lohkopalkkio) louhittu Bitcoinissa lohkosta 961632 lähtien; siirtomaksuja ei lasketa, koska ne eivät ole uusia kolikoita. Päivitetään kerran päivässä (05:00 Madridin aikaa); viimeksi: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Hinta</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Toistot</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Tilastot</target></trans-unit>
     </body>
   </file>
 </xliff>

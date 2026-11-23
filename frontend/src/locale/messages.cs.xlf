@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se oddělilo pohybem na Bitcoinu: <x id="INTERPOLATION_1"/> BTC přesunuto výhradně na Bitcoinu (na Spamcoinu stále neutracené) a <x id="INTERPOLATION_2"/> BTC utraceno v obou řetězcích různými transakcemi (jiný příjemce nebo částka). Aktualizováno jednou denně (05:00 madridského času); naposledy: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC se pohnulo na Spamcoinu a na Bitcoinu jsou stále neutracené, kde je vlastník stále může utratit. Pokud se stejná transakce Spamcoinu později zopakuje na Bitcoinu, mince se vrátí do obou řetězců. Aktualizováno jednou denně (05:00 madridského času); naposledy: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Nové mince (bloková odměna) vytěžené na Bitcoinu od bloku 961632; poplatky se nepočítají, protože nejde o nové mince. Aktualizováno jednou denně (05:00 madridského času); naposledy: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Cena</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Opakování</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statistiky</target></trans-unit>
     </body>
   </file>
 </xliff>

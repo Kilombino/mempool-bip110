@@ -11501,6 +11501,10 @@ Publicera för att lägga till den i mempoolen.</target>
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC har delats genom att röra sig på Bitcoin: <x id="INTERPOLATION_1"/> BTC endast flyttade på Bitcoin (fortfarande ospenderade på Spamcoin) och <x id="INTERPOLATION_2"/> BTC spenderade på båda kedjorna med olika transaktioner (annan mottagare eller annat belopp). Uppdateras en gång om dagen (05:00, Madridtid); senast: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC har flyttats på Spamcoin och är fortfarande ospenderade på Bitcoin, där ägaren fortfarande kan spendera dem. Om samma Spamcoin-transaktion senare upprepas på Bitcoin finns mynten åter på båda kedjorna. Uppdateras en gång om dagen (05:00, Madridtid); senast: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Nya mynt (blocksubvention) minade på Bitcoin sedan block 961632; avgifter räknas inte eftersom de inte är nya mynt. Uppdateras en gång om dagen (05:00, Madridtid); senast: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Pris</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Replays</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statistik</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC rozdzieliło się przez ruch w Bitcoinie: <x id="INTERPOLATION_1"/> BTC przeniesionych wyłącznie w Bitcoinie (wciąż niewydanych w Spamcoinie) i <x id="INTERPOLATION_2"/> BTC wydanych w obu łańcuchach różnymi transakcjami (inny odbiorca lub kwota). Aktualizowane raz dziennie (05:00 czasu madryckiego); ostatnio: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC przeniesiono w Spamcoinie i wciąż są niewydane w Bitcoinie, gdzie właściciel nadal może je wydać. Jeśli ta sama transakcja Spamcoina zostanie później powtórzona w Bitcoinie, monety wrócą do obu łańcuchów. Aktualizowane raz dziennie (05:00 czasu madryckiego); ostatnio: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Nowe monety (subsydium blokowe) wydobyte w Bitcoinie od bloku 961632; opłaty się nie liczą, bo nie są nowymi monetami. Aktualizowane raz dziennie (05:00 czasu madryckiego); ostatnio: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Cena</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Powtórzenia</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statystyki</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC haben sich durch Bewegung auf Bitcoin getrennt: <x id="INTERPOLATION_1"/> BTC nur auf Bitcoin bewegt (auf Spamcoin noch unausgegeben) und <x id="INTERPOLATION_2"/> BTC auf beiden Ketten durch unterschiedliche Transaktionen ausgegeben (anderes Ziel oder anderer Betrag). Einmal täglich aktualisiert (05:00 Uhr, Madrider Zeit); zuletzt: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC wurden auf Spamcoin bewegt und sind auf Bitcoin noch unausgegeben, wo ihr Besitzer sie weiterhin ausgeben kann. Wird dieselbe Spamcoin-Transaktion später auf Bitcoin wiederholt, sind diese Coins wieder auf beiden Ketten. Einmal täglich aktualisiert (05:00 Uhr, Madrider Zeit); zuletzt: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Neue Coins (Blocksubvention), die seit Block 961632 auf Bitcoin gemined wurden; Gebühren zählen nicht, weil sie keine neuen Coins sind. Einmal täglich aktualisiert (05:00 Uhr, Madrider Zeit); zuletzt: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Preis</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Replays</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statistiken</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -11489,6 +11489,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC انفصلت بالتحرك على Bitcoin: <x id="INTERPOLATION_1"/> BTC نُقلت على Bitcoin حصرًا (لا تزال غير منفقة على Spamcoin) و<x id="INTERPOLATION_2"/> BTC أُنفقت على السلسلتين بمعاملات مختلفة (وجهة أو مبلغ مختلف). يُحدَّث مرة يوميًا (05:00 بتوقيت مدريد)؛ آخر تحديث: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC نُقلت على Spamcoin ولا تزال غير منفقة على Bitcoin، حيث يستطيع مالكها إنفاقها. إذا أُعيد بث معاملة Spamcoin نفسها لاحقًا على Bitcoin، تعود هذه العملات إلى السلسلتين. يُحدَّث مرة يوميًا (05:00 بتوقيت مدريد)؛ آخر تحديث: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>عملات جديدة (مكافأة الكتلة) عُدِّنت على Bitcoin منذ الكتلة 961632؛ الرسوم لا تُحتسب لأنها ليست عملات جديدة. يُحدَّث مرة يوميًا (05:00 بتوقيت مدريد)؛ آخر تحديث: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>السعر</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>معدل التجزئة</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>إعادة البث</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>الإحصاءات</target></trans-unit>
     </body>
   </file>
 </xliff>

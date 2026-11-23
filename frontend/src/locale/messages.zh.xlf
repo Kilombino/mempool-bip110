@@ -11501,6 +11501,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC 因在 Bitcoin 上移动而分离：<x id="INTERPOLATION_1"/> BTC 仅在 Bitcoin 上移动（在 Spamcoin 上仍未花费），<x id="INTERPOLATION_2"/> BTC 在两条链上被不同交易花费（不同的目的地或金额）。 每天更新一次（马德里时间 05:00）；最近一次：<x id="INTERPOLATION_3"/>。</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC 已在 Spamcoin 上移动，但在 Bitcoin 上仍未花费，所有者仍可在那里花费。如果同一笔 Spamcoin 交易之后在 Bitcoin 上被重放，这些币将重新回到两条链上。 每天更新一次（马德里时间 05:00）；最近一次：<x id="INTERPOLATION_1"/>。</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>自区块 961632 以来在 Bitcoin 上挖出的新币（区块补贴）；手续费不计入，因为它们不是新币。 每天更新一次（马德里时间 05:00）；最近一次：<x id="INTERPOLATION"/>。</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>价格</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>算力</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>重放</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>统计</target></trans-unit>
     </body>
   </file>
 </xliff>

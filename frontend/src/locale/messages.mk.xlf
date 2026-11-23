@@ -11037,6 +11037,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC се разделија со движење на Bitcoin: <x id="INTERPOLATION_1"/> BTC преместени исклучиво на Bitcoin (сè уште непотрошени на Spamcoin) и <x id="INTERPOLATION_2"/> BTC потрошени на двата синџира со различни трансакции (друга дестинација или износ). Се ажурира еднаш дневно (05:00 по мадридско време); последно: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC се преместени на Spamcoin и сè уште се непотрошени на Bitcoin, каде што сопственикот сè уште може да ги потроши. Ако истата трансакција на Spamcoin подоцна се повтори на Bitcoin, овие монети повторно се на двата синџира. Се ажурира еднаш дневно (05:00 по мадридско време); последно: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Нови монети (субвенција на блок) ископани на Bitcoin од блок 961632; провизиите не се сметаат бидејќи не се нови монети. Се ажурира еднаш дневно (05:00 по мадридско време); последно: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Цена</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Хашрејт</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Повторувања</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Статистика</target></trans-unit>
     </body>
   </file>
 </xliff>

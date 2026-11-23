@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC er delt ved å bevege seg på Bitcoin: <x id="INTERPOLATION_1"/> BTC kun flyttet på Bitcoin (fortsatt ubrukt på Spamcoin) og <x id="INTERPOLATION_2"/> BTC brukt på begge kjedene med ulike transaksjoner (annen mottaker eller annet beløp). Oppdateres én gang om dagen (05:00, Madrid-tid); sist: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC er flyttet på Spamcoin og fortsatt ubrukt på Bitcoin, der eieren fortsatt kan bruke dem. Hvis den samme Spamcoin-transaksjonen senere gjentas på Bitcoin, er myntene igjen på begge kjedene. Oppdateres én gang om dagen (05:00, Madrid-tid); sist: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Nye mynter (blokksubsidie) utvunnet på Bitcoin siden blokk 961632; gebyrer teller ikke fordi de ikke er nye mynter. Oppdateres én gang om dagen (05:00, Madrid-tid); sist: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Pris</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Replays</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statistikk</target></trans-unit>
     </body>
   </file>
 </xliff>

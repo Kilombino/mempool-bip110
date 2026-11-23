@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC vált szét a Bitcoinon mozogva: <x id="INTERPOLATION_1"/> BTC kizárólag a Bitcoinon mozgatva (a Spamcoinon még elköltetlen) és <x id="INTERPOLATION_2"/> BTC mindkét láncon különböző tranzakciókkal elköltve (más cél vagy összeg). Naponta egyszer frissül (05:00, madridi idő szerint); legutóbb: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC mozdult a Spamcoinon, és a Bitcoinon még elköltetlen, ahol a tulajdonosa továbbra is elköltheti. Ha ugyanazt a Spamcoin-tranzakciót később megismétlik a Bitcoinon, ezek az érmék újra mindkét láncon lesznek. Naponta egyszer frissül (05:00, madridi idő szerint); legutóbb: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Új érmék (blokktámogatás), amelyeket a 961632. blokk óta bányásztak a Bitcoinon; a díjak nem számítanak, mert nem új érmék. Naponta egyszer frissül (05:00, madridi idő szerint); legutóbb: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Ár</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Megismétlések</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statisztika</target></trans-unit>
     </body>
   </file>
 </xliff>

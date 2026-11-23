@@ -11265,6 +11265,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC แยกออกจากการเคลื่อนไหวบน Bitcoin: <x id="INTERPOLATION_1"/> BTC ย้ายเฉพาะบน Bitcoin (ยังไม่ถูกใช้บน Spamcoin) และ <x id="INTERPOLATION_2"/> BTC ถูกใช้บนทั้งสองเชนด้วยธุรกรรมต่างกัน (ปลายทางหรือจำนวนต่างกัน) อัปเดตวันละครั้ง (05:00 เวลามาดริด); ล่าสุด: <x id="INTERPOLATION_3"/></target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC ย้ายบน Spamcoin และยังไม่ถูกใช้บน Bitcoin ซึ่งเจ้าของยังใช้จ่ายได้ หากธุรกรรม Spamcoin เดียวกันถูก replay บน Bitcoin ภายหลัง เหรียญเหล่านี้จะกลับมาอยู่บนทั้งสองเชน อัปเดตวันละครั้ง (05:00 เวลามาดริด); ล่าสุด: <x id="INTERPOLATION_1"/></target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>เหรียญใหม่ (เงินอุดหนุนบล็อก) ที่ขุดได้บน Bitcoin ตั้งแต่บล็อก 961632 ค่าธรรมเนียมไม่นับเพราะไม่ใช่เหรียญใหม่ อัปเดตวันละครั้ง (05:00 เวลามาดริด); ล่าสุด: <x id="INTERPOLATION"/></target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>ราคา</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>แฮชเรต</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Replay</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>สถิติ</target></trans-unit>
     </body>
   </file>
 </xliff>

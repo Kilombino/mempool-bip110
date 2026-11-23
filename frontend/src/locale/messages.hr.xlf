@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC razdvojilo se kretanjem na Bitcoinu: <x id="INTERPOLATION_1"/> BTC pomaknuto isključivo na Bitcoinu (na Spamcoinu još nepotrošeno) i <x id="INTERPOLATION_2"/> BTC potrošeno na oba lanca različitim transakcijama (drugo odredište ili iznos). Ažurira se jednom dnevno (05:00 po madridskom vremenu); zadnji put: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC pomaknuto je na Spamcoinu i na Bitcoinu je još nepotrošeno, gdje ga vlasnik još može potrošiti. Ako se ista transakcija Spamcoina kasnije ponovi na Bitcoinu, te kovanice ponovno su na oba lanca. Ažurira se jednom dnevno (05:00 po madridskom vremenu); zadnji put: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>Nove kovanice (subvencija bloka) iskopane na Bitcoinu od bloka 961632; naknade se ne računaju jer nisu nove kovanice. Ažurira se jednom dnevno (05:00 po madridskom vremenu); zadnji put: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>Cijena</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>Hashrate</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>Ponavljanja</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>Statistika</target></trans-unit>
     </body>
   </file>
 </xliff>

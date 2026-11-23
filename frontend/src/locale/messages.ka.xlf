@@ -11023,6 +11023,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC გაიყო Bitcoin-ზე მოძრაობით: <x id="INTERPOLATION_1"/> BTC გადაადგილდა მხოლოდ Bitcoin-ზე (Spamcoin-ზე ჯერ დაუხარჯავი) და <x id="INTERPOLATION_2"/> BTC დაიხარჯა ორივე ჯაჭვზე სხვადასხვა ტრანზაქციით (სხვა მიმღები ან თანხა). ახლდება დღეში ერთხელ (05:00, მადრიდის დროით); ბოლოს: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC გადაადგილდა Spamcoin-ზე და Bitcoin-ზე ჯერ დაუხარჯავია, სადაც მფლობელს კვლავ შეუძლია მისი დახარჯვა. თუ იგივე Spamcoin-ის ტრანზაქცია მოგვიანებით Bitcoin-ზე გამეორდება, ეს მონეტები ისევ ორივე ჯაჭვზე იქნება. ახლდება დღეში ერთხელ (05:00, მადრიდის დროით); ბოლოს: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>ახალი მონეტები (ბლოკის სუბსიდია), მოპოვებული Bitcoin-ზე 961632-ე ბლოკიდან; საკომისიოები არ ითვლება, რადგან ისინი ახალი მონეტები არ არის. ახლდება დღეში ერთხელ (05:00, მადრიდის დროით); ბოლოს: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>ფასი</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>ჰეშრეიტი</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>გამეორებები</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>სტატისტიკა</target></trans-unit>
     </body>
   </file>
 </xliff>

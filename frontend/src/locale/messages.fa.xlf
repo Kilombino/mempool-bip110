@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC با حرکت در Bitcoin جدا شده‌اند: <x id="INTERPOLATION_1"/> BTC فقط در Bitcoin جابه‌جا شده (هنوز در Spamcoin خرج نشده) و <x id="INTERPOLATION_2"/> BTC در هر دو زنجیره با تراکنش‌های متفاوت خرج شده (مقصد یا مبلغ دیگر). روزی یک بار به‌روز می‌شود (05:00 به وقت مادرید)؛ آخرین بار: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC در Spamcoin جابه‌جا شده و هنوز در Bitcoin خرج نشده‌اند، جایی که صاحبشان هنوز می‌تواند خرجشان کند. اگر همان تراکنش Spamcoin بعداً در Bitcoin تکرار شود، این سکه‌ها دوباره در هر دو زنجیره خواهند بود. روزی یک بار به‌روز می‌شود (05:00 به وقت مادرید)؛ آخرین بار: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>سکه‌های جدید (پاداش بلوک) استخراج‌شده در Bitcoin از بلوک 961632؛ کارمزدها حساب نمی‌شوند چون سکهٔ جدید نیستند. روزی یک بار به‌روز می‌شود (05:00 به وقت مادرید)؛ آخرین بار: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>قیمت</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>نرخ هش</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>تکرارها</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>آمار</target></trans-unit>
     </body>
   </file>
 </xliff>

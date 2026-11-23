@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTCがBitcoinでの移動により分離しました：Bitcoinのみで移動した<x id="INTERPOLATION_1"/> BTC（Spamcoinではまだ未使用）と、両チェーンで異なるトランザクション（別の宛先または金額）により使用された<x id="INTERPOLATION_2"/> BTC。 1日1回更新（マドリード時間05:00）；最終更新：<x id="INTERPOLATION_3"/>。</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTCはSpamcoinで移動し、Bitcoinではまだ未使用で、所有者は引き続き使用できます。同じSpamcoinのトランザクションが後でBitcoinにリプレイされると、これらのコインは再び両チェーンに戻ります。 1日1回更新（マドリード時間05:00）；最終更新：<x id="INTERPOLATION_1"/>。</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>ブロック961632以降にBitcoinで採掘された新規コイン（ブロック報酬）。手数料は新規コインではないため含みません。 1日1回更新（マドリード時間05:00）；最終更新：<x id="INTERPOLATION"/>。</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>価格</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>ハッシュレート</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>リプレイ</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>統計</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -11500,6 +11500,10 @@
       <trans-unit id="header.sc-split-title" datatype="html"><target><x id="INTERPOLATION"/> BTC가 Bitcoin에서 이동해 분리되었습니다: Bitcoin에서만 이동한 <x id="INTERPOLATION_1"/> BTC(Spamcoin에서는 아직 미사용)와 두 체인에서 서로 다른 트랜잭션(다른 수신처 또는 금액)으로 사용된 <x id="INTERPOLATION_2"/> BTC. 하루 한 번 갱신(마드리드 시간 05:00); 마지막 갱신: <x id="INTERPOLATION_3"/>.</target></trans-unit>
       <trans-unit id="header.sc-only-spam-title" datatype="html"><target><x id="INTERPOLATION"/> BTC는 Spamcoin에서 이동했고 Bitcoin에서는 아직 사용되지 않아 소유자가 여전히 사용할 수 있습니다. 같은 Spamcoin 트랜잭션이 나중에 Bitcoin에 리플레이되면 이 코인은 다시 두 체인에 있게 됩니다. 하루 한 번 갱신(마드리드 시간 05:00); 마지막 갱신: <x id="INTERPOLATION_1"/>.</target></trans-unit>
       <trans-unit id="header.sc-mined-title" datatype="html"><target>블록 961632 이후 Bitcoin에서 채굴된 새 코인(블록 보조금). 수수료는 새 코인이 아니므로 포함하지 않습니다. 하루 한 번 갱신(마드리드 시간 05:00); 마지막 갱신: <x id="INTERPOLATION"/>.</target></trans-unit>
+      <trans-unit id="header.group-price" datatype="html"><target>가격</target></trans-unit>
+      <trans-unit id="header.group-hashrate" datatype="html"><target>해시레이트</target></trans-unit>
+      <trans-unit id="header.group-replays" datatype="html"><target>리플레이</target></trans-unit>
+      <trans-unit id="header.group-stats" datatype="html"><target>통계</target></trans-unit>
     </body>
   </file>
 </xliff>
