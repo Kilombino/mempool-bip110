@@ -495,7 +495,7 @@ main {
 }
 
 /* Grupos plegables del cabecero */
-.group-toggle-item .group-toggle {
+.stat-group .group-toggle {
   background: none;
   border: 0;
   color: #ff9d1c;
@@ -506,7 +506,7 @@ main {
   padding-right: 4px;
   cursor: pointer;
 }
-.group-toggle-item .group-toggle .caret, .stats-toggle .caret {
+.stat-group .group-toggle .caret, .stats-toggle .caret {
   display: inline-block;
   width: 0.8em;
 }
@@ -536,4 +536,26 @@ main {
 }
 .header-extras-mobile .stats-body span span, .header-extras-mobile .stats-body a span, .header-extras-mobile .stats-body b {
   white-space: normal;
+}
+
+/* Acordeón de escritorio: el título arriba y sus datos debajo, sangrados, en lista vertical */
+.stat-group {
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: flex-start;
+}
+.stat-group .group-items {
+  list-style: none;
+  margin: 0 0 4px;
+  padding: 0 0 0 1.4em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.stat-group .group-items > li {
+  display: flex;
+}
+.stat-group .group-items .nav-link {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
 }

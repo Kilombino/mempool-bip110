@@ -138,84 +138,90 @@
           <div class="svg-wrapper"><app-svg-images name="nav-faucet-drip" width="21.59" height="100%"></app-svg-images></div>
         </a>
       </li>
-      <!-- Datos del cabecero en 3 grupos plegables (estado por navegador en localStorage, ver toggleGroup) -->
-      <li class="nav-item d-none d-lg-flex group-toggle-item" *ngIf="btcb2Price !== null">
-        <button type="button" class="nav-link group-toggle" (click)="toggleGroup('price')" [attr.aria-expanded]="groups.price"><span class="caret">{{ groups.price ? '▾' : '▸' }}</span>&nbsp;<ng-container i18n="@@header.group-price">Price</ng-container></button>
+      <!-- Datos del cabecero en 3 grupos tipo acordeón (solo uno abierto; estado por navegador, ver toggleGroup) -->
+      <li class="nav-item d-none d-lg-flex stat-group" id="grp-price" *ngIf="btcb2Price !== null">
+          <button type="button" class="nav-link group-toggle" (click)="toggleGroup('price')" [attr.aria-expanded]="groups.open === 'price'"><span class="caret">{{ groups.open === 'price' ? '▾' : '▸' }}</span>&nbsp;<ng-container i18n="@@header.group-price">Price</ng-container></button>
+        <ul class="group-items" *ngIf="groups.open === 'price'">
+          <!-- Precio de Bitcoin-Blake2b (BTCB2/USDC) en neoxa -->
+          <li class="nav-item group-item" id="btn-price" *ngIf="btcb2Price !== null">
+            <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_USDC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b en neoxa.exchange (BTCB2/USDC)">
+              <span class="price-value">1 BTC = ${{ btcb2Price | number: '1.2-2' }}</span>
+            </a>
+          </li>
+          <!-- Precio de Bitcoin-Blake2b contra BTC (BTCB2/BTC) en neoxa -->
+          <li class="nav-item group-item" id="btn-price-btc" *ngIf="btcb2BtcSats !== null">
+            <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b contra BTC en neoxa.exchange (BTCB2/BTC)">
+              <span class="price-value">1 BTC = {{ btcb2BtcSats | number: '1.0-0' }} Poolsats</span>
+            </a>
+          </li>
+        </ul>
       </li>
-      <!-- Precio de Bitcoin-Blake2b (BTCB2/USDC) en neoxa -->
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.price" id="btn-price" *ngIf="btcb2Price !== null">
-        <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_USDC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b en neoxa.exchange (BTCB2/USDC)">
-          <span class="price-value">1 BTC = ${{ btcb2Price | number: '1.2-2' }}</span>
-        </a>
+      <li class="nav-item d-none d-lg-flex stat-group" id="grp-hashrate" *ngIf="thsBtcDay !== null || yshValue !== null">
+          <button type="button" class="nav-link group-toggle" (click)="toggleGroup('hashrate')" [attr.aria-expanded]="groups.open === 'hashrate'"><span class="caret">{{ groups.open === 'hashrate' ? '▾' : '▸' }}</span>&nbsp;<ng-container i18n="@@header.group-hashrate">Hashrate</ng-container></button>
+        <ul class="group-items" *ngIf="groups.open === 'hashrate'">
+          <!-- Rendimiento por TH/s (como pool.awokenlazarus.xyz) -->
+          <li class="nav-item group-item" id="btn-yield" *ngIf="thsBtcDay !== null">
+            <a class="nav-link yield-info" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer" title="Alquilar hashrate BLAKE2b en MiningRigRentals — rendimiento estimado de 1 TH/s">
+              <span class="yield-label">1 TH/s earns (est.)</span>
+              <span class="yield-value">{{ thsSatsDay | number: '1.0-0' }} sats/Day<span *ngIf="thsPoolsatsDay !== null"> ≈ {{ thsPoolsatsDay | number: '1.0-0' }} Poolsats</span><span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></span>
+            </a>
+          </li>
+          <!-- Coste de alquiler más barato de 1 TH/s en MiningRigRentals (BTC real + $) -->
+          <li class="nav-item group-item" id="btn-rent" *ngIf="mrrBtcPerThDay !== null">
+            <a class="nav-link yield-info" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer" title="Alquiler más barato de 1 TH/s en MiningRigRentals, en Poolsats (sats de BTC real) por día">
+              <span class="yield-label">1 TH/s rent</span>
+              <span class="yield-value">{{ mrrPoolsatsPerThDay | number: '1.0-0' }} Poolsats/day<span *ngIf="mrrSatsPerThDay !== null"> ≈ {{ mrrSatsPerThDay | number: '1.0-0' }} sats</span><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></span>
+            </a>
+          </li>
+          <!-- Energía equivalente a 1 BTC (Bitcoin-Blake2b) con el ASIC de referencia -->
+          <li class="nav-item group-item" id="btn-energy" *ngIf="kwhPerBtc !== null">
+            <a class="nav-link price-link" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer" [title]="'Energía necesaria para minar 1 BTC de Bitcoin-Blake2b con un ' + minerName + ' (14 TH/s, 3300 W), a la dificultad actual'">
+              <span class="price-value">1 BTC = {{ kwhPerBtc | number: '1.0-0' }} kWh</span>
+              <span class="price-miner">({{ minerName }})</span>
+            </a>
+          </li>
+          <!-- Hash-even: hashrate de red repartido entre las monedas en circulación -->
+          <li class="nav-item group-item" id="btn-ysh" *ngIf="yshValue !== null">
+            <a class="nav-link yield-info" [routerLink]="['/tools/ysh' | relativeUrl]" title="YSH (Your Security Hashrate): el punto de equilibrio entre lo que minas y lo que tienes. Es el hashrate de la red repartido entre las monedas que viven en esta cadena (movidas o minadas desde la bifurcación). Pincha para calcular el tuyo.">
+              <span class="yield-label">YSH</span>
+              <span class="yield-value">1 BTC = {{ yshValue | number: '1.2-2' }} {{ yshUnit }}</span>
+            </a>
+          </li>
+        </ul>
       </li>
-      <!-- Precio de Bitcoin-Blake2b contra BTC (BTCB2/BTC) en neoxa -->
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.price" id="btn-price-btc" *ngIf="btcb2BtcSats !== null">
-        <a class="nav-link price-link" href="https://neoxa.exchange/trade/BTCB2_BTC" target="_blank" rel="noopener noreferrer" title="Bitcoin-Blake2b contra BTC en neoxa.exchange (BTCB2/BTC)">
-          <span class="price-value">1 BTC = {{ btcb2BtcSats | number: '1.0-0' }} Poolsats</span>
-        </a>
-      </li>
-      <li class="nav-item d-none d-lg-flex group-toggle-item" *ngIf="thsBtcDay !== null || yshValue !== null">
-        <button type="button" class="nav-link group-toggle" (click)="toggleGroup('hashrate')" [attr.aria-expanded]="groups.hashrate"><span class="caret">{{ groups.hashrate ? '▾' : '▸' }}</span>&nbsp;<ng-container i18n="@@header.group-hashrate">Hashrate</ng-container></button>
-      </li>
-      <!-- Rendimiento por TH/s (como pool.awokenlazarus.xyz) -->
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.hashrate" id="btn-yield" *ngIf="thsBtcDay !== null">
-        <a class="nav-link yield-info" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer" title="Alquilar hashrate BLAKE2b en MiningRigRentals — rendimiento estimado de 1 TH/s">
-          <span class="yield-label">1 TH/s earns (est.)</span>
-          <span class="yield-value">{{ thsSatsDay | number: '1.0-0' }} sats/Day<span *ngIf="thsPoolsatsDay !== null"> ≈ {{ thsPoolsatsDay | number: '1.0-0' }} Poolsats</span><span *ngIf="thsUsdDay !== null"> · ${{ thsUsdDay | number: '1.2-2' }}</span></span>
-        </a>
-      </li>
-      <!-- Coste de alquiler más barato de 1 TH/s en MiningRigRentals (BTC real + $) -->
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.hashrate" id="btn-rent" *ngIf="mrrBtcPerThDay !== null">
-        <a class="nav-link yield-info" href="https://www.miningrigrentals.com/rigs/blake2b" target="_blank" rel="noopener noreferrer" title="Alquiler más barato de 1 TH/s en MiningRigRentals, en Poolsats (sats de BTC real) por día">
-          <span class="yield-label">1 TH/s rent</span>
-          <span class="yield-value">{{ mrrPoolsatsPerThDay | number: '1.0-0' }} Poolsats/day<span *ngIf="mrrSatsPerThDay !== null"> ≈ {{ mrrSatsPerThDay | number: '1.0-0' }} sats</span><span *ngIf="mrrUsdPerThDay !== null"> · ${{ mrrUsdPerThDay | number: '1.2-2' }}</span></span>
-        </a>
-      </li>
-      <!-- Energía equivalente a 1 BTC (Bitcoin-Blake2b) con el ASIC de referencia -->
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.hashrate" id="btn-energy" *ngIf="kwhPerBtc !== null">
-        <a class="nav-link price-link" href="https://www.goldshell.com/" target="_blank" rel="noopener noreferrer" [title]="'Energía necesaria para minar 1 BTC de Bitcoin-Blake2b con un ' + minerName + ' (14 TH/s, 3300 W), a la dificultad actual'">
-          <span class="price-value">1 BTC = {{ kwhPerBtc | number: '1.0-0' }} kWh</span>
-          <span class="price-miner">({{ minerName }})</span>
-        </a>
-      </li>
-      <!-- Hash-even: hashrate de red repartido entre las monedas en circulación -->
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.hashrate" id="btn-ysh" *ngIf="yshValue !== null">
-        <a class="nav-link yield-info" [routerLink]="['/tools/ysh' | relativeUrl]" title="YSH (Your Security Hashrate): el punto de equilibrio entre lo que minas y lo que tienes. Es el hashrate de la red repartido entre las monedas que viven en esta cadena (movidas o minadas desde la bifurcación). Pincha para calcular el tuyo.">
-          <span class="yield-label">YSH</span>
-          <span class="yield-value">1 BTC = {{ yshValue | number: '1.2-2' }} {{ yshUnit }}</span>
-        </a>
-      </li>
-      <li class="nav-item d-none d-lg-flex group-toggle-item" *ngIf="splitCoins?.stillShared">
-        <button type="button" class="nav-link group-toggle" (click)="toggleGroup('replays')" [attr.aria-expanded]="groups.replays"><span class="caret">{{ groups.replays ? '▾' : '▸' }}</span>&nbsp;<ng-container i18n="@@header.group-replays">Replays</ng-container></button>
-      </li>
-      <!-- Monedas de la separación (salidas hasta 961631) seguidas a través de las txs replayadas. Indexador
-           split-coins v2 (~/Projects/blake2b/split-coins/indexer2.py, diario 05:00 Madrid) vía /api/v1/blake2b/scarcity. -->
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.replays" id="btn-sc-shared" *ngIf="splitCoins?.stillShared">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-shared-title" title="{{ splitCoins.stillShared.btc | number: '1.0-0' }} BTC are still identical on both chains: coins that existed at the split (block 961631) and have never moved, or have only moved through transactions replayed identically on both chains, followed through any number of replays. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
-          <span class="yield-label">🔗 <ng-container i18n="@@header.sc-shared">Still on both chains (not split)</ng-container></span>
-          <span class="yield-value">{{ splitCoins.stillShared.share * 100 | number: '1.1-1' }}%</span>
-        </span>
-      </li>
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.replays" id="btn-sc-split" *ngIf="splitCoins?.stillShared">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-split-title" title="{{ splitCoins.onlyBtc.btc + splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC have split by moving on Bitcoin: {{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC moved only on Bitcoin (still unspent on Spamcoin) and {{ splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC spent on both chains by different transactions (different destination or amount). Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
-          <span class="yield-label">✂️ <ng-container i18n="@@header.sc-split">Split, moving on Bitcoin</ng-container></span>
-          <span class="yield-value">{{ (splitCoins.onlyBtc.share + splitCoins.both.diffTx.share) * 100 | number: '1.2-2' }}%</span>
-          <span class="sc-sub">• <ng-container i18n="@@header.sc-only-btc">Moved only on Bitcoin</ng-container> {{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%</span>
-          <span class="sc-sub">• <ng-container i18n="@@header.sc-diff">Moved on both, divergent txs</ng-container> {{ splitCoins.both.diffTx.share * 100 | number: '1.2-2' }}%</span>
-        </span>
-      </li>
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.replays" id="btn-sc-spam" *ngIf="splitCoins?.stillShared">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-only-spam-title" title="{{ splitCoins.onlySpam.btc | number: '1.0-0' }} BTC have moved on Spamcoin and are still unspent on Bitcoin, where their owner can still spend them. If the same Spamcoin transaction is later replayed on Bitcoin, these coins go back to being on both chains. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
-          <span class="yield-label">🟠 <ng-container i18n="@@header.sc-only-spam">Moved only on Spamcoin</ng-container></span>
-          <span class="yield-value">{{ splitCoins.onlySpam.share * 100 | number: '1.2-2' }}%</span>
-          <span class="sc-sub" i18n="@@header.sc-only-spam-note">(on Bitcoin they remain intact and spendable by their owner)</span>
-        </span>
-      </li>
-      <li class="nav-item d-none" [class.d-lg-flex]="groups.replays" id="btn-split-mined" *ngIf="splitCoins?.minedSinceSplit">
-        <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-mined-title" title="New coins (block subsidy) mined on Bitcoin since block 961632; fees do not count because they are not new coins. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
-          <span class="yield-label">⛏️ <ng-container i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</ng-container></span>
-          <span class="yield-value">{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC ({{ splitCoins.minedSinceSplit.share * 100 | number: '1.2-2' }}%)</span>
-        </span>
+      <li class="nav-item d-none d-lg-flex stat-group" id="grp-replays" *ngIf="splitCoins?.stillShared">
+          <button type="button" class="nav-link group-toggle" (click)="toggleGroup('replays')" [attr.aria-expanded]="groups.open === 'replays'"><span class="caret">{{ groups.open === 'replays' ? '▾' : '▸' }}</span>&nbsp;<ng-container i18n="@@header.group-replays">Replays</ng-container></button>
+        <ul class="group-items" *ngIf="groups.open === 'replays'">
+          <!-- Monedas de la separación (salidas hasta 961631) seguidas a través de las txs replayadas. Indexador
+               split-coins v2 (~/Projects/blake2b/split-coins/indexer2.py, diario 05:00 Madrid) vía /api/v1/blake2b/scarcity. -->
+          <li class="nav-item group-item" id="btn-sc-shared" *ngIf="splitCoins?.stillShared">
+            <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-shared-title" title="{{ splitCoins.stillShared.btc | number: '1.0-0' }} BTC are still identical on both chains: coins that existed at the split (block 961631) and have never moved, or have only moved through transactions replayed identically on both chains, followed through any number of replays. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+              <span class="yield-label">🔗 <ng-container i18n="@@header.sc-shared">Still on both chains (not split)</ng-container></span>
+              <span class="yield-value">{{ splitCoins.stillShared.share * 100 | number: '1.1-1' }}%</span>
+            </span>
+          </li>
+          <li class="nav-item group-item" id="btn-sc-split" *ngIf="splitCoins?.stillShared">
+            <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-split-title" title="{{ splitCoins.onlyBtc.btc + splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC have split by moving on Bitcoin: {{ splitCoins.onlyBtc.btc | number: '1.0-0' }} BTC moved only on Bitcoin (still unspent on Spamcoin) and {{ splitCoins.both.diffTx.btc | number: '1.0-0' }} BTC spent on both chains by different transactions (different destination or amount). Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+              <span class="yield-label">✂️ <ng-container i18n="@@header.sc-split">Split, moving on Bitcoin</ng-container></span>
+              <span class="yield-value">{{ (splitCoins.onlyBtc.share + splitCoins.both.diffTx.share) * 100 | number: '1.2-2' }}%</span>
+              <span class="sc-sub">• <ng-container i18n="@@header.sc-only-btc">Moved only on Bitcoin</ng-container> {{ splitCoins.onlyBtc.share * 100 | number: '1.2-2' }}%</span>
+              <span class="sc-sub">• <ng-container i18n="@@header.sc-diff">Moved on both, divergent txs</ng-container> {{ splitCoins.both.diffTx.share * 100 | number: '1.2-2' }}%</span>
+            </span>
+          </li>
+          <li class="nav-item group-item" id="btn-sc-spam" *ngIf="splitCoins?.stillShared">
+            <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-only-spam-title" title="{{ splitCoins.onlySpam.btc | number: '1.0-0' }} BTC have moved on Spamcoin and are still unspent on Bitcoin, where their owner can still spend them. If the same Spamcoin transaction is later replayed on Bitcoin, these coins go back to being on both chains. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+              <span class="yield-label">🟠 <ng-container i18n="@@header.sc-only-spam">Moved only on Spamcoin</ng-container></span>
+              <span class="yield-value">{{ splitCoins.onlySpam.share * 100 | number: '1.2-2' }}%</span>
+              <span class="sc-sub" i18n="@@header.sc-only-spam-note">(on Bitcoin they remain intact and spendable by their owner)</span>
+            </span>
+          </li>
+          <li class="nav-item group-item" id="btn-split-mined" *ngIf="splitCoins?.minedSinceSplit">
+            <span class="nav-link yield-info chain-size" i18n-title="@@header.sc-mined-title" title="New coins (block subsidy) mined on Bitcoin since block 961632; fees do not count because they are not new coins. Updated once a day (05:00, Madrid time); last update: {{ splitUpdated }}.">
+              <span class="yield-label">⛏️ <ng-container i18n="@@header.split-mined">Mined on Bitcoin since the Spamcoin hardfork</ng-container></span>
+              <span class="yield-value">{{ splitCoins.minedSinceSplit.btc | number: '1.0-0' }} BTC ({{ splitCoins.minedSinceSplit.share * 100 | number: '1.2-2' }}%)</span>
+            </span>
+          </li>
+        </ul>
       </li>
       <!-- Lo que pesa la cadena Bitcoin-Blake2b en disco -->
       <li class="nav-item d-none d-lg-flex" id="btn-chainsize" *ngIf="chainSizeGB !== null">

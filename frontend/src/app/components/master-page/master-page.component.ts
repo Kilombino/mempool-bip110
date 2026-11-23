@@ -71,23 +71,32 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   // Monedas de la separación de cadenas (salidas hasta 961631) movidas solo en Bitcoin / en Spamcoin y
   // Bitcoin; viene en splitCoins de /api/v1/blake2b/scarcity (indexador split-coins, a cada bloque).
   splitCoins: any = null;
-  // Grupos plegables del cabecero (escritorio: price/hashrate/replays; móvil: un solo "Stats").
-  // Se leen al construir (sin salto de maquetación) y se guardan por navegador.
-  groups: { price: boolean; hashrate: boolean; replays: boolean; mobile: boolean } = MasterPageComponent.loadGroups();
+  // Grupos del cabecero. Escritorio: acordeón Precio/Hashrate/Replays (solo uno abierto o ninguno);
+  // móvil: un solo plegable "Stats". Se leen al construir (sin salto de maquetación) y se guardan por navegador.
+  groups: { open: 'price' | 'hashrate' | 'replays' | null; mobile: boolean } = MasterPageComponent.loadGroups();
   private static readonly GROUPS_KEY = 'kb-header-groups';
-  private static loadGroups(): { price: boolean; hashrate: boolean; replays: boolean; mobile: boolean } {
-    const def = { price: true, hashrate: false, replays: false, mobile: false };
+  private static loadGroups(): { open: 'price' | 'hashrate' | 'replays' | null; mobile: boolean } {
+    const def: { open: 'price' | 'hashrate' | 'replays' | null; mobile: boolean } = { open: 'price', mobile: false };
     try {
       const raw = window.localStorage.getItem(MasterPageComponent.GROUPS_KEY);
       if (raw) {
         const g = JSON.parse(raw);
-        for (const k of Object.keys(def)) { if (typeof g[k] === 'boolean') { (def as any)[k] = g[k]; } }
+        if (g.open === null || ['price', 'hashrate', 'replays'].includes(g.open)) {
+          def.open = g.open;
+        } else if (typeof g.price === 'boolean') {  // formato anterior {price, hashrate, replays}
+          def.open = g.price ? 'price' : g.hashrate ? 'hashrate' : g.replays ? 'replays' : null;
+        }
+        if (typeof g.mobile === 'boolean') { def.mobile = g.mobile; }
       }
     } catch (e) { /* sin almacenamiento: valores por defecto */ }
     return def;
   }
   toggleGroup(name: 'price' | 'hashrate' | 'replays' | 'mobile'): void {
-    this.groups = { ...this.groups, [name]: !this.groups[name] };
+    if (name === 'mobile') {
+      this.groups = { ...this.groups, mobile: !this.groups.mobile };
+    } else {
+      this.groups = { ...this.groups, open: this.groups.open === name ? null : name };
+    }
     try { window.localStorage.setItem(MasterPageComponent.GROUPS_KEY, JSON.stringify(this.groups)); } catch (e) { }
   }
   splitUpdated = '';   // fecha del último cálculo diario, en hora de Madrid y en el idioma del visitante
