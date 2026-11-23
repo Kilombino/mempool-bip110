@@ -530,3 +530,10 @@ main {
   flex-direction: column;
   gap: 1px;
 }
+.header-extras-mobile .stats-body a, .header-extras-mobile .stats-body > span, .header-extras-mobile .stats-body ng-container > span {
+  white-space: normal;
+  overflow: visible;
+}
+.header-extras-mobile .stats-body span span, .header-extras-mobile .stats-body a span, .header-extras-mobile .stats-body b {
+  white-space: normal;
+}
