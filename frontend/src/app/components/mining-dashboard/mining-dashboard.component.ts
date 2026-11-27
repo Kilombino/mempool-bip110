@@ -53,7 +53,7 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
       this.poolGraphHeight = 620;
     } else {
       this.hashrateGraphHeight = 240;
-      this.poolGraphHeight = 520;   // 27 nov 2026: sitio para los mineros DATUM bajo cada pool
+      this.poolGraphHeight = 780;   // 27 nov 2026: sitio para los mineros DATUM bajo cada pool
     }
   }
 }

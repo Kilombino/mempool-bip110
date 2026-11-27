@@ -215,7 +215,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
         name: g.name + ((isMobile() || this.widget) ? `` : ` (${g.share}%)`),
         label: {
           overflow: 'none',
-          color: 'var(--grey)',
+          color: '#e6e6e6',   // 27 nov 2026: nombres de pool más intensos; sus mineros, tenues
           alignTo: 'edge',
           edgeDistance: edgeDistance,
         },
@@ -262,7 +262,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       name:  $localize`Independent miners (${percentage})`,
       label: {
         overflow: 'none',
-        color: 'var(--grey)',
+        color: '#e6e6e6',
         alignTo: 'edge',
         edgeDistance: edgeDistance
       },
@@ -423,8 +423,8 @@ export class PoolRankingComponent implements OnInit, OnChanges {
               sub: {
                 fontSize: 10,
                 lineHeight: SUB_LINE_HEIGHT,
-                color: 'var(--grey)',
-                opacity: 0.8,
+                color: '#8c8c8c',
+                opacity: 0.75,
                 padding: [0, 0, 0, 12],
               },
             },
@@ -518,7 +518,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     const items = serieData.filter((d) => (d._arc1 - d._arc0) * 360 >= 1.8).map((d) => {
       const mid = (d._arc0 + d._arc1) / 2;
       const miners = (d._miners || []).length > 1 ? (d._miners || []).filter((m) => m.name && m.name !== d._name) : [];
-      return { d, right: mid < 0.5, y: h / 2 - Math.cos(2 * Math.PI * mid) * radius, miners, n: 0, share: parseFloat(d.value), top: 0 };
+      return { d, right: mid < 0.5, y: h / 2 - Math.cos(2 * Math.PI * mid) * radius, miners, n: 0, share: parseFloat(d.value), top: 0, drift0: 0 };
     });
     const height = (it) => MAIN + it.n * SUB_LINE_HEIGHT;
     // apilar sin solapes: cada una lo más cerca de su cuña, empujando hacia abajo y, si se
@@ -536,11 +536,15 @@ export class PoolRankingComponent implements OnInit, OnChanges {
         nextTop = list[i].top;
       }
       if (nextTop < 0) { return false; }
-      return list.every((it) => !it.n || Math.abs(it.top + height(it) / 2 - it.y) <= DRIFT + it.n * SUB_LINE_HEIGHT / 2);
+      // lo que ya se alejaba sin mineros (empujada por las etiquetas vecinas) no cuenta: solo
+      // lo que se aleja de más por añadirle nombres
+      return list.every((it) => !it.n || Math.abs(it.top + height(it) / 2 - it.y) <= (it.drift0 || 0) + DRIFT + it.n * SUB_LINE_HEIGHT / 2);
     };
     [true, false].forEach((right) => {
       const side = items.filter((it) => it.right === right);
-      if (stack(side)) {
+      const fitsBare = stack(side);
+      side.forEach((it) => { it.drift0 = Math.abs(it.top + height(it) / 2 - it.y); });
+      if (fitsBare) {
         const order = side.filter((it) => it.miners.length).sort((x, y) => y.share - x.share);
         let grew = true;
         while (grew) {
