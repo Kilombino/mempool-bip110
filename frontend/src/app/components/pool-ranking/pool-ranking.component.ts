@@ -193,13 +193,14 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     let totalBlockOther = 0;
     let totalEstimatedHashrateOther = 0;
 
-    let edgeDistance: any = '8%';
+    let edgeDistance: any = '8%';   // también lo usan los nombres de mineros (labelEdge)
     if (isMobile() && this.widget) {
       edgeDistance = 0;
     } else if (isMobile() && !this.widget || this.widget) {
       edgeDistance = 10;
     }
 
+    this.labelEdge = edgeDistance;
     groups.forEach((g) => {
       if (g.shareSum < poolShareThreshold) {
         totalShareOther += g.shareSum;
@@ -348,9 +349,13 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       const l = r.reduce((s, mm) => s + (mm.blockCount || 0), 0);
       const dd = Math.max(0, poolTotal - l - c);
       const f: any[] = [];
-      if (dd > 0) { f.push({ name: $localize`Built by the pool`, blockCount: dd }); }
-      if (c > 0) { f.push({ name: $localize`Other miners`, blockCount: c }); }
-      f.push(...r.slice().reverse());
+      if (dd > 0) { f.push({ name: $localize`Built by the pool`, blockCount: dd, key: '__pool' }); }
+      if (c > 0) { f.push({ name: $localize`Other miners`, blockCount: c, key: '__other' }); }
+      f.push(...r.slice().reverse().map((mm) => ({ ...mm, key: mm.name })));
+      // nombre de minero de la lista → su banda (los diminutos van en "Other miners")
+      d._keyOf = {};
+      r.forEach((mm) => { d._keyOf[mm.name] = mm.name; });
+      tiny.forEach((mm) => { d._keyOf[mm.name] = '__other'; });
       if (!f.length) { return; }
       const p = f.reduce((s, mm) => s + (mm.blockCount || 0), 0) || 1;
       const M = Math.min(MIN_BAND_DEPTH, 0.5 / f.length);
@@ -370,6 +375,10 @@ export class PoolRankingComponent implements OnInit, OnChanges {
           // Así una banda que es el pool entero (p.ej. nodeStratum) muestra su % real del total, no 100%.
           poolShare: (parseFloat(String(d.value)) * (R.blockCount || 0) / poolTotal).toFixed(1),
           color: this.bandColor((d.itemStyle && d.itemStyle.color) || '#888', L),
+          hl: this.bandColor((d.itemStyle && d.itemStyle.color) || '#888', 0.88),   // resaltada
+          key: R.key,
+          serieIdx: (serieData as any[]).indexOf(d),
+          first: G === 0,
           startAngle: startFrac,
           endAngle: endFrac,
           innerRadius: le,
@@ -416,17 +425,8 @@ export class PoolRankingComponent implements OnInit, OnChanges {
             // el alto que ocupa su cuña; si no caben todos, la última línea es "(…)".
             formatter: (serie: any) => {
               const main = serie.name === 'Binance Pool' ? 'Binance\nPool' : serie.name;
-              const sub: string[] = this.minerSub(serieData as any[], serie.dataIndex, outerFrac);
-              return sub.length ? `${main}\n` + sub.map((x) => `{sub|${x}}`).join('\n') : main;
-            },
-            rich: {
-              sub: {
-                fontSize: 10,
-                lineHeight: SUB_LINE_HEIGHT,
-                color: '#8c8c8c',
-                opacity: 0.75,
-                padding: [0, 0, 0, 12],
-              },
+              this.minerSub(serieData as any[], serie.dataIndex, outerFrac);   // reparto listo
+              return main;
             },
           },
           itemStyle: {
@@ -479,7 +479,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
             const cc = Math.min(w, h) / 2;
             const rInner = innerFrac * cc;
             const ring = (outerFrac - innerFrac) * cc;
-            return {
+            const sector = {
               type: 'sector',
               shape: {
                 cx: w / 2,
@@ -495,7 +495,38 @@ export class PoolRankingComponent implements OnInit, OnChanges {
                 stroke: 'var(--bg)',
                 lineWidth: 1,
               },
+              // al pasar el ratón por la banda o por su nombre en la lista (como mempool.guide)
+              emphasis: { style: { fill: s.hl, stroke: '#ffffff', lineWidth: 2 } },
             };
+            // Los nombres de esta banda en la lista de su pool: en el mismo grupo que el sector,
+            // así pasar el ratón por un nombre resalta su banda (y saca su tooltip).
+            this.minerSub(serieData as any[], 0, outerFrac);
+            const d: any = (serieData as any[])[s.serieIdx];
+            const texts: any[] = [];
+            if (d && d._subKeys && d._subKeys.length && d._subTop !== undefined) {
+              const e = this.labelEdge;
+              const edge = (typeof e === 'string' && e.endsWith('%')) ? w * parseFloat(e) / 100 : (parseFloat(String(e)) || 0);
+              d._subKeys.forEach((k: string | null, i: number) => {
+                const mine = k === null ? s.first : (d._keyOf[k] || '__other') === s.key;
+                if (!mine) { return; }
+                texts.push({
+                  type: 'text',
+                  silent: k === null,   // "(…)" no es de ninguna banda
+                  style: {
+                    text: d._sub[i],
+                    x: d._right ? w - edge : edge + 12,
+                    y: d._subTop + i * SUB_LINE_HEIGHT + SUB_LINE_HEIGHT / 2,
+                    align: d._right ? 'right' : 'left',
+                    verticalAlign: 'middle',
+                    fontSize: 10,
+                    fill: '#8c8c8c',
+                    opacity: 0.75,
+                  },
+                  emphasis: { style: { fill: '#ffffff', opacity: 1 } },
+                });
+              });
+            }
+            return texts.length ? { type: 'group', children: [sector, ...texts] } : sector;
           },
         } as any
       ],
@@ -511,7 +542,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   // dice este cálculo (labelLayout), así lo que se decide y lo que se pinta coinciden.
   // En la página del gráfico y en el panel de minería, en escritorio y en móvil.
   private layoutMinerLines(serieData: any[], w: number, h: number, outerFrac: number): void {
-    serieData.forEach((d) => { d._sub = []; d._labelY = undefined; });
+    serieData.forEach((d) => { d._sub = []; d._subKeys = []; d._labelY = undefined; });
     const radius = outerFrac * Math.min(w, h) / 2 + 15;   // final de la primera línea guía
     // MAIN/MARGIN con holgura (el texto real ocupa algo más); DRIFT 120: con 24 el lado izquierdo
     // del móvil se quedaba medio vacío (probado con los datos reales, 27 nov 2026)
@@ -564,8 +595,15 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       side.forEach((it) => {
         // en el móvil la columna de etiquetas es estrecha: nombres largos recortados
         const names = it.miners.map((m) => (isMobile() && m.name.length > 13) ? m.name.slice(0, 12) + '…' : m.name);
-        it.d._sub = !it.n ? [] : (it.n >= names.length ? names : names.slice(0, it.n - 1).concat(['(…)']));
-        it.d._labelY = it.top + height(it) / 2;
+        const keys = it.miners.map((m) => m.name);
+        const cut = !it.n ? 0 : (it.n >= names.length ? names.length : it.n - 1);
+        it.d._sub = !it.n ? [] : names.slice(0, cut).concat(cut < names.length ? ['(…)'] : []);
+        it.d._subKeys = !it.n ? [] : keys.slice(0, cut).concat(cut < names.length ? [null] : []);
+        // la etiqueta del pie solo lleva el nombre del pool, arriba del bloque; los mineros los
+        // dibuja la serie de las bandas debajo, uno a uno, para resaltar su banda al pasar el ratón
+        it.d._labelY = it.top + MAIN / 2;
+        it.d._subTop = it.top + MAIN;
+        it.d._right = it.right;
       });
     });
   }
@@ -573,6 +611,7 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   // El reparto de líneas depende del tamaño real del gráfico: se calcula al pintar la primera
   // etiqueta (y de nuevo si el gráfico cambia de tamaño).
   private minerLayoutKey = '';
+  private labelEdge: any = 0;
   private minerSub(serieData: any[], index: number, outerFrac: number): string[] {
     const w = this.chartInstance?.getWidth?.();
     const h = this.chartInstance?.getHeight?.();
