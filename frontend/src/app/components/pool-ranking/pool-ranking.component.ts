@@ -292,8 +292,10 @@ export class PoolRankingComponent implements OnInit, OnChanges {
 
   prepareChartOptions(miningStats) {
     let pieSize = ['20%', '80%']; // Desktop
-    if (isMobile() && !this.widget) {
-      pieSize = ['15%', '60%'];
+    if (isMobile()) {
+      // 27 nov 2026: más pequeño en el móvil (también en el panel) para que los mineros DATUM
+      // que se listan bajo cada pool no queden tapados por el rosco
+      pieSize = ['12%', '50%'];
     }
 
     const serieData = this.generatePoolsChartSerieData(miningStats);
@@ -507,10 +509,9 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   // los pools más grandes) mientras, apiladas sin solaparse, ninguna etiqueta con mineros se
   // aleje de su cuña ni se salga del gráfico. Las etiquetas se colocan luego exactamente donde
   // dice este cálculo (labelLayout), así lo que se decide y lo que se pinta coinciden.
-  // En la página del gráfico (escritorio y móvil); en el widget pequeño del inicio no hay sitio.
+  // En la página del gráfico y en el panel de minería, en escritorio y en móvil.
   private layoutMinerLines(serieData: any[], w: number, h: number, outerFrac: number): void {
     serieData.forEach((d) => { d._sub = []; d._labelY = undefined; });
-    if (this.widget) { return; }
     const radius = outerFrac * Math.min(w, h) / 2 + 15;   // final de la primera línea guía
     const MAIN = 17, MARGIN = 14, DRIFT = 24;   // con holgura: el texto real ocupa algo más
     // las cuñas de menos de 1,8° no llevan etiqueta (minShowLabelAngle): no ocupan sitio

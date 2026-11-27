@@ -15,7 +15,6 @@ import { EventType, NavigationStart, Router } from '@angular/router';
 export class MiningDashboardComponent implements OnInit, AfterViewInit {
   hashrateGraphHeight = 335;
   poolGraphHeight = 1200;
-  antPoolProxy = false;
 
   constructor(
     private seoService: SeoService,
@@ -33,10 +32,6 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
     this.ogService.setManualOgImage('mining.jpg');
   }
   
-  onPoolGroupToggleStatusChanged(event: boolean): void {
-    this.antPoolProxy = event;
-  }
-
   ngAfterViewInit(): void {
     this.stateService.focusSearchInputDesktop();
     this.router.events.subscribe((e: NavigationStart) => {
@@ -58,7 +53,7 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
       this.poolGraphHeight = 620;
     } else {
       this.hashrateGraphHeight = 240;
-      this.poolGraphHeight = 380;
+      this.poolGraphHeight = 520;   // 27 nov 2026: sitio para los mineros DATUM bajo cada pool
     }
   }
 }

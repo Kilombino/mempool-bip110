@@ -32,12 +32,7 @@
 .chart-widget {
   width: 100%;
   height: 100%;
-  @media (max-width: 767px) {
-    max-height: 240px;
-  }
-  @media (max-width: 485px) {
-    max-height: 200px;
-  }
+  /* 27 nov 2026: sin tope en el móvil; el alto lo marca el panel (sitio para los mineros DATUM) */
 }
 
 @media (max-width: 767.98px) {
