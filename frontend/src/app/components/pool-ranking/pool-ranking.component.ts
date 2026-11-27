@@ -507,10 +507,10 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   // los pools más grandes) mientras, apiladas sin solaparse, ninguna etiqueta con mineros se
   // aleje de su cuña ni se salga del gráfico. Las etiquetas se colocan luego exactamente donde
   // dice este cálculo (labelLayout), así lo que se decide y lo que se pinta coinciden.
-  // Solo en la vista grande de escritorio (en el widget y en el móvil no hay sitio).
+  // En la página del gráfico (escritorio y móvil); en el widget pequeño del inicio no hay sitio.
   private layoutMinerLines(serieData: any[], w: number, h: number, outerFrac: number): void {
     serieData.forEach((d) => { d._sub = []; d._labelY = undefined; });
-    if (this.widget || isMobile()) { return; }
+    if (this.widget) { return; }
     const radius = outerFrac * Math.min(w, h) / 2 + 15;   // final de la primera línea guía
     const MAIN = 17, MARGIN = 14, DRIFT = 24;   // con holgura: el texto real ocupa algo más
     // las cuñas de menos de 1,8° no llevan etiqueta (minShowLabelAngle): no ocupan sitio
@@ -555,7 +555,8 @@ export class PoolRankingComponent implements OnInit, OnChanges {
       }
       stack(side);
       side.forEach((it) => {
-        const names = it.miners.map((m) => m.name);
+        // en el móvil la columna de etiquetas es estrecha: nombres largos recortados
+        const names = it.miners.map((m) => (isMobile() && m.name.length > 13) ? m.name.slice(0, 12) + '…' : m.name);
         it.d._sub = !it.n ? [] : (it.n >= names.length ? names : names.slice(0, it.n - 1).concat(['(…)']));
         it.d._labelY = it.top + height(it) / 2;
       });

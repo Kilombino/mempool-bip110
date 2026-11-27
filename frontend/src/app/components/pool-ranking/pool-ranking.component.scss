@@ -24,8 +24,9 @@
   height: 780px;
   margin-bottom: 20px;
   @media (max-width: 767.98px) {
-    max-height: 260px;
-    height: 260px;
+    /* 27 nov 2026: más alto en el móvil para que quepan los mineros DATUM bajo cada pool */
+    max-height: 480px;
+    height: 480px;
   }
 }
 .chart-widget {
