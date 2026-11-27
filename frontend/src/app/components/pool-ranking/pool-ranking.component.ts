@@ -513,7 +513,9 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   private layoutMinerLines(serieData: any[], w: number, h: number, outerFrac: number): void {
     serieData.forEach((d) => { d._sub = []; d._labelY = undefined; });
     const radius = outerFrac * Math.min(w, h) / 2 + 15;   // final de la primera línea guía
-    const MAIN = 17, MARGIN = 14, DRIFT = 24;   // con holgura: el texto real ocupa algo más
+    // MAIN/MARGIN con holgura (el texto real ocupa algo más); DRIFT 120: con 24 el lado izquierdo
+    // del móvil se quedaba medio vacío (probado con los datos reales, 27 nov 2026)
+    const MAIN = 17, MARGIN = 14, DRIFT = 120;
     // las cuñas de menos de 1,8° no llevan etiqueta (minShowLabelAngle): no ocupan sitio
     const items = serieData.filter((d) => (d._arc1 - d._arc0) * 360 >= 1.8).map((d) => {
       const mid = (d._arc0 + d._arc1) / 2;
