@@ -13,6 +13,9 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
 import { download } from '@app/shared/graphs.utils';
 import { isMobile } from '@app/shared/common.utils';
 
+// alto de cada línea de minero bajo el nombre de un pool DATUM en el queso
+const SUB_LINE_HEIGHT = 13;
+
 @Component({
   selector: 'app-pool-ranking',
   templateUrl: './pool-ranking.component.html',
@@ -316,6 +319,14 @@ export class PoolRankingComponent implements OnInit, OnChanges {
     const BAND_DARKEST = 0.42;     // luz de la banda interior (más oscura)
     const BAND_LIGHTEST = 0.72;    // luz de la banda exterior (más clara)
     const bandsData: any[] = [];
+    // Arco de cada cuña (fracción 0..1 desde arriba, en sentido horario), para que la etiqueta
+    // sepa cuánto alto tiene para listar sus mineros.
+    let arcCum = 0;
+    (serieData as any[]).forEach((d) => {
+      d._arc0 = arcCum / bandTotal;
+      arcCum += parseFloat(d.value);
+      d._arc1 = arcCum / bandTotal;
+    });
     let bandCum = 0;
     (serieData as any[]).forEach((d) => {
       const v = parseFloat(d.value);
@@ -382,9 +393,14 @@ export class PoolRankingComponent implements OnInit, OnChanges {
           type: 'pie',
           radius: pieSize,
           data: serieData,
-          labelLayout: {
-            hideOverlap: false,       // no ocultar nombres aunque casi se solapen
-            moveOverlap: 'shiftY',    // separar verticalmente las etiquetas que chocan (clave para que se lean con muchos pools)
+          // En la vista grande cada etiqueta va a la altura calculada en layoutMinerLines; en el
+          // widget y el móvil, como antes: separar verticalmente las que chocan, sin ocultarlas.
+          labelLayout: (params: any) => {
+            const d: any = (serieData as any[])[params.dataIndex];
+            if (d && d._labelY !== undefined) {
+              return { y: d._labelY, verticalAlign: 'middle', hideOverlap: false };
+            }
+            return { hideOverlap: false, moveOverlap: 'shiftY' };
           },
           labelLine: {
             lineStyle: {
@@ -393,7 +409,23 @@ export class PoolRankingComponent implements OnInit, OnChanges {
           },
           label: {
             fontSize: 11,   // algo más pequeña para que quepan más nombres sin solaparse
-            formatter: (serie) => `${serie.name === 'Binance Pool' ? 'Binance\nPool' : serie.name}`,
+            // 27 nov 2026 (Kilombino): debajo del nombre de cada pool DATUM, sangrados y por orden
+            // de bloques, los nombres de sus mineros (las bandas concéntricas) mientras quepan en
+            // el alto que ocupa su cuña; si no caben todos, la última línea es "(…)".
+            formatter: (serie: any) => {
+              const main = serie.name === 'Binance Pool' ? 'Binance\nPool' : serie.name;
+              const sub: string[] = this.minerSub(serieData as any[], serie.dataIndex, outerFrac);
+              return sub.length ? `${main}\n` + sub.map((x) => `{sub|${x}}`).join('\n') : main;
+            },
+            rich: {
+              sub: {
+                fontSize: 10,
+                lineHeight: SUB_LINE_HEIGHT,
+                color: 'var(--grey)',
+                opacity: 0.8,
+                padding: [0, 0, 0, 12],
+              },
+            },
           },
           itemStyle: {
             borderRadius: 1,
@@ -469,6 +501,82 @@ export class PoolRankingComponent implements OnInit, OnChanges {
   }
 
   // Devuelve el color base con la LUZ (HSL L) fijada a targetL (0..1): rampa de tonos del pool.
+  // Nombres de los mineros de cada pool DATUM para su etiqueta (d._sub), por orden de bloques,
+  // tantos como quepan; "(…)" si sobran, y la altura de cada etiqueta (d._labelY). Se reparten a
+  // la vez para todas las etiquetas de cada lado del queso: se van añadiendo líneas (primero a
+  // los pools más grandes) mientras, apiladas sin solaparse, ninguna etiqueta con mineros se
+  // aleje de su cuña ni se salga del gráfico. Las etiquetas se colocan luego exactamente donde
+  // dice este cálculo (labelLayout), así lo que se decide y lo que se pinta coinciden.
+  // Solo en la vista grande de escritorio (en el widget y en el móvil no hay sitio).
+  private layoutMinerLines(serieData: any[], w: number, h: number, outerFrac: number): void {
+    serieData.forEach((d) => { d._sub = []; d._labelY = undefined; });
+    if (this.widget || isMobile()) { return; }
+    const radius = outerFrac * Math.min(w, h) / 2 + 15;   // final de la primera línea guía
+    const MAIN = 17, MARGIN = 14, DRIFT = 24;   // con holgura: el texto real ocupa algo más
+    // las cuñas de menos de 1,8° no llevan etiqueta (minShowLabelAngle): no ocupan sitio
+    const items = serieData.filter((d) => (d._arc1 - d._arc0) * 360 >= 1.8).map((d) => {
+      const mid = (d._arc0 + d._arc1) / 2;
+      const miners = (d._miners || []).length > 1 ? (d._miners || []).filter((m) => m.name && m.name !== d._name) : [];
+      return { d, right: mid < 0.5, y: h / 2 - Math.cos(2 * Math.PI * mid) * radius, miners, n: 0, share: parseFloat(d.value), top: 0 };
+    });
+    const height = (it) => MAIN + it.n * SUB_LINE_HEIGHT;
+    // apilar sin solapes: cada una lo más cerca de su cuña, empujando hacia abajo y, si se
+    // sale por abajo, hacia arriba. Devuelve si cabe y deja la posición en it.top.
+    const stack = (side: any[]): boolean => {
+      const list = side.slice().sort((x, y) => x.y - y.y);
+      let prevBottom = MARGIN;
+      list.forEach((it) => {
+        it.top = Math.max(it.y - height(it) / 2, prevBottom);
+        prevBottom = it.top + height(it);
+      });
+      let nextTop = h - MARGIN;
+      for (let i = list.length - 1; i >= 0; i--) {
+        list[i].top = Math.min(list[i].top, nextTop - height(list[i]));
+        nextTop = list[i].top;
+      }
+      if (nextTop < 0) { return false; }
+      return list.every((it) => !it.n || Math.abs(it.top + height(it) / 2 - it.y) <= DRIFT + it.n * SUB_LINE_HEIGHT / 2);
+    };
+    [true, false].forEach((right) => {
+      const side = items.filter((it) => it.right === right);
+      if (stack(side)) {
+        const order = side.filter((it) => it.miners.length).sort((x, y) => y.share - x.share);
+        let grew = true;
+        while (grew) {
+          grew = false;
+          for (const it of order) {
+            if (it.n >= it.miners.length) { continue; }
+            it.n++;
+            if (stack(side)) { grew = true; } else { it.n--; }
+          }
+        }
+        // con "(…)" una línea es para el aviso: con solo una línea no vale la pena
+        side.forEach((it) => { if (it.n === 1 && it.miners.length > 1) { it.n = 0; } });
+      }
+      stack(side);
+      side.forEach((it) => {
+        const names = it.miners.map((m) => m.name);
+        it.d._sub = !it.n ? [] : (it.n >= names.length ? names : names.slice(0, it.n - 1).concat(['(…)']));
+        it.d._labelY = it.top + height(it) / 2;
+      });
+    });
+  }
+
+  // El reparto de líneas depende del tamaño real del gráfico: se calcula al pintar la primera
+  // etiqueta (y de nuevo si el gráfico cambia de tamaño).
+  private minerLayoutKey = '';
+  private minerSub(serieData: any[], index: number, outerFrac: number): string[] {
+    const w = this.chartInstance?.getWidth?.();
+    const h = this.chartInstance?.getHeight?.();
+    if (!w || !h) { return []; }
+    const key = `${w}x${h}x${serieData.length}`;
+    if (this.minerLayoutKey !== key || !serieData.some((d) => d._sub)) {
+      this.layoutMinerLines(serieData, w, h, outerFrac);
+      this.minerLayoutKey = key;
+    }
+    return (serieData[index] && serieData[index]._sub) || [];
+  }
+
   private bandColor(color: string, targetL: number): string {
     const rgb = this.hexToRgb(color);
     if (!rgb) { return color; }
